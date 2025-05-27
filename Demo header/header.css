@@ -1,0 +1,107 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 20px;
+  font-size: 14px;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+}
+
+.top-bar i {
+  color: orange;
+  margin-right: 5px;
+}
+
+.hotline {
+  color: crimson;
+  font-weight: bold;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+}
+
+.logo h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.search-box {
+  flex: 1;
+  max-width: 400px;
+  margin: 0 20px;
+  display: flex;
+}
+
+.search-box input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+}
+
+.search-box button {
+  padding: 8px 12px;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+}
+
+.icons {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.icons div {
+  text-align: center;
+  font-size: 14px;
+}
+
+.icons i {
+  font-size: 18px;
+  color: orange;
+  display: block;
+}
+
+.cart {
+  position: relative;
+}
+
+.cart .badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  padding: 2px 6px;
+  font-size: 10px;
+  border-radius: 50%;
+}
+
+.navbar {
+  background-color: lightpink;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 12px 0;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 15px;
+}
