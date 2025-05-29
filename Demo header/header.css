@@ -1,7 +1,15 @@
 body {
   font-family: Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding:0;
+}
+*{
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 .top-bar {
@@ -104,4 +112,153 @@ body {
   text-decoration: none;
   font-weight: bold;
   font-size: 15px;
+}
+
+.container{
+  max-width: 1250px;
+  margin: auto;
+}
+.footer-col p,
+.footer-col li,
+.footer-col div,
+.shop-info p {
+  color: #bbbbbb;
+}
+.footer-col p,.shop-info p{
+  margin-bottom: 15px;
+}
+.row {
+  display:flex;
+  flex-wrap: wrap;
+}
+
+ul{
+  list-style: none;
+}
+.footer{
+  background-color:#0f0f0f;
+  padding: 0px 0;
+  margin-top:auto;
+}
+
+.footer-col {
+  width: 25%;
+  padding: 20px 40px;
+  color: white;
+  font-size: 15px;
+  font-family: Arial, sans-serif;
+}
+
+.footer-col h4 {
+  font-size: 18px;
+  color: white;
+  text-transform: capitalize;
+  margin-bottom: 10px;
+  font-weight: bold;
+  position: relative;
+}
+
+.footer-col h4::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  height: 2px;
+  box-sizing: border-box;
+  width: 50px;
+  background-color: white;
+}
+
+.footer-col ul li:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+.footer-col ul li a {
+  font-size: 15px;
+  color: #bbbbbb;
+  text-decoration: none;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.footer-col ul li a:hover {
+  color: white;
+  padding-left: 5px;
+}
+
+.contact b, .shop-info b {
+  color: crimson;
+  font-weight: bold;
+}
+
+.contact ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.contact ul li {
+  font-size: 15px;
+  font-weight: 400;
+  color: #eeeeee;
+  list-style-position: outside;
+  text-transform: none;
+}
+
+.contact a {
+  font-size: 15px;
+  color: #bbbbbb;
+  text-decoration: underline;
+}
+
+.contact a:hover {
+  color: white;
+}
+
+.contact p a {
+  color: white;
+  text-decoration: none;
+  font-weight: 400;
+  position: relative;       
+  display: inline-block;   
+  padding-bottom: 2px;
+}
+
+.contact p a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 0;
+  background-color: white;
+  transition: width 0.3s ease-in-out;
+}
+
+.contact p a:hover::after {
+  width: 100%;  
+}
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* khoảng cách giữa các phần con */
+}
+.bottom-footer {
+  background-color: crimson;
+  width: 100%;        /* phủ hết chiều ngang */
+  padding: 10px 0;    /* tạo khoảng padding trên dưới */
+  box-sizing: border-box;
+}
+
+.bottom-footer .container {
+  max-width: 1250px;
+  margin: 0 auto;     /* căn giữa container */
+  width: 100%;
+}
+.bottom-footer .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* Căn giữa ngang */
+  text-align: center;   /* Căn giữa chữ trong các phần tử con */
+  gap: 5px;             /* Khoảng cách giữa các dòng */
 }
