@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "react-router-dom": "^7.6.1"
+  },
+  
+  "name": "my-ecommerce-app",
+  "scripts": {
+    "start": "npm --prefix frontend start",
+    "build": "npm --prefix frontend build",
+    "test": "npm --prefix frontend test"
+  }
+
+}

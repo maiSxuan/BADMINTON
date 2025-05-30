@@ -1,0 +1,33 @@
+Front end code ReactJS, tham khảo https://www.youtube.com/watch?v=jbfuzcrfjqQ
+- Cài NodeJS + npm
+- Chạy: npm start
+frontend/
+├── src/
+│   ├── assets/
+│   ├── components/
+│   │   ├── common/               # Dùng chung: Header, Footer, Button
+│   │   ├── customer/             # Thành phần riêng cho customer
+│   │   ├── admin/                # Thành phần riêng cho admin
+│   │   └── manager/              # Thành phần riêng cho manager
+│   ├── layouts/
+│   │   ├── CustomerLayout.js     # Giao diện (layout) cho customer
+│   │   ├── AdminLayout.js        # Giao diện admin
+│   │   └── ManagerLayout.js      # Giao diện manager
+│   ├── pages/
+│   │   ├── customer/
+│   │   │   ├── Home.js
+│   │   │   ├── Product.js
+│   │   │   └── Cart.js 
+│   │   ├── admin/
+│   │   │   ├── Dashboard.js
+│   │   │   └── ManageUsers.js
+│   │   └── manager/
+│   │       ├── Reports.js
+│   │       └── Inventory.js
+│   ├── routes/
+│   │   ├── CustomerRoutes.js
+│   │   ├── AdminRoutes.js
+│   │   └── ManagerRoutes.js
+│   ├── utils/                    # Hàm phụ, kiểm tra role, auth
+│   ├── App.js                    # Hàm chính chạy
+│   └── index.js
