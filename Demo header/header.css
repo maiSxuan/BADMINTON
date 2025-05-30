@@ -4,18 +4,60 @@ body {
   padding: 0;
 }
 
-.top-bar {
+  /* .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 20px;
+    font-size: 14px;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .top-bar i {
+    color: orange;
+    margin-right: 5px;
+  } */
+
+.main-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
   padding: 8px 20px;
   font-size: 14px;
   background-color: #fff;
   border-bottom: 1px solid #ccc;
 }
 
-.top-bar i {
+.right {
+  display: flex;
+  align-items: center;
+  color: crimson;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.right i {
   color: orange;
   margin-right: 5px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; 
+  width: 70px; 
+  height: 70px; 
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.logo-img {
+  max-width: 120px;
+  max-height: 120px;
+  object-fit: contain; /* Giữ tỉ lệ ảnh, không bị méo */
+  display: block;
 }
 
 .hotline {
@@ -23,40 +65,43 @@ body {
   font-weight: bold;
 }
 
-.main-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-}
-
-.logo h1 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: bold;
-}
-
 .search-box {
   flex: 1;
-  max-width: 400px;
+  max-width: 600px;
   margin: 0 20px;
+  align-items: center;
   display: flex;
+  gap: 10px;
 }
 
 .search-box input {
   flex: 1;
-  padding: 8px;
+  padding: 8px 12px;
   border: 1px solid #ccc;
   border-right: none;
   border-radius: 4px 0 0 4px;
+  font-size: 14px;
 }
 
 .search-box button {
-  padding: 8px 12px;
+  padding: 8px 14px;
   background-color: #eee;
   border: 1px solid #ccc;
   border-radius: 0 4px 4px 0;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  color: crimson;
+  font-weight: bold;
+  font-size: 14px;
+  gap: 5px; 
+  margin-left: 20px;
 }
 
 .icons {
