@@ -1,5 +1,7 @@
 Front end code ReactJS, tham khảo https://www.youtube.com/watch?v=jbfuzcrfjqQ
 - Cài NodeJS + npm
+- Cài react-slick: npm install react-slick --save
+npm install slick-carousel
 - Chạy: npm start 
 
 
