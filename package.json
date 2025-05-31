@@ -1,13 +1,14 @@
 {
   "dependencies": {
-    "react-router-dom": "^7.6.1"
+    "react-router-dom": "^7.6.1",
+    "react-slick": "^0.30.3",
+    "slick-carousel": "^1.8.1",
+    "swiper": "^11.2.8"
   },
-  
   "name": "my-ecommerce-app",
   "scripts": {
     "start": "npm --prefix frontend start",
     "build": "npm --prefix frontend build",
     "test": "npm --prefix frontend test"
   }
-
 }

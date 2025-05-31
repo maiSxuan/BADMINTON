@@ -1,6 +1,9 @@
 Front end code ReactJS, tham khảo https://www.youtube.com/watch?v=jbfuzcrfjqQ
 - Cài NodeJS + npm
-- Chạy: npm start
+- Chạy: npm start 
+
+
+
 frontend/
 ├── src/
 │   ├── assets/
@@ -17,13 +20,13 @@ frontend/
 │   │   ├── customer/
 │   │   │   ├── Home.js
 │   │   │   ├── Product.js
-│   │   │   └── Cart.js 
+│   │   │   └── Cart.js ...
 │   │   ├── admin/
 │   │   │   ├── Dashboard.js
-│   │   │   └── ManageUsers.js
+│   │   │   └── ManageUsers.js ....
 │   │   └── manager/
 │   │       ├── Reports.js
-│   │       └── Inventory.js
+│   │       └── Inventory.js ....
 │   ├── routes/
 │   │   ├── CustomerRoutes.js
 │   │   ├── AdminRoutes.js
@@ -31,3 +34,4 @@ frontend/
 │   ├── utils/                    # Hàm phụ, kiểm tra role, auth
 │   ├── App.js                    # Hàm chính chạy
 │   └── index.js
+

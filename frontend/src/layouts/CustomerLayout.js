@@ -1,50 +1,38 @@
 // src/layouts/CustomerLayout.js
 
 import React from 'react';
+import Home from '../pages/customer/Home';
 
 const CustomerLayout = () => {
   return (
     <div style={styles.container}>
-      <header style={styles.header}>
-        <h1>Customer Area</h1>
-      </header>
-
       <main style={styles.main}>
-        <p>Welcome, valued customer! 👋</p>
-        <p>This is the customer layout.</p>
+        <Home />
       </main>
-
-      <footer style={styles.footer}>
-        <p>© 2025 Your Store - All rights reserved.</p>
-      </footer>
     </div>
   );
 };
 
 const styles = {
   container: {
-    fontFamily: 'Arial, sans-serif',
-    maxWidth: 800,
-    margin: '0 auto',
     padding: 20,
-    border: '1px solid #ccc',
-    borderRadius: 10,
-    background: '#f9f9f9',
+    maxWidth: 1000,
+    margin: '0 auto',
   },
   header: {
-    borderBottom: '1px solid #ddd',
-    marginBottom: 20,
+    borderBottom: '1px solid #ccc',
+    paddingBottom: 10,
   },
   main: {
-    minHeight: 300,
+    minHeight: 400,
+    paddingTop: 20,
   },
   footer: {
-    borderTop: '1px solid #ddd',
+    borderTop: '1px solid #ccc',
     marginTop: 20,
     paddingTop: 10,
-    textAlign: 'center',
     fontSize: 12,
-    color: '#888',
+    textAlign: 'center',
   },
 };
 
