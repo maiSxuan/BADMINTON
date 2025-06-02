@@ -147,8 +147,10 @@ body {
   background-color: lightpink;
   display: flex;
   justify-content: center;
-  gap: 30px;
+  gap: 100px;
   padding: 12px 0;
+  position: relative; /*thêm mới*/
+  z-index: 1000;
 }
 
 .navbar a {
@@ -157,6 +159,103 @@ body {
   font-weight: bold;
   font-size: 15px;
 }
+
+/*sub-menu*/
+.nav-item-dropdown {
+  position: relative;
+}
+
+.nav-item-dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 15px;
+  display: block;
+  transition: color 0.3s;
+}
+
+.nav-link:hover {
+  color: #012c29;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-300px);
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 1);
+  border-radius: 0 0 8px 8px;
+  min-width: 1250px;
+  max-height: 400px;
+  overflow-y: auto;
+  display: none;
+  z-index: 999;
+  margin-top: 0;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-content {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  column-gap: 0;
+  row-gap: 20px;
+  padding: 20px;
+}
+
+.dropdown-column {
+  padding: 0 15px;
+}
+
+.dropdown-title { 
+  color: rgb(40, 31, 38);
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  border-bottom: 2px solid lightpink;
+  padding-bottom: 3px;
+  cursor: pointer;
+}
+
+.dropdown-list {
+  list-style: none;
+}
+
+.dropdown-list li {
+  margin-bottom: 5px;
+}
+
+.dropdown-list a {
+  color: #000000;
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 1;
+  display: block;
+  padding: 4px 0;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.dropdown-list a:hover {
+  color: rgb(56, 162, 146);
+  font-weight: bold;
+  transform: translateX(-3px);
+}
+
+.more-link {
+  color: lightpink !important;
+  font-weight: 500;
+  margin-top: 0;
+}
+/*sub menumenu*/
+
 
 .container{
   max-width: 1250px;
