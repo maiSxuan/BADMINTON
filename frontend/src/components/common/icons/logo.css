@@ -1,0 +1,21 @@
+.logo-large {
+background-image: url(../../../assets/icons/SCD.png);
+background-position: 50% 50%;
+background-size: cover;
+height: 646px;
+width: 646px;
+}
+.logo-medium {
+background-image: url(../../../assets/icons/SCD.png);
+background-position: 50% 50%;
+background-size: cover;
+height: 409px;
+width: 409px;
+}
+.logo-small {
+background-image: url(../../../assets/icons/SCD.png);
+background-position: 50% 50%;
+background-size: cover;
+height: 175px;
+width: 175px;
+}

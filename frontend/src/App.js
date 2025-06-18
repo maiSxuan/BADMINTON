@@ -1,18 +1,18 @@
 import './App.css';
-import CustomerLayout from './layouts/CustomerLayout';
-// import AdminLayout from './layouts/AdminLayout';
-// import ManagerLayout from './layouts/ManagerLayout';
-function App() {
-  // Tạm thời giả lập role để test layout
-  const role = 'admin';  // Switch to 'customer' or 'manager' to test
+import Header from './components/customer/Header';
+import Footer from './components/customer/Footer';
+import Home from './pages/customer/Home';
 
-  // if (role === 'admin') {
-  //   return <AdminLayout />;
-  // }
-  // if (role === 'manager') {
-  //   return <ManagerLayout />;
-  // }
-  return <CustomerLayout />;
+function App() {
+  return (
+    <>
+      <Header />
+      <main>
+        <Home />
+      </main>
+      <Footer />
+    </>
+  );
 }
 
 export default App;

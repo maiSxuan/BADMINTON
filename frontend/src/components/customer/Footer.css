@@ -1,0 +1,142 @@
+.container { 
+  max-width:100%;
+  margin: auto;
+  padding: 0 15px; 
+  box-sizing: border-box;
+}
+
+ul {
+  list-style: none;
+  padding: 0; 
+}
+
+.footer {
+  margin-top: auto;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+}
+
+.mid-footer {
+  background-color: #ffffff; 
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.footer-col {
+  flex: 1 1 220px;
+  padding: 20px; 
+  min-width: 200px;
+}
+
+.logo-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 0;
+}
+
+.footer-col h4 {
+  font-size: 18px;
+  color: #000000; 
+  text-transform: capitalize;
+  margin-bottom: 25px; 
+  font-weight: bold;
+  position: relative;
+}
+
+.footer-col h4::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  height: 2px;
+  box-sizing: border-box;
+  width: 50px;
+  background-color: #000000; 
+}
+
+.footer-col span {
+  display: block;
+  color: #000000; 
+  margin-bottom: 10px;
+}
+
+.footer-col ul li:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+.footer-col ul li a {
+  font-size: 15px;
+  color: #000000; 
+  text-decoration: none;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.footer-col ul li a:hover {
+  color: #555555; 
+  padding-left: 5px;
+}
+
+.bottom-footer {
+  background-color: #FFE2F6; 
+  width: 100%;
+  padding: 15px 0;
+  box-sizing: border-box;
+  text-align: center; 
+}
+
+.bottom-footer .container {
+  color: rgb(0,0,0);
+  font-size: 14px;
+}
+
+
+.footer-col .contact-info div {
+  margin-bottom: 10px; 
+}
+
+
+
+@media (max-width: 992px) {
+  .row {
+    gap: 30px 0; 
+  }
+}
+
+@media (max-width: 767px) {
+  .footer-col {
+    text-align: center;
+  }
+  
+  .footer-col h4::before {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .logo-col {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.mid-footer .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px; 
+}
+
+.mid-footer .row .footer-intro {
+  flex-grow: 1; 
+  flex-basis: 300px; 
+}
+
+.mid-footer .row .footer-col {
+  flex-grow: 0;
+  flex-basis: 150px; 
+}
+

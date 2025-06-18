@@ -10,5 +10,19 @@
     "start": "npm --prefix frontend start",
     "build": "npm --prefix frontend build",
     "test": "npm --prefix frontend test"
-  }
+  },
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maiSxuan/Badminton.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maiSxuan/Badminton/issues"
+  },
+  "homepage": "https://github.com/maiSxuan/Badminton#readme"
 }
