@@ -1,18 +1,34 @@
-import './App.css';
-import Header from './components/customer/Header';
-import Footer from './components/customer/Footer';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import Home from './pages/customer/Home';
+import './App.css';
 
 function App() {
   return (
-    <>
-      <Header />
-      <main>
-        <Home />
-      </main>
-      <Footer />
-    </>
+        <Routes>
+          {/* Thêm các path khác vào đây */}
+          <Route path="/" element={<Home />} />
+        </Routes>
   );
 }
 
 export default App;
+//code cũ
+// import './App.css';
+// import Header from './components/customer/Header';
+// import Footer from './components/customer/Footer';
+// import Home from './pages/customer/Home';
+
+// function App() {
+//   return (
+//     <>
+//       <Header />
+//       <main>
+//         <Home />
+//       </main>
+//       <Footer />
+//     </>
+//   );
+// }
+
+// export default App;

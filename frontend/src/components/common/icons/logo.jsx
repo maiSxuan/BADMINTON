@@ -1,14 +1,24 @@
 import React from 'react';
 import './logo.css';
-import logo from '../../../assets/icons/SCD.png';
+import logoImage from "../../../assets/icons/SCD.png"
 
-//Tái sử dụng bằng cách <logo size ="small" "medium" hoặc "large"/>
-const Logo = ({ size = 'logo-medium' }) => {
+//Thêm sizes vô đây
+const SIZES = {
+  mini:{width:100, height:100},
+  small: { width: 175, height: 175 },
+  medium: { width: 409, height: 409 },
+  large: { width: 646, height: 646 },
+  'extra-large': { width: 800, height: 800 },
+};
+const Logo = ({ size = 'medium' }) => {
+  const style = SIZES[size] || SIZES.medium;
+
   return (
     <img
-      src={logo}
-      alt="Logo"
-      className={`logo-${size}`}
+      src={logoImage}
+      alt="SCD Shop Logo"
+      className="logo-image"
+      style={style} // Áp dụng style đã lấy được
     />
   );
 };

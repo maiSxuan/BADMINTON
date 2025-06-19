@@ -1,4 +1,6 @@
 import React from "react";
+// 1. IMPORT LINK TỪ REACT-ROUTER-DOM
+import { Link } from "react-router-dom"; 
 import "./Footer.css";
 import Logo from "../common/icons/logo";
 
@@ -9,34 +11,43 @@ const Footer = () => {
         <div className="container">
           <div className="row">
             <div className="footer-col logo-col">
-              <Logo className="small" />
+              <Link to="/">
+                <Logo size="small" />
+              </Link>
             </div>
+
+            {/* Cột Thông tin liên hệ */}
             <div className="footer-col">
-            <h4>Thông tin liên hệ</h4>
-            <div className="contact-info">
+              <h4>Thông tin liên hệ</h4>
+              <div className="contact-info">
                 <div>Email: scdbadmintonhelp@gmail.com</div>
                 <div>Hotline: 0948245045</div>
                 <div>Địa chỉ: 227 Nguyễn Văn Cừ, Quận 5, TP.HCM</div>
               </div>
             </div>
+
+            {/* Cột Chính sách */}
             <div className="footer-col">
               <h4>Chính sách</h4>
               <ul>
-                <li><a href="#doitra">Chính sách nhượng quyền</a></li>
-                <li><a href="#vanchuyen">Chính sách đổi trả</a></li>
-                <li><a href="#baomat">Chính sách bảo hành</a></li>
+                <li><Link to="/franchise">Chính sách nhượng quyền</Link></li>
+                <li><Link to="/return">Chính sách đổi trả</Link></li>
+                <li><Link to="/warranty">Chính sách bảo hành</Link></li>
               </ul>
             </div>
+
+            {/* Cột Hướng dẫn */}
             <div className="footer-col">
               <h4>Hướng dẫn</h4>
               <ul>
-                <li><a href="#muahang">Hướng dẫn mua hàng</a></li>
-                <li><a href="#thanhtoan">Hướng dẫn thanh toán</a></li>
+                <li><Link to="/how-to-buy">Hướng dẫn mua hàng</Link></li>
+                <li><Link to="/payment">Hướng dẫn thanh toán</Link></li>
               </ul>
             </div>
           </div>
         </div>
-      </div> 
+      </div>
+
       <div className="bottom-footer">
         <div className="container">
           <span>© 2025 Badminton Shop. All rights reserved</span>
