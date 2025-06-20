@@ -1,7 +1,7 @@
 /* src/components/common/Breadcrumb/Breadcrumb.css */
 
 .breadcrumb-container {
-  background-color: #fff1f3; /* Màu hồng nhạt giống AdminHeader */
+  background-color: #fff1f3; 
   padding: 12px 30px;
   border-bottom: 1px solid #f0f0f0;
 }
