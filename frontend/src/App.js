@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/customer/Home';
+import Admin from './pages/admin/Admin'
 import './App.css';
 
 function App() {
@@ -8,6 +9,7 @@ function App() {
         <Routes>
           {/* Thêm các path khác vào đây */}
           <Route path="/" element={<Home />} />
+          <Route path="/admin" element={<Admin/>}/>
         </Routes>
   );
 }

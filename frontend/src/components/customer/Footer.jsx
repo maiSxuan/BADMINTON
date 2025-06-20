@@ -2,7 +2,7 @@ import React from "react";
 // 1. IMPORT LINK TỪ REACT-ROUTER-DOM
 import { Link } from "react-router-dom"; 
 import "./Footer.css";
-import Logo from "../common/icons/logo";
+import Logo from "../common/logo";
 
 const Footer = () => {
   return (

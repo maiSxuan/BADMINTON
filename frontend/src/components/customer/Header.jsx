@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import './Header.css';
 
 // Import các component/ảnh
-import Logo from "../common/icons/logo";
+import Logo from "../common/logo";
 import userIcon from '../../assets/icons/User.svg';
 import cartIcon from '../../assets/icons/Shopping cart.svg';
 import searchIcon from '../../assets/icons/Info.svg';

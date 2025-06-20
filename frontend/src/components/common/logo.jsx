@@ -1,6 +1,6 @@
 import React from 'react';
 import './logo.css';
-import logoImage from "../../../assets/icons/SCD.png"
+import logoImage from "../../assets/icons/SCD.png"
 
 //Thêm sizes vô đây
 const SIZES = {

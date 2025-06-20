@@ -1,0 +1,83 @@
+/* src/components/Sidebar/AdminSidebar.css */
+
+.admin-sidebar {
+  width: 280px;
+  background-color: #fff1f3; /* Thay đổi màu nền nếu muốn */
+  padding: 20px;
+  height: fit-content;
+}
+
+.sidebar-section {
+  margin-bottom: 15px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px 0;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #212529;
+  margin: 0;
+}
+
+/* --- CSS để tạo mũi tên --- */
+/* Cách này không cần dùng file ảnh, rất linh hoạt */
+.arrow {
+  display: inline-block;
+  border: solid #333;
+  border-width: 0 2px 2px 0;
+  padding: 3px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.arrow.up {
+  /* Hướng lên */
+  transform: rotate(-135deg);
+  margin-top: -5px; /* Điều chỉnh vị trí một chút */
+}
+
+.arrow.down {
+  /* Hướng xuống */
+  transform: rotate(45deg);
+  margin-top: -2px; /* Điều chỉnh vị trí một chút */
+}
+
+/* --- CSS cho submenu và hiệu ứng đóng/mở --- */
+.submenu {
+  max-height: 0; /* Trạng thái đóng */
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out; /* Hiệu ứng mượt mà */
+  padding-left: 10px; /* Thụt lề cho các mục con */
+}
+
+.submenu.open {
+  max-height: 500px; /* Một giá trị đủ lớn để chứa tất cả các mục */
+}
+
+.submenu ul {
+  list-style: none;
+  padding: 10px 0 0 0;
+  margin: 0;
+}
+
+.submenu li a {
+  display: block;
+  padding: 8px 15px;
+  color: #495057;
+  font-size: 16px;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+
+.submenu li a.active {
+  background-color: #e9ecef;
+  font-weight: 500;
+  color: #000;
+}

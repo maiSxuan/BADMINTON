@@ -1,0 +1,82 @@
+/* src/components/AdminHeader/AdminHeader.css */
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+  background-color: #fff1f3;
+}
+
+/* --- Phần bên trái --- */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Style cho logo nếu cần, ví dụ: */
+.header-left .logo-link svg {
+  height: 40px;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+/* --- Phần bên phải --- */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.notification-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0; /* Reset padding */
+  line-height: 0; /* Giúp căn chỉnh ảnh tốt hơn */
+}
+
+/* Style cho icon chuông */
+.icon-bell {
+  width: 22px;
+  height: 22px;
+}
+
+.separator {
+  width: 1px;
+  height: 24px;
+  background-color: #ddd;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #ff85a2;
+}
+
+/* Style chung cho ảnh trong avatar để đảm bảo nó lấp đầy hình tròn */
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Quan trọng: Đảm bảo ảnh lấp đầy mà không bị méo */
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
