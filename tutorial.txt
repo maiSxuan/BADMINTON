@@ -2,9 +2,17 @@ Front end code ReactJS, tham khảo https://www.youtube.com/watch?v=jbfuzcrfjqQ
 - Cài NodeJS + npm
 - Cài react-slick: npm install react-slick --save
 npm install slick-carousel
-- Chạy: npm start 
+-Cd frontend chạy: npm start 
 
-
+Backend package: npm install nodemon express mongoose dotenv 
+    - nodemon dùng cho chạy server: nodemon server.js
+    - moongoose dùng cho xử lí database lưu vào mongodb
+    - Tạo cluster trên atlas (cloud) của mongodb
+    - Tạo một file .env để lưu đường dẫn vd MONGO_DB = mongodb+srv://haovo234:{mật khẩu}m@cluster0.y4bqdbq.mongodb.net/ rồi vào server.js
+    connect bằng mongoose.connect (`${process.env.MONGO_DB}`)
+Tutorial: 
+-   Tạo rest API : https://youtu.be/fgTGADljAeg?si=SygecJM5XrQvWJwK 
+-   Thiết kế database + kết nối mongodb: https://youtu.be/uGT_5p8K6OE?si=Yab5lkrcJaYjMjbJ
 
 frontend/
 ├── src/
@@ -13,7 +21,7 @@ frontend/
 │   │   ├── common/               # Dùng chung: Header, Footer, Button
 │   │   ├── customer/             # Thành phần riêng cho customer
 │   │   ├── admin/                # Thành phần riêng cho admin
-│   │   └── manager/              # Thành phần riêng cho manager
+│   │   ├── guest/           # Thành phần riêng cho guest
 │   ├── layouts/
 │   │   ├── CustomerLayout.js     # Giao diện (layout) cho customer
 │   │   ├── AdminLayout.js        # Giao diện admin
@@ -26,14 +34,12 @@ frontend/
 │   │   ├── admin/
 │   │   │   ├── Dashboard.js
 │   │   │   └── ManageUsers.js ....
-│   │   └── manager/
-│   │       ├── Reports.js
-│   │       └── Inventory.js ....
 │   ├── routes/
 │   │   ├── CustomerRoutes.js
 │   │   ├── AdminRoutes.js
 │   │   └── ManagerRoutes.js
-│   ├── utils/                    # Hàm phụ, kiểm tra role, auth
-│   ├── App.js                    # Hàm chính chạy
+|   | │   ├── App.js                    # Hàm chính chạy
 │   └── index.js
+│   ├── utils/                    # Hàm phụ, kiểm tra role, auth
 
+    └── server.js

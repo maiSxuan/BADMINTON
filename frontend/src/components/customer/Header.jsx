@@ -15,9 +15,7 @@ const Header = () => {
         <div className="main-header">
           {/* Nhóm 1: Logo */}
           <div className="header-group logo-group">
-            <NavLink to="/">
               <Logo size="mini" />
-            </NavLink>
           </div>
           {/* Nhóm 2: Hỗ trợ (Hotline, Cửa hàng) */}
           <div className="header-group support-group">

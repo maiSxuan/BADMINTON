@@ -1,0 +1,17 @@
+### Kiểm tra GET
+GET http://localhost:4000/add-product/685b77cec6385923144a8336
+###
+
+POST http://localhost:4000/add-product
+Content-Type: application/json
+
+{
+    "name": "Vợt cầu lông",
+    "type": "Racket",
+    "price": "300000",
+    "countInStock": "10",
+    "description":"Vợt này rất tuyệt vời"
+}
+
+### Kiểm tra DELETE
+DELETE http://localhost:4000/add-product/685b77cec6385923144a8336

@@ -1,20 +1,25 @@
-import React from 'react';
-import AdminSidebar from '../../components/admin/AdminSidebar';
-import AdminHeader from "../../components/admin/AdminHeader";
-import Breadcrumb from '../../components/common/breadcrumb';
-function AdminLayout({children}){
-    return (
-        <div>
-            <AdminHeader />
-            <div className='containter'>
-                <AdminSidebar/>
-                <Breadcrumb/>
-                <div className='content'>
-                    {children}
-                </div>
-            </div>
-        </div>
-    )
+import AdminHeader from '../admin/AdminHeader';
+import AdminSidebar from '../admin/AdminSidebar';
+import { Outlet } from 'react-router-dom'; 
+import './AdminLayout.css'; 
 
-}
-export default AdminLayout
+const AdminLayout = ({ children }) => {
+  return (
+    <div className="admin-layout">
+
+      <AdminHeader />
+
+      <div className="admin-body-container">
+        
+        <AdminSidebar />
+        
+        <main className="admin-main-content">
+          {children || <Outlet />} 
+        </main>
+
+      </div>
+    </div>
+  );
+};
+
+export default AdminLayout;
