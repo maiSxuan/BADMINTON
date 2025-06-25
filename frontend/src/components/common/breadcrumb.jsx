@@ -23,7 +23,7 @@ const Breadcrumb = ({ items = [] }) => {
             )}
             
             {/* Hiển thị dấu phân cách, trừ item cuối cùng */}
-            {index < items.length - 1 && <span className="separator"></span>}
+            {index < items.length - 1 && <span className="separator">›</span>}
           </li>
         ))}
       </ol>
