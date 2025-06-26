@@ -112,37 +112,6 @@ const Intro = () => {
               </div>
             </div>
 
-            <div className="intro-section">
-              <h3 className="intro-section-title">
-                Tầm nhìn – Sứ mệnh – Giá trị cốt lõi của SCD Badminton
-              </h3>
-
-              <div>
-                <h4 className="intro-subsection-title">Tầm nhìn:</h4>
-                <p className="intro-paragraph">
-                  Trở thành thương hiệu cầu lông hàng đầu Việt Nam...
-                </p>
-
-                <h4 className="intro-subsection-title">Sứ mệnh:</h4>
-                <p className="intro-paragraph">
-                  Cung cấp sản phẩm và dịch vụ tốt nhất...
-                </p>
-
-                <h4 className="intro-subsection-title">Giá trị cốt lõi:</h4>
-                <ul className="intro-ul">
-                  <li>
-                    • Trung: Trung thực với khách hàng, đối tác và nhân viên.
-                  </li>
-                  <li>• Tín: Giữ chữ tín trong từng cam kết.</li>
-                  <li>• Tâm: Luôn đặt khách hàng làm trung tâm.</li>
-                  <li>• Trí: Sáng tạo, cải tiến không ngừng.</li>
-                  <li>
-                    • Nhân: Xây dựng văn hóa doanh nghiệp nhân văn và bền vững.
-                  </li>
-                </ul>
-              </div>
-            </div>
-
             <div className="intro-slogan">
               Slogan: "Play your best – Choose SCD"
             </div>
