@@ -67,11 +67,11 @@ const Header = () => {
         <nav className="navbar">
           
           <NavLink to="/">TRANG CHỦ</NavLink>
-          <NavLink to="customer/products">SẢN PHẨM</NavLink>
-          <NavLink to="customer/sale">SALE OFF</NavLink>
-          <NavLink to="customer/franchise">CHÍNH SÁCH NHƯỢNG QUYỀN</NavLink>
-          <NavLink to="/customer/about">GIỚI THIỆU</NavLink>
-          <NavLink to="customer/contact">LIÊN HỆ</NavLink>
+          <NavLink to="/products">SẢN PHẨM</NavLink>
+          <NavLink to="/sale">SALE OFF</NavLink>
+          <NavLink to="/franchise">CHÍNH SÁCH NHƯỢNG QUYỀN</NavLink>
+          <NavLink to="/about">GIỚI THIỆU</NavLink>
+          <NavLink to="/contact">LIÊN HỆ</NavLink>
          
         </nav>
         </div>
