@@ -2,14 +2,13 @@
 
 import React from 'react';
 import ImageSlider from '../../components/customer/Slider';
-import Header from '../../components/customer/Header';
-import Footer from '../../components/customer/Footer';
 const Home = () => {
   return (
     <div>
-      <Header />
+
+      {/* Thêm phần content vào đây */}
+      <h2>This is content</h2>
       <ImageSlider />
-      <Footer />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 // src/layouts/CustomerLayout.js
 
 import React from 'react';
-import Home from '../pages/customer/Home';
+import Home from '../../pages/customer/Home';
 
 const CustomerLayout = () => {
   return (

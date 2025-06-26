@@ -4,23 +4,60 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import './AdminSidebar.css';
 
-// Dữ liệu menu không đổi
-const menuItems = [
-    { id: 'users', title: 'Quản lý người dùng', subItems: [ { label: 'Xem thông tin người dùng', path: '/admin/users' }, { label: 'Khóa tài khoản', path: '/admin/users/lock' }, { label: 'Reset mật khẩu', path: '/admin/users/reset' }, ], }, { id: 'orders', title: 'Quản lý đơn hàng', subItems: [ { label: 'Tất cả', path: '/admin/orders' }, { label: 'Đơn hủy', path: '/admin/orders/cancelled' }, ], }, { id: 'products', title: 'Quản lý sản phẩm', subItems: [ { label: 'Tất cả sản phẩm', path: '/admin/products' }, { label: 'Thêm sản phẩm', path: '/admin/products/add' }, ], }, { id: 'customer-care', title: 'Chăm sóc khách hàng', subItems: [ { label: 'Quản lý chat', path: '/admin/chat' }, { label: 'Quản lý đánh giá', path: '/admin/reviews' }, ], }, { id: 'finance', title: 'Tài chính', subItems: [ { label: 'Doanh thu', path: '/admin/finance/revenue' }, { label: 'Số dư tài khoản', path: '/admin/finance/balance' }, ], },
-];
+  const menuItems = [
+    {
+      id: 'users',
+      title: 'Quản lý người dùng',
+      subItems: [
+        { label: 'Xem thông tin người dùng', path: '/admin/user-list' }, 
+        { label: 'Khóa tài khoản', path: '/admin/lock-account' },
+        { label: 'Reset mật khẩu', path: '/admin/reset-password' },
+      ],
+    },
+    {
+      id: 'orders',
+      title: 'Quản lý đơn hàng',
+      subItems: [
+        { label: 'Tất cả', path: '/admin/all-orders' },
+        { label: 'Đơn hủy', path: '/admin/cancelled-orders' },
+      ],
+    },
+    {
+      id: 'products',
+      title: 'Quản lý sản phẩm',
+      subItems: [
+        { label: 'Tất cả sản phẩm', path: '/admin/all-products' },
+        { label: 'Thêm sản phẩm', path: '/admin/add-product' },
+      ],
+    },
+    {
+      id: 'customer-care',
+      title: 'Chăm sóc khách hàng',
+      subItems: [
+        { label: 'Quản lý chat', path: '/admin/chat-management' },
+        { label: 'Quản lý đánh giá', path: '/admin/review-management' },
+      ],
+    },
+    {
+      id: 'finance',
+      title: 'Tài chính',
+      subItems: [
+        { label: 'Doanh thu', path: '/admin/revenue' },
+        { label: 'Số dư tài khoản', path: '/admin/balance' },
+      ],
+    },
+  ];
 
 const AdminSidebar = () => {
-  // [THAY ĐỔI 1] Sử dụng mảng để lưu các ID đang mở
   const [openSectionIds, setOpenSectionIds] = useState([]);
 
-  // [THAY ĐỔI 2] Cập nhật logic toggle
   const handleToggle = (sectionId) => {
     setOpenSectionIds(prevOpenIds => {
       const isOpen = prevOpenIds.includes(sectionId);
       if (isOpen) {
-        return prevOpenIds.filter(id => id !== sectionId); // Đóng section
+        return prevOpenIds.filter(id => id !== sectionId); 
       } else {
-        return [...prevOpenIds, sectionId]; // Mở section
+        return [...prevOpenIds, sectionId];
       }
     });
   };
@@ -28,7 +65,7 @@ const AdminSidebar = () => {
   return (
     <aside className="admin-sidebar">
       {menuItems.map((section) => {
-        // [THAY ĐỔI 3] Kiểm tra xem section có trong mảng không
+  
         const isOpen = openSectionIds.includes(section.id);
 
         return (
