@@ -1,28 +1,31 @@
 {
-  "dependencies": {
-    "react-router-dom": "^7.6.2",
-    "react-slick": "^0.30.3",
-    "slick-carousel": "^1.8.1",
-    "swiper": "^11.2.8"
-  },
-  "name": "my-ecommerce-app",
-  "scripts": {
-    "start": "npm --prefix frontend start",
-    "build": "npm --prefix frontend build",
-    "test": "npm --prefix frontend test"
-  },
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/maiSxuan/Badminton.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/maiSxuan/Badminton/issues"
-  },
-  "homepage": "https://github.com/maiSxuan/Badminton#readme"
+    "dependencies": {
+        "dotenv": "^16.5.0",
+        "express": "^5.1.0",
+        "mongoose": "^8.16.0",
+        "nodemon": "^3.1.10",
+        "react-router-dom": "^7.6.2",
+        "react-slick": "^0.30.3",
+        "slick-carousel": "^1.8.1",
+        "swiper": "^11.2.8"
+    },
+    "name": "my-ecommerce-app",
+    "scripts": {
+        "nodestart": "node server.js",
+        "nodemonstart": "nodemon server.js"
+    },
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/maiSxuan/Badminton.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/maiSxuan/Badminton/issues"
+    },
+    "homepage": "https://github.com/maiSxuan/Badminton#readme"
 }

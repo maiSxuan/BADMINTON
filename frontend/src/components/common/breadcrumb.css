@@ -1,18 +1,24 @@
 /* src/components/common/Breadcrumb/Breadcrumb.css */
 
 .breadcrumb-container {
-  background-color: #fff1f3; /* Màu hồng nhạt giống AdminHeader */
-  padding: 12px 30px;
-  border-bottom: 1px solid #f0f0f0;
+  width: 100vw;                       /* Chiếm toàn bộ chiều ngang màn hình */
+  background-color: #ffffffeb;
+  padding: 4px 8px;
+  margin: 0;
+  box-sizing: border-box;
+  border-bottom: 1px solid #ffffffeb;
+  position: relative;
+  z-index: 1;
 }
 
 .breadcrumb-list {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   list-style: none;
   padding: 0;
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .breadcrumb-item {
@@ -25,6 +31,7 @@
   color: #555;
   text-decoration: none;
   transition: color 0.2s;
+  font-weight: 400;
 }
 
 .breadcrumb-item a:hover {
@@ -39,6 +46,6 @@
 
 /* Style cho dấu phân cách */
 .breadcrumb-item .separator {
-  margin: 0 10px;
-  color: #888;
+  margin: 0 8px;
+  color: #150909;
 }
