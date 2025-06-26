@@ -8,7 +8,7 @@ Backend package: npm install nodemon express mongoose dotenv
     - nodemon dùng cho chạy server: nodemon server.js
     - moongoose dùng cho xử lí database lưu vào mongodb
     - Tạo cluster trên atlas (cloud) của mongodb
-    - Tạo một file .env để lưu đường dẫn vd MONGO_DB = mongodb+srv://haovo234:{mật khẩu}m@cluster0.y4bqdbq.mongodb.net/ rồi vào server.js
+    - Tạo một file .env để lưu đường dẫn vd MONGO_DB = mongodb+srv://{tài khoản}:{mật khẩu}m@cluster0.y4bqdbq.mongodb.net/ rồi vào server.js
     connect bằng mongoose.connect (`${process.env.MONGO_DB}`)
 Tutorial: 
 -   Tạo rest API : https://youtu.be/fgTGADljAeg?si=SygecJM5XrQvWJwK 

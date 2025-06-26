@@ -22,6 +22,7 @@ router.post('/', async (req,res)=>{
         price: req.body.price,
         countInStock: req.body.countInStock,
         description: req.body.description,
+        brand: req.body.brand,
     })
     try{
         const newProduct = await product.save()
@@ -60,7 +61,7 @@ router.patch('/:id',getProduct,async (req,res)=>{
 //delete one 
 router.delete('/:id',getProduct,async (req,res)=>{
     try {
-        await res.product.deleteMany()
+        await res.product.deleteOne()
         res.json({message:'deleted product'})
     }catch(err){
         res.status(500).json({message:err.message})
