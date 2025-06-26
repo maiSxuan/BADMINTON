@@ -150,8 +150,7 @@ const Intro = () => {
             <div className="intro-box">
               <h4>Triết lý kinh doanh:</h4>
               <p>
-                Tại SCD Badminton, chúng tôi tin rằng chất lượng là nền tảng,
-                khách hàng là trọng tâm...
+                 Tại SCD Badminton, chúng tôi tin rằng chất lượng là nền tảng, khách hàng là trọng tâm. Từng sản phẩm, từng dịch vụ đều mang theo cam kết về sự uy tín và trách nhiệm đối với người tiêu dùng.
               </p>
             </div>
           </div>
