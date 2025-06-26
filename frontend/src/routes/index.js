@@ -9,13 +9,14 @@ import AdminLayout from "../components/layouts/AdminLayout";
 import Admin from "../pages/admin/Admin";
 import HomePage from "../pages/customer/Home";
 import About from "../pages/customer/About";
+import Contact from "../pages/customer/Contact"
 import AddProducts from "../pages/admin/AddProducts";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = () => <h1>Trang Sản Phẩm</h1>;
 const SalePage = () => <h1>Trang Sale Off</h1>;
 const FranchisePage = () => <h1>Trang Chính Sách Nhượng Quyền</h1>;
 const AboutPage = About;
-const ContactPage = () => <h1>Trang Liên Hệ</h1>;
+const ContactPage = Contact;
 const ReturnPolicyPage = () => <h1>Trang Chính Sách Đổi Trả</h1>;
 const WarrantyPolicyPage = () => <h1>Trang Chính Sách Bảo Hành</h1>;
 const HowToBuyPage = () => <h1>Trang Hướng Dẫn Mua Hàng</h1>;
@@ -44,7 +45,7 @@ const publicRoutes = [
     layout: (props) => (
       <DefaultLayout
         {...props}
-        showSidebar={true}
+        showSidebar={false}
         breadcrumbItems={[
           { label: "Trang chủ", path: "/" },
           { label: "Sản phẩm" },
@@ -59,7 +60,7 @@ const publicRoutes = [
     layout: (props) => (
       <DefaultLayout
         {...props}
-        showSidebar={true}
+        showSidebar={false}
         breadcrumbItems={[
           { label: "Trang chủ", path: "/" },
           { label: "Sale off" },
@@ -103,7 +104,7 @@ const publicRoutes = [
     layout: (props) => (
       <DefaultLayout
         {...props}
-        showSidebar={true}
+        showSidebar={false}
         breadcrumbItems={[
           { label: "Trang chủ", path: "/" },
           { label: "Liên hệ" },
