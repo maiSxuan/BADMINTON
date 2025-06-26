@@ -16,7 +16,9 @@ const AdminHeader = ({ user }) => {
         <Link to="/admin" className="logo-link">
           <Logo size="mini"/>
         </Link>
-        <h1 className="header-title">Kênh quản lý cửa hàng</h1>
+        <Link to="/admin" className="header-title-link">
+          <h1 className="header-title">Kênh quản lý cửa hàng</h1>
+        </Link>
       </div>
 
       <div className="header-right">

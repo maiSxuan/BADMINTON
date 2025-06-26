@@ -6,7 +6,7 @@ import DefaultLayout from "../components/layouts/DefaultLayout";
 import AdminLayout from "../components/layouts/AdminLayout";
 
 // Thêm các trang vào đây
-import Admin from "../pages/admin/Admin";
+import AdminHome from "../pages/admin/AdminHome";
 import HomePage from "../pages/customer/Home";
 import About from "../pages/customer/About";
 import Contact from "../pages/customer/Contact"
@@ -119,7 +119,7 @@ const publicRoutes = [
 
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)
-  { path: "/admin", component: Admin, layout: AdminLayout },
+  { path: "/admin", component: AdminHome, layout: AdminLayout },
 
   // Quản lý người dùng
   { path: "/admin/user-list", component: UserListPage, layout: AdminLayout },
