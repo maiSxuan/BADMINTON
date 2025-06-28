@@ -31,3 +31,5 @@ Content-type: application/json
     "countInStock":"9"
 }
 
+### Kiểm tra GET
+GET http://localhost:4000/admin/user-list

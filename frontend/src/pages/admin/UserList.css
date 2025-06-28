@@ -1,0 +1,50 @@
+/* --- Container chính của trang --- */
+.user-list-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.user-list-page h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.table-container {
+  background-color: #ffffff; 
+  border-radius: 8px; 
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); 
+  overflow:hidden;
+}
+
+.user-list-page table {
+  width: 100%;
+  border-collapse: collapse; 
+}
+
+.user-list-page th {
+  background-color: #fafafa; 
+  padding: 15px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  border-bottom: 1px solid #f0f0f0; 
+}
+
+.user-list-page td {
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+  color: #333;
+}
+
+
+
+.user-list-page tbody tr:hover {
+  background-color: #f8f9fa;
+}
