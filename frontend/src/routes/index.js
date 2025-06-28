@@ -12,6 +12,7 @@ import About from "../pages/customer/About";
 import Contact from "../pages/customer/Contact"
 import AddProducts from "../pages/admin/AddProducts";
 import ProductPage from "../pages/customer/ProductPage";
+//import RacketPage from "../pages/customer/Product/Racket";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = ProductPage;
 const SalePage = () => <h1>Trang Sale Off</h1>;
