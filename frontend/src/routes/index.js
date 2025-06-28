@@ -10,6 +10,7 @@ import Admin from "../pages/admin/Admin";
 import HomePage from "../pages/customer/Home";
 import About from "../pages/customer/About";
 import AddProducts from "../pages/admin/AddProducts";
+import UserListPage from "../pages/admin/UserList";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = () => <h1>Trang Sản Phẩm</h1>;
 const SalePage = () => <h1>Trang Sale Off</h1>;
@@ -22,7 +23,6 @@ const HowToBuyPage = () => <h1>Trang Hướng Dẫn Mua Hàng</h1>;
 const PaymentPage = () => <h1>Trang Hướng Dẫn Thanh Toán</h1>;
 
 // Tạo các component giữ chỗ cho các trang admin khác
-const UserListPage = () => <h1>Trang Danh Sách Người Dùng</h1>;
 const LockAccountPage = () => <h1>Trang Khóa Tài Khoản</h1>;
 const ResetPasswordPage = () => <h1>Trang Reset Mật Khẩu</h1>;
 const AllOrdersPage = () => <h1>Trang Tất Cả Đơn Hàng</h1>;

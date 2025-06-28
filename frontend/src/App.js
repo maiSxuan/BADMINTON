@@ -10,9 +10,8 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        {publicRoutes.map((route, index) => {
+        {publicRoutes.map((route) => {
           const Page = route.component;
-          
           // Mặc định Layout là một thẻ rỗng (Fragment) nếu không được chỉ định
           // hoặc nếu layout được cố tình đặt là null
           let Layout = Fragment; 
@@ -23,7 +22,7 @@ function App() {
 
           return (
             <Route
-              key={index}
+              key={route.path}
               path={route.path}
               element={
                 <Layout>
