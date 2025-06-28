@@ -1,4 +1,3 @@
-// ProductPage.js
 import React, { useState, useMemo } from 'react';
 import './Outline.css'; // Import file CSS
 

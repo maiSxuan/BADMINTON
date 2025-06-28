@@ -4,12 +4,10 @@ import './ProductPage.css'; // Import file CSS
 
 // Dữ liệu giả lập - Trong dự án thật, bạn sẽ lấy từ API
 const allMockProducts = [
-    { id: 1, name: "Vợt Cầu Lông Victor Thruster Ryuga Metallic", prod: "Vợt cầu lông", price: 3980000, brand: "Victor", imageUrl: "https://cdn.shopvnb.com/uploads/gallery/vot-cau-long-victor-tk-ryuga-metallic-chinh-hang_1702259879.webp" },
-    { id: 2, name: "Vợt Cầu Lông Lining Halbertec 5000", prod: "Vợt cầu lông", price: 1380000, brand: "Lining", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-lining-halbertec-5000-chinh-hang_1685418193.webp" },
-    // Thêm dữ liệu để test bộ lọc sản phẩm
-    { id: 3, name: "Giày Cầu Lông Yonex Power Cushion 65Z3", prod: "Giày cầu lông", price: 2150000, brand: "Yonex", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/giay-cau-long-yonex-shb-65z3-men-trang-chinh-hang_1672300735.webp" },
-    { id: 4, name: "Balo Cầu Lông Yonex BP001U", prod: "Balo cầu lông", price: 750000, brand: "Yonex", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/balo-cau-long-yonex-bp001u-den-chinh-hang_1699943472.webp" },
-
+    { id: 1, name: "Vợt Cầu Lông Victor Thruster Ryuga Metallic", prod: "Vợt cầu lông", price: 3980000, brand: "Victor", imageUrl: "https://cdn.shopvnb.com/uploads/gallery/vot-cau-long-victor-tk-ryuga-metallic-chinh-hang_1702259879.webp", inStockAt: ["SCD Premium", "SCD Quận 3", "SCD Quận 5"] },
+    { id: 2, name: "Vợt Cầu Lông Lining Halbertec 5000", prod: "Vợt cầu lông", price: 1380000, brand: "Lining", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-lining-halbertec-5000-chinh-hang_1685418193.webp", inStockAt: ["SCD Quận 1", "SCD Quận 7"] },
+    { id: 3, name: "Giày Cầu Lông Yonex Power Cushion 65Z3", prod: "Giày cầu lông", price: 2150000, brand: "Yonex", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/giay-cau-long-yonex-shb-65z3-men-trang-chinh-hang_1672300735.webp", inStockAt: ["SCD Premium", "SCD Quận 1", "SCD Quận 8"] },
+    { id: 4, name: "Balo Cầu Lông Yonex BP001U", prod: "Balo cầu lông", price: 750000, brand: "Yonex", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/balo-cau-long-yonex-bp001u-den-chinh-hang_1699943472.webp", inStockAt: [] },
 ];
 
 const priceRanges = {
@@ -21,11 +19,15 @@ const priceRanges = {
 };
 
 const brands = ["Yonex", "Lining", "Victor", "Mizuno", "Adidas", "Proace"];
-const productTypes = ["Vợt cầu lông", "Balo cầu lông", "Giày cầu lông", "Quần áo cầu lông", "Phụ kiện"]; 
+const productTypes = ["Vợt cầu lông", "Balo cầu lông", "Giày cầu lông", "Quần áo cầu lông", "Phụ kiện"];
+const branches = [
+    "SCD Premium", "SCD Quận 1", "SCD Quận 3", "SCD Quận 4", 
+    "SCD Quận 5", "SCD Quận 7", "SCD Quận 8"
+]; 
 
 function ProductPage() {
     // SỬA LỖI 1: Thêm 'prod: []' vào state ban đầu
-    const [filters, setFilters] = useState({ price: null, brands: [], prod: [] });
+    const [filters, setFilters] = useState({ price: null, brands: [], prod: [], branches: [] });
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 9;
 
@@ -45,8 +47,11 @@ function ProductPage() {
 
         // SỬA LỖI 2: Lọc theo loại sản phẩm
         if (filters.prod.length > 0) {
-            // Sửa 'p.racket' thành 'p.prod' để khớp với dữ liệu mock
             products = products.filter(p => filters.prod.includes(p.prod));
+        }
+
+        if (filters.branches.length > 0) {
+            products = products.filter(p => p.inStockAt.some(branch => filters.branches.includes(branch)));
         }
 
         return products;
@@ -88,6 +93,17 @@ function ProductPage() {
         setFilters(prev => ({ ...prev, prod: newProds }));
         setCurrentPage(1); // Reset về trang 1 khi lọc
     };
+
+    const handleBranchChange = (e) => {
+        const { value, checked } = e.target;
+        const currentBranches = filters.branches;
+        const newBranches = checked
+            ? [...currentBranches, value]
+            : currentBranches.filter(branch => branch !== value);
+        
+        setFilters(prev => ({ ...prev, branches: newBranches }));
+        setCurrentPage(1);
+    };
     
     return React.createElement(
         'div',
@@ -126,10 +142,30 @@ function ProductPage() {
                     'div', { className: 'filter-group' },
                     React.createElement('h3', null, 'CHỌN SẢN PHẨM'),
                     React.createElement('ul', null, 
-                        // SỬA LỖI 4: Lặp qua mảng 'productTypes' thay vì 'brands'
                         productTypes.map(prod => React.createElement('li', { key: prod }, React.createElement('label', null,
-                            React.createElement('input', { type: 'checkbox', name: 'prod', value: prod, onChange: handleProdChange }),
+                            React.createElement('input', { 
+                                type: 'checkbox', 
+                                name: 'prod', 
+                                value: prod, 
+                                onChange: handleProdChange 
+                            }),
                             ` ${prod}`
+                        )))
+                    )
+                ),
+
+                React.createElement(
+                    'div', { className: 'filter-group' },
+                    React.createElement('h3', null, 'CHI NHÁNH'),
+                    React.createElement('ul', null, 
+                        branches.map(branch => React.createElement('li', { key: branch }, React.createElement('label', null,
+                            React.createElement('input', { 
+                                type: 'checkbox', 
+                                name: 'branch', 
+                                value: branch, 
+                                onChange: handleBranchChange 
+                            }),
+                            ` ${branch}`
                         )))
                     )
                 )
@@ -138,7 +174,7 @@ function ProductPage() {
             React.createElement(
                 'section',
                 { className: 'product-content' },
-                React.createElement('h1', { className: 'page-title' }, 'SẢN PHẨM TIÊU BIỂU'),
+                
                 // -- Product Grid --
                 React.createElement(
                     'div',
