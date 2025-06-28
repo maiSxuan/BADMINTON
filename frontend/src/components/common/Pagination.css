@@ -1,0 +1,18 @@
+.page-bar{
+    display:flex;
+    justify-content: flex-end;
+}
+.page-button {
+    margin-left:5px;
+    width:25px;
+    height:25px;
+    border-radius: 6px;
+    border: 2px solid #ff85a2;
+    background-color: white;
+    cursor: pointer;
+}
+
+.page-bar .page-button.active {
+    background-color: #ff85a2;
+    color: white;
+}
