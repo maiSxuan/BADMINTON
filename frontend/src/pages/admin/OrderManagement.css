@@ -110,22 +110,9 @@
   color: #adb5bd;
 }
 
-.search-button {
-  padding: 10px 12px;
-  border: 1px solid #ced4da;
-  background-color: white;
-  border-radius: 0 4px 4px 0;
-  cursor: pointer;
-  font-size: 16px;
-  color: #6c757d;
-}
-
-.search-button:hover {
-  background-color: #f8f9fa;
-}
 
 .table-container {
-  background-color: white;
+  background-color: #FFF2FB;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -138,7 +125,7 @@
 }
 
 .orders-table th {
-  background-color: #f8f9fa;
+  background-color: #FFF2FB;
   padding: 16px 12px;
   text-align: left;
   font-weight: 600;
@@ -164,7 +151,7 @@
 
 .close-btn {
   background-color: #dc3545;
-  color: white;
+  color: #FFF2FB;
   border: none;
   border-radius: 50%;
   width: 22px;
@@ -300,12 +287,12 @@
 
 .print-btn {
   padding: 8px 12px;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
+  background-color: #fb6dd0;
+  border: 1px solid #ffffff;
   border-radius: 4px;
   cursor: pointer;
   font-size: 12px;
-  color: #495057;
+  color: #ffffff;
   white-space: nowrap;
 }
 

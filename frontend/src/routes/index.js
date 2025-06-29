@@ -13,6 +13,7 @@ import Contact from "../pages/customer/Contact"
 import AddProducts from "../pages/admin/AddProducts";
 import OrderManagement from "../pages/admin/OrderManagement";
 import CancelledOrders from "../pages/admin/CancelledOrdersPage";
+import AllProducts from "../pages/admin/AllProducts";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = () => <h1>Trang Sản Phẩm</h1>;
 const SalePage = () => <h1>Trang Sale Off</h1>;
@@ -28,7 +29,6 @@ const PaymentPage = () => <h1>Trang Hướng Dẫn Thanh Toán</h1>;
 const UserListPage = () => <h1>Trang Danh Sách Người Dùng</h1>;
 const LockAccountPage = () => <h1>Trang Khóa Tài Khoản</h1>;
 const ResetPasswordPage = () => <h1>Trang Reset Mật Khẩu</h1>;
-const AllProductsPage = () => <h1>Trang Tất Cả Sản Phẩm</h1>;
 const ChatManagementPage = () => <h1>Trang Quản Lý Chat</h1>;
 const ReviewManagementPage = () => <h1>Trang Quản Lý Đánh Giá</h1>;
 const RevenuePage = () => <h1>Trang Doanh Thu</h1>;
@@ -145,7 +145,7 @@ const publicRoutes = [
   // Quản lý sản phẩm
   {
     path: "/admin/all-products",
-    component: AllProductsPage,
+    component: AllProducts,
     layout: AdminLayout,
   },
   { path: "/admin/add-product", component: AddProducts, layout: AdminLayout },

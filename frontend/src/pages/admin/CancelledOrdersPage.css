@@ -98,7 +98,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #6b7280;
+  color: #FFF2FB;
   padding: 4px;
   border-radius: 4px;
 }
@@ -109,7 +109,7 @@
 }
 
 .table-container {
-  background-color: white;
+  background-color: #FFF2FB;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -121,7 +121,7 @@
 }
 
 .data-table th {
-  background-color: #f8f9fa;
+  background-color: #FFF2FB;
   padding: 16px;
   text-align: left;
   font-weight: 600;
