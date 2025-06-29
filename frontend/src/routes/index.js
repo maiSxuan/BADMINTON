@@ -6,21 +6,29 @@ import DefaultLayout from "../components/layouts/DefaultLayout";
 import AdminLayout from "../components/layouts/AdminLayout";
 
 // Thêm các trang vào đây
-import Admin from "../pages/admin/Admin";
+import AdminHome from "../pages/admin/AdminHome";
 import HomePage from "../pages/customer/Home";
 import About from "../pages/customer/About";
+import Contact from "../pages/customer/Contact"
 import AddProducts from "../pages/admin/AddProducts";
+
+//import ProductPage from "../pages/customer/ProductPage";
+//import RacketPage from "../pages/customer/Product/Racket";
+//import ShoePage from "../pages/customer/Product/Shoe";
+import BaloPage from "../pages/customer/Product/Balo";
 import UserListPage from "../pages/admin/UserList";
 import AddPromotionPage from "../pages/admin/AddPromotion";
 import RevenuePage from "../pages/admin/RevenuePage";
 import BalancePage from "../pages/admin/BalancePage";
 import PromotionListPage from "../pages/admin/PromotionList";
+import FranchisePolicy from "../pages/customer/FranchisePolicy";
+
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
-const ProductsPage = () => <h1>Trang Sản Phẩm</h1>;
-const SalePage = () => <h1>Trang Sale Off</h1>;
-const FranchisePage = () => <h1>Trang Chính Sách Nhượng Quyền</h1>;
+const ProductsPage = BaloPage;
+const SalePage = SaleOffPage;
+const FranchisePage = FranchisePolicy;
 const AboutPage = About;
-const ContactPage = () => <h1>Trang Liên Hệ</h1>;
+const ContactPage = Contact;
 const ReturnPolicyPage = () => <h1>Trang Chính Sách Đổi Trả</h1>;
 const WarrantyPolicyPage = () => <h1>Trang Chính Sách Bảo Hành</h1>;
 const HowToBuyPage = () => <h1>Trang Hướng Dẫn Mua Hàng</h1>;
@@ -48,7 +56,7 @@ const publicRoutes = [
     layout: (props) => (
       <DefaultLayout
         {...props}
-        showSidebar={true}
+        showSidebar={false}
         breadcrumbItems={[
           { label: "Trang chủ", path: "/" },
           { label: "Sản phẩm" },
@@ -63,7 +71,7 @@ const publicRoutes = [
     layout: (props) => (
       <DefaultLayout
         {...props}
-        showSidebar={true}
+        showSidebar={false}
         breadcrumbItems={[
           { label: "Trang chủ", path: "/" },
           { label: "Sale off" },
@@ -107,7 +115,7 @@ const publicRoutes = [
     layout: (props) => (
       <DefaultLayout
         {...props}
-        showSidebar={true}
+        showSidebar={false}
         breadcrumbItems={[
           { label: "Trang chủ", path: "/" },
           { label: "Liên hệ" },
@@ -122,7 +130,7 @@ const publicRoutes = [
 
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)
-  { path: "/admin", component: Admin, layout: AdminLayout },
+  { path: "/admin", component: AdminHome, layout: AdminLayout },
 
   // Quản lý người dùng
   { path: "/admin/user-list", component: UserListPage, layout: AdminLayout },
