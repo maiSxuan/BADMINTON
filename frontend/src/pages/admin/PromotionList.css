@@ -1,0 +1,91 @@
+
+.promotion-list-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.promotion-list-page h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.table-container {
+  background-color: #ffffff; 
+  border-radius: 8px; 
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); 
+  overflow: hidden;
+}
+
+.promotion-list-page table {
+  width: 100%;
+  border-collapse: collapse; 
+}
+
+.promotion-list-page th {
+  background-color: #fafafa; 
+  padding: 15px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  border-bottom: 1px solid #f0f0f0; 
+  height: 50px;
+}
+
+.promotion-list-page td {
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+  color: #333;
+  height: 50px;
+  vertical-align: middle; 
+}
+
+.promotion-list-page tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.promotion-list-page tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.action-cell {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 15px; 
+}
+
+.action-cell button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.action-cell button:hover {
+  background-color: #e9ecef;
+}
+
+.promotion-pagination {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.promotion-list-page button {
+    background-color: transparent;
+    border:none;
+    cursor:pointer;
+    
+}

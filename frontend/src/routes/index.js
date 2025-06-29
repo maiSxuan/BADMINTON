@@ -11,6 +11,10 @@ import HomePage from "../pages/customer/Home";
 import About from "../pages/customer/About";
 import AddProducts from "../pages/admin/AddProducts";
 import UserListPage from "../pages/admin/UserList";
+import AddPromotionPage from "../pages/admin/AddPromotion";
+import RevenuePage from "../pages/admin/RevenuePage";
+import BalancePage from "../pages/admin/BalancePage";
+import PromotionListPage from "../pages/admin/PromotionList";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = () => <h1>Trang Sản Phẩm</h1>;
 const SalePage = () => <h1>Trang Sale Off</h1>;
@@ -30,8 +34,8 @@ const CancelledOrdersPage = () => <h1>Trang Đơn Hàng Đã Hủy</h1>;
 const AllProductsPage = () => <h1>Trang Tất Cả Sản Phẩm</h1>;
 const ChatManagementPage = () => <h1>Trang Quản Lý Chat</h1>;
 const ReviewManagementPage = () => <h1>Trang Quản Lý Đánh Giá</h1>;
-const RevenuePage = () => <h1>Trang Doanh Thu</h1>;
-const BalancePage = () => <h1>Trang Số Dư Tài Khoản</h1>;
+
+
 
 // Theo yêu cầu, tất cả sẽ được đặt trong publicRoutes để đơn giản hóa
 const publicRoutes = [
@@ -165,6 +169,9 @@ const publicRoutes = [
   { path: "/admin/revenue", component: RevenuePage, layout: AdminLayout },
   { path: "/admin/balance", component: BalancePage, layout: AdminLayout },
 
+  //Khuyễn Mãi
+  { path: "/admin/add-promotion", component: AddPromotionPage, layout: AdminLayout },
+  { path: "/admin/manage-promotion", component: PromotionListPage, layout: AdminLayout },
   //  404 Not Found
   // { path: '*', component: NotFoundPage, layout: DefaultLayout }
 ];
