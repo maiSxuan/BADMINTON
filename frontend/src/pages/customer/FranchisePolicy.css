@@ -1,0 +1,163 @@
+/* .policy-container {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    max-width: 100%;
+    margin: 0 50px 0 400px;
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #000;
+}
+
+.title {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 32px;
+    color: #000;
+}
+
+.section {
+    margin-bottom: 8px;
+    padding: 12px;
+    background-color: #ffffff;
+    border-radius: 8px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #ec84cd;
+    text-decoration: underline;
+}
+
+.intro-title {
+    padding: 0;
+    list-style-type: none;
+}
+
+ul {
+    padding-left: 32px;
+}
+
+.section-image {
+    border-radius: 8px;
+    margin-top: 12px;
+    margin-left: 24px;
+}
+
+.section-image.cost {
+    
+}
+
+.section-image.monthly {
+  
+}
+
+.section-image.revenue {
+  
+}
+
+.section-image.process {
+  
+}
+
+.intro-link {
+    list-style-type: none;
+    padding: 0;
+}
+
+.intro-link li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.intro-link .icon-contact {
+    width: 20px; 
+    height: 20px;
+    margin-right: 5px; 
+}
+
+.intro-link a {
+    text-decoration: none;
+    color: inherit;
+}
+*/
+
+
+.policy-container {
+  background-color: #ffffff;
+  padding: 24px;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.section {
+  margin: 0 50px 40px 50px;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #6b21a8;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.section ul {
+  padding-left: 20px;
+  color: #000;
+  line-height: 28px;
+}
+
+.section li {
+  margin-bottom: 12px;
+  list-style-type: disc;
+}
+
+.section-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 16px auto;
+  border-radius: 8px;
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); */
+}
+
+.icon-contact {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.intro-link,
+.contact-link {
+  color: #e93030;
+  text-decoration: none;
+}
+
+.intro-title {
+  color: #374151;
+  line-height: 28px;
+  padding-left: 20px;
+}
+
+.intro-link li,
+.intro-link a {
+  color: #374151;
+  margin-bottom: 12px;
+  line-height: 25.6px;
+}

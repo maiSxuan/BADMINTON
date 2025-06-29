@@ -2,13 +2,13 @@
 
 import React from 'react';
 import ImageSlider from '../../components/customer/Slider';
+import Product from '../../pages/customer/HomeProduct';
+
 const Home = () => {
   return (
     <div>
-
-      {/* Thêm phần content vào đây */}
-      <h2>This is content</h2>
       <ImageSlider />
+      <Product />
     </div>
   );
 };

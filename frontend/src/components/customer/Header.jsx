@@ -1,6 +1,7 @@
-import React from 'react';
+// import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import './Header.css';
+import DropdownMenu from '../customer/DropdownMenu';
 
 // Import các component/ảnh
 import Logo from "../common/logo";
@@ -10,6 +11,8 @@ import searchIcon from '../../assets/icons/Info.svg';
 import locationIcon from '../../assets/icons/Map pin.svg';
 import search from '../../assets/icons/Search.svg';
 const Header = () => {
+  // const [showUserMenu, setShowUserMenu] = useState(false);
+
   return (
     <header className="site-header">
         <div className="main-header">
@@ -52,6 +55,26 @@ const Header = () => {
               <img src={searchIcon} alt="Tra cứu đơn hàng" />
               <span>TRA CỨU</span>
             </NavLink>
+
+            {/* <div className="action-item user-menu" 
+                onMouseEnter={() => setShowUserMenu(true)}
+                onMouseLeave={() => setShowUserMenu(false)}
+            >
+              <img src={userIcon} alt="Tài khoản" />
+              <span>TÀI KHOẢN</span>
+              {showUserMenu && (
+                <div className="dropdown-menu">
+                  <NavLink to="/login" className="dropdown-item">
+                    <i className="fa-solid fa-sign-in-alt"></i> Đăng nhập
+                  </NavLink>
+
+                  <NavLink to="/registration" className="dropdown-item">
+                    <i className="fa-solid fa-user-plus"></i> Đăng ký
+                  </NavLink>
+                </div>
+              )}
+            </div> */}
+
             <NavLink to="/account" className="action-item">
               <img src={userIcon} alt="Tài khoản" />
               <span>TÀI KHOẢN</span>
@@ -67,7 +90,8 @@ const Header = () => {
         <nav className="navbar">
           
           <NavLink to="/">TRANG CHỦ</NavLink>
-          <NavLink to="/products">SẢN PHẨM</NavLink>
+          {/* <NavLink to="/products">SẢN PHẨM</NavLink> */}
+          <DropdownMenu />
           <NavLink to="/sale">SALE OFF</NavLink>
           <NavLink to="/franchise">CHÍNH SÁCH NHƯỢNG QUYỀN</NavLink>
           <NavLink to="/about">GIỚI THIỆU</NavLink>

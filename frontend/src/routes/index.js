@@ -15,10 +15,11 @@ import AddProducts from "../pages/admin/AddProducts";
 import ProductPage from "../pages/customer/ProductPage";
 //import RacketPage from "../pages/customer/Product/Racket";
 import UserListPage from "../pages/admin/UserList";
+import FranchisePolicy from "../pages/customer/FranchisePolicy";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = ProductPage;
 const SalePage = () => <h1>Trang Sale Off</h1>;
-const FranchisePage = () => <h1>Trang Chính Sách Nhượng Quyền</h1>;
+const FranchisePage = FranchisePolicy;
 const AboutPage = About;
 const ContactPage = Contact;
 const ReturnPolicyPage = () => <h1>Trang Chính Sách Đổi Trả</h1>;
