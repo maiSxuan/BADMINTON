@@ -1,43 +1,43 @@
-// ShoePage.js
+// BackpackPage.js
 import React, { useState, useMemo } from 'react';
-import './Outline.css'; // Giả sử bạn dùng chung file CSS
+import './Outline.css'; // Dùng chung file CSS với các trang khác
 
 // --- DỮ LIỆU ---
 
-// BƯỚC 2: Tạo hằng số cho các bộ lọc
-const brands = ["Yonex", "Lining", "Victor", "Mizuno", "Kawasaki"];
-const sizes = [38, 39, 40, 41, 42, 43, 44, 45];
+// Hằng số cho các bộ lọc
+const brands = ["Yonex", "Lining", "Victor", "Kawasaki"];
 const branches = ["SCD Premium", "SCD Quận 1", "SCD Quận 3", "SCD Quận 5", "SCD Quận 7", "SCD Quận 8"];
 
+// Mức giá phù hợp cho balo
 const priceRanges = {
-    'range1': { min: 0, max: 1000000 },
-    'range2': { min: 1000000, max: 1500000 },
-    'range3': { min: 1500000, max: 2000000 },
-    'range4': { min: 2000000, max: Infinity }
+    'range1': { min: 0, max: 500000 },
+    'range2': { min: 500000, max: 1000000 },
+    'range3': { min: 1000000, max: 1500000 },
+    'range4': { min: 1500000, max: Infinity }
 };
 
-// BƯỚC 1: Dữ liệu mock với cấu trúc 'inStockAt' mới
+// Dữ liệu giả lập cho balo
 const allMockProducts = [
-    { id: 21, name: "Giày Cầu Lông Yonex 65Z3 Trắng", price: 2150000, brand: "Yonex", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/giay-cau-long-yonex-shb-65z3-men-trang-chinh-hang_1672300735.webp", inStockAt: { '40': ["SCD Quận 1", "SCD Quận 3"], '41': ["SCD Premium"], '42': ["SCD Quận 1", "SCD Quận 5", "SCD Quận 7"] } },
-    { id: 22, name: "Giày Cầu Lông Lining AYAT005-3S", price: 1350000, brand: "Lining", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/giay-cau-long-lining-ayat005-3s-chinh-hang_1680164894.webp", inStockAt: { '39': ["SCD Quận 5"], '40': ["SCD Quận 7", "SCD Quận 8"] } },
-    { id: 23, name: "Giày Cầu Lông Victor A970ACE", price: 3200000, brand: "Victor", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/giay-cau-long-victor-a970ace-af-trang-chinh-hang_1677488347.webp", inStockAt: { '41': ["SCD Premium"], '42': ["SCD Premium"], '43': ["SCD Quận 3"] } },
-    { id: 24, name: "Giày Cầu Lông Mizuno Wave Claw Neo 2", price: 2950000, brand: "Mizuno", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/giay-cau-long-mizuno-wave-claw-neo-2-trang-xanh-chinh-hang_1688719266.webp", inStockAt: { '40': ["SCD Quận 1"], '41': [], '42': ["SCD Quận 5"] } }, // Size 41 hết hàng
-    { id: 25, name: "Giày Cầu Lông Kawasaki K088", price: 890000, brand: "Kawasaki", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/giay-cau-long-kawasaki-k088-trang-xanh-chinh-hang_1623832717.webp", inStockAt: { '38': ["SCD Quận 7"], '39': ["SCD Quận 8"] } },
+    { id: 31, name: "Balo Cầu Lông Yonex BP001U Đen", price: 750000, brand: "Yonex", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/balo-cau-long-yonex-bp001u-den-chinh-hang_1699943472.webp", inStockAt: ["SCD Quận 1", "SCD Quận 5", "SCD Premium"] },
+    { id: 32, name: "Balo Cầu Lông Lining ABSJ433-1", price: 890000, brand: "Lining", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/balo-cau-long-lining-absj433-1-chinh-hang_1693452285.webp", inStockAt: ["SCD Quận 3", "SCD Quận 7"] },
+    { id: 33, name: "Balo Cầu Lông Victor BR3026C", price: 1250000, brand: "Victor", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/balo-cau-long-victor-br3026c-chinh-hang_1697275062.webp", inStockAt: ["SCD Premium", "SCD Quận 8"] },
+    { id: 34, name: "Balo Cầu Lông Yonex BP102MS", price: 1100000, brand: "Yonex", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/balo-cau-long-yonex-bp102ms-trang-xanh-chinh-hang_1699945281.webp", inStockAt: ["SCD Quận 1", "SCD Quận 3"] },
+    { id: 35, name: "Balo Cầu Lông Kawasaki KBB-8656", price: 480000, brand: "Kawasaki", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/balo-cau-long-kawasaki-kbb-8656-xanh-chinh-hang_1625024446.webp", inStockAt: [] }, // Hết hàng
+    { id: 36, name: "Balo Cầu Lông Lining ABSN282-4", price: 650000, brand: "Lining", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/balo-cau-long-lining-absn282-4-xanh-chinh-hang_1625208643.webp", inStockAt: ["SCD Quận 5", "SCD Quận 7", "SCD Quận 8"] }
 ];
 
 
-function ShoePage() {
-    // BƯỚC 3: Mở rộng State
+function BackpackPage() {
+    // State cho các bộ lọc
     const [filters, setFilters] = useState({ 
         price: null, 
         brands: [],
-        size: null,
         branches: []
     });
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 9;
 
-    // BƯỚC 5: Cập nhật logic lọc
+    // Logic lọc sản phẩm
     const filteredProducts = useMemo(() => {
         let products = allMockProducts;
 
@@ -47,43 +47,25 @@ function ShoePage() {
             products = products.filter(p => p.price >= min && p.price < max);
         }
 
-        // Lọc theo thương hiệu
+        // Lọc theo hãng
         if (filters.brands.length > 0) {
             products = products.filter(p => filters.brands.includes(p.brand));
         }
         
-        // Lọc theo size: Giữ lại sản phẩm nếu nó CÓ size người dùng chọn
-        if (filters.size) {
-            products = products.filter(p => 
-                p.inStockAt.hasOwnProperty(filters.size) && p.inStockAt[filters.size].length > 0
-            );
-        }
-
-        // Lọc theo chi nhánh (phụ thuộc vào size đã chọn)
+        // Lọc theo chi nhánh
         if (filters.branches.length > 0) {
-            products = products.filter(p => {
-                // Nếu người dùng đã chọn size, chỉ tìm trong các chi nhánh có size đó
-                if (filters.size) {
-                    return p.inStockAt[filters.size]?.some(branch => filters.branches.includes(branch));
-                } 
-                // Nếu chưa chọn size, tìm ở bất kỳ chi nhánh nào có bất kỳ size nào
-                else {
-                    const allAvailableBranches = Object.values(p.inStockAt).flat();
-                    return allAvailableBranches.some(branch => filters.branches.includes(branch));
-                }
-            });
+            products = products.filter(p => p.inStockAt.some(branch => filters.branches.includes(branch)));
         }
 
         return products;
     }, [filters]);
 
-    // TÍNH TOÁN PHÂN TRANG
+    // Tính toán phân trang
     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
     const startIndex = (currentPage - 1) * productsPerPage;
     const paginatedProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
 
-    // BƯỚC 4: Tạo các hàm xử lý sự kiện
-    // Dùng factory function cho gọn
+    // Hàm xử lý sự kiện (dùng factory function cho gọn)
     const handleFilterChange = (filterName, isCheckbox = false) => (e) => {
         const { value, checked } = e.target;
         
@@ -100,10 +82,9 @@ function ShoePage() {
 
     const handlePriceChange = handleFilterChange('price');
     const handleBrandChange = handleFilterChange('brands', true);
-    const handleSizeChange = handleFilterChange('size');
     const handleBranchChange = handleFilterChange('branches', true);
     
-    // BƯỚC 6: Render UI
+    // Render giao diện
     return React.createElement(
         'div', { className: 'container' },
         React.createElement(
@@ -115,10 +96,11 @@ function ShoePage() {
                     'div', { className: 'filter-group' },
                     React.createElement('h3', null, 'MỨC GIÁ'),
                     React.createElement('ul', null, 
-                        Object.keys(priceRanges).map((key) => React.createElement('li', { key }, React.createElement('label', null,
+                        Object.keys(priceRanges).map((key, index) => React.createElement('li', { key }, React.createElement('label', null,
                             React.createElement('input', { type: 'radio', name: 'price', value: key, onChange: handlePriceChange }),
-                             // Hiển thị dải giá
-                             ` ${priceRanges[key].min.toLocaleString()}đ - ${priceRanges[key].max === Infinity ? 'trở lên' : priceRanges[key].max.toLocaleString() + 'đ'}`
+                             index === 0 ? ` Dưới ${priceRanges[key].max.toLocaleString()}đ` :
+                             index === 3 ? ` Trên ${priceRanges[key].min.toLocaleString()}đ` :
+                             ` ${priceRanges[key].min.toLocaleString()}đ - ${priceRanges[key].max.toLocaleString()}đ`
                         )))
                     )
                 ),
@@ -129,16 +111,6 @@ function ShoePage() {
                         brands.map(brand => React.createElement('li', { key: brand }, React.createElement('label', null,
                             React.createElement('input', { type: 'checkbox', name: 'brand', value: brand, onChange: handleBrandChange }),
                             ` ${brand}`
-                        )))
-                    )
-                ),
-                React.createElement(
-                    'div', { className: 'filter-group' },
-                    React.createElement('h3', null, 'KÍCH CỠ CÓ HÀNG'),
-                    React.createElement('ul', null, 
-                        sizes.map(size => React.createElement('li', { key: size }, React.createElement('label', null,
-                            React.createElement('input', { type: 'radio', name: 'size', value: size, onChange: handleSizeChange }),
-                            ` Size ${size}`
                         )))
                     )
                 ),
@@ -156,7 +128,7 @@ function ShoePage() {
             // --- PRODUCT CONTENT ---
             React.createElement(
                 'section', { className: 'product-content' },
-                React.createElement('h1', { className: 'page-title' }, 'GIÀY CẦU LÔNG'),
+                React.createElement('h1', { className: 'page-title' }, 'BALO CẦU LÔNG'),
                 React.createElement(
                     'div', { className: 'product-grid' },
                     paginatedProducts.length > 0
@@ -169,10 +141,23 @@ function ShoePage() {
                         : React.createElement('p', { className: 'no-products' }, 'Không tìm thấy sản phẩm phù hợp.')
                 ),
                 // -- Pagination --
-                React.createElement( 'nav', { className: 'pagination' }, /* ... code phân trang giữ nguyên ... */ )
+                React.createElement(
+                    'nav', { className: 'pagination' },
+                    totalPages > 1 && Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber =>
+                        React.createElement(
+                            'button',
+                            {
+                                key: pageNumber,
+                                className: currentPage === pageNumber ? 'active' : '',
+                                onClick: () => setCurrentPage(pageNumber)
+                            },
+                            pageNumber
+                        )
+                    )
+                )
             )
         )
     );
 }
 
-export default ShoePage;
+export default BackpackPage;
