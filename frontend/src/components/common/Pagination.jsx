@@ -1,10 +1,10 @@
 import React from 'react'
 import "./Pagination.css"
-// ceil(totalUsers = 9 / usersPerPage = 10) = 1
+// ceil(totalitems = 9 / itemsPerPage = 10) = 1
 // paginate hàm 
-const Pagination = ({usersPerPage, totalUsers, paginate, currentPage})=> {
+const Pagination = ({itemsPerPage, totalItems, paginate, currentPage})=> {
     const pageNumbers = []
-    for (let i=1; i<= Math.ceil(totalUsers/usersPerPage); i++){
+    for (let i=1; i<= Math.ceil(totalItems/itemsPerPage); i++){
         pageNumbers.push(i)
     }
     return (

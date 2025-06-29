@@ -3,7 +3,8 @@ Front end code ReactJS, tham khảo https://www.youtube.com/watch?v=jbfuzcrfjqQ
 - Cài react-slick: npm install react-slick --save
 npm install slick-carousel
 -Cd frontend chạy: npm start 
-
+- lucide-react
+- recharts
 Backend package: npm install nodemon express mongoose dotenv 
     - nodemon dùng cho chạy server: nodemon server.js
     - moongoose dùng cho xử lí database lưu vào mongodb

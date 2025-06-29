@@ -11,15 +11,9 @@
 }
 
 .admin-main-content {
-  flex-grow: 1; /* Sửa: từ 2 thành 1 để nó chiếm hết không gian còn lại một cách chuẩn xác */
+  flex-grow: 1;
+  padding: 20px 30px; 
+  overflow-y: auto; 
+  background-color: #f8f9fa; 
   
-  /* XÓA CÁC DÒNG CĂN GIỮA NÀY ĐI */
-  /* display: flex; */
-  /* justify-content: center; */
-  /* align-items: center; */
-
-  /* THÊM CÁC THUỘC TÍNH NÀY VÀO */
-  padding: 20px 30px; /* Thêm khoảng đệm cho nội dung */
-  overflow-y: auto; /* Cho phép cuộn nếu nội dung quá dài */
-  background-color: #f8f9fa; /* Thêm màu nền để dễ phân biệt */
 }
