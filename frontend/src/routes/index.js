@@ -20,7 +20,7 @@ import UserListPage from "../pages/admin/UserList";
 import FranchisePolicy from "../pages/customer/FranchisePolicy";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = BaloPage;
-const SalePage = () => <h1>Trang Sale Off</h1>;
+const SalePage = SaleOffPage;
 const FranchisePage = FranchisePolicy;
 const AboutPage = About;
 const ContactPage = Contact;

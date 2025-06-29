@@ -1,0 +1,85 @@
+/* Trong file Outline.css hoặc file CSS tương ứng của bạn */
+
+/* --- Layout chung --- */
+.product-page-layout {
+    display: flex;
+    gap: 20px;
+}
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
+}
+.product-content {
+    flex-grow: 1;
+}
+
+/* --- Nhóm bộ lọc trong Sidebar --- */
+.filter-group {
+    margin-bottom: 25px;
+}
+.filter-group h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+.filter-group ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.filter-group li {
+    margin-bottom: 8px;
+}
+.filter-group label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.filter-group input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+/* --- Thẻ sản phẩm Sale Off --- */
+.product-card.sale-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.sale-tag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: #e74c3c;
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 4px;
+    z-index: 10;
+}
+
+.price-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.sale-price {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #e74c3c; /* Màu đỏ cho giá sale */
+}
+
+.original-price {
+    font-size: 0.9em;
+    color: #888;
+    text-decoration: line-through; /* Gạch ngang giá gốc */
+}
+
+.branch-info {
+    font-size: 0.9em;
+    color: #555;
+    margin-top: 6px;
+}
