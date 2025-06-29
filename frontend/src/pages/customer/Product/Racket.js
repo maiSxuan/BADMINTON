@@ -1,20 +1,26 @@
+// Racket.js
 import React, { useState, useMemo } from 'react';
 import './Outline.css'; // Import file CSS
 
-// Dữ liệu giả lập - Trong dự án thật, bạn sẽ lấy từ API
+// BƯỚC 2: Tạo các hằng số cho bộ lọc mới
+const stiffnessOptions = ["Siêu cứng", "Cứng", "Trung bình", "Dẻo"];
+const playingStyles = ["Thiên công", "Công thủ toàn diện", "Thiên thủ"];
+const branches = ["SCD Premium", "SCD Quận 1", "SCD Quận 3", "SCD Quận 5", "SCD Quận 7", "SCD Quận 8"];
+
+// BƯỚC 1: Cập nhật dữ liệu mock với các thuộc tính mới
 const allMockProducts = [
-    { id: 1, name: "Vợt Cầu Lông Victor Thruster Ryuga Metallic", price: 3980000, brand: "Victor", imageUrl: "https://cdn.shopvnb.com/uploads/gallery/vot-cau-long-victor-tk-ryuga-metallic-chinh-hang_1702259879.webp" },
-    { id: 2, name: "Vợt Cầu Lông Lining Halbertec 5000", price: 1380000, brand: "Lining", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-lining-halbertec-5000-chinh-hang_1685418193.webp" },
-    { id: 3, name: "Vợt Cầu Lông Victor Thruster Ryuga II TD", price: 2100000, brand: "Victor", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-victor-thruster-ryuga-2-td_1688461750.webp" },
-    { id: 4, name: "Vợt Cầu Lông Lining Axforce 90 New", price: 4348000, brand: "Lining", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-lining-axforce-90-max-xanh-dragon-noi-dia_1669280961.webp" },
-    { id: 5, name: "Vợt Cầu Lông Kumpoo YangZhiNew", price: 930000, brand: "Kumpoo", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-kumpoo-yangzhinew-noi-dia-trung_1685093780.webp" },
-    { id: 6, name: "Vợt Cầu Lông Lining Axforce 80", price: 3300000, brand: "Lining", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-lining-axforce-80-chen-long-noi-dia_1659929854.webp" },
-    { id: 7, name: "Vợt Cầu Lông Yonex Astrox 100ZZ Kurenai", price: 5079000, brand: "Yonex", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-yonex-astrox-100zz-kurenai-chinh-hang_1625732168.webp" },
-    { id: 8, name: "Vợt Cầu Lông Yonex Nanoflare 700 Pro", price: 4300000, brand: "Yonex", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-yonex-nanoflare-700-pro-noi-dia-nhat_1694077673.webp" },
-    { id: 9, name: "Vợt Cầu Lông Lining Axforce Cannon", price: 980000, brand: "Lining", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-lining-axforce-cannon-trang-chinh-hang_1691395560.webp" },
-    { id: 10, name: "Vợt Cầu Lông Mizuno Atlas S.1", price: 2880000, brand: "Mizuno", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-mizuno-atlas-s1-chinh-hang_1694073867.webp" },
-    { id: 11, name: "Vợt Cầu Lông Yonex LD Force 2019", price: 2740000, brand: "Yonex", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-yonex-voltric-ld-force-2019-den-chinh-hang_1625801732.webp" },
-    { id: 12, name: "Vợt Cầu Lông Proace Stroke 318II", price: 1000000, brand: "Proace", imageUrl: "https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-proace-stroke-318-ii-chinh-hang_1639039019.webp" }
+    { id: 1, name: "Vợt Cầu Lông Victor Thruster Ryuga Metallic", price: 3980000, brand: "Victor", imageUrl: "...", stiffness: "Cứng", style: "Thiên công", inStockAt: ["SCD Premium", "SCD Quận 3"] },
+    { id: 2, name: "Vợt Cầu Lông Lining Halbertec 5000", price: 1380000, brand: "Lining", imageUrl: "...", stiffness: "Dẻo", style: "Công thủ toàn diện", inStockAt: ["SCD Quận 1", "SCD Quận 7"] },
+    { id: 3, name: "Vợt Cầu Lông Victor Thruster Ryuga II TD", price: 2100000, brand: "Victor", imageUrl: "...", stiffness: "Trung bình", style: "Thiên công", inStockAt: ["SCD Quận 5", "SCD Quận 8"] },
+    { id: 4, name: "Vợt Cầu Lông Lining Axforce 90 New", price: 4348000, brand: "Lining", imageUrl: "...", stiffness: "Siêu cứng", style: "Thiên công", inStockAt: ["SCD Premium"] },
+    { id: 5, name: "Vợt Cầu Lông Kumpoo YangZhiNew", price: 930000, brand: "Kumpoo", imageUrl: "...", stiffness: "Dẻo", style: "Thiên thủ", inStockAt: [] },
+    { id: 6, name: "Vợt Cầu Lông Lining Axforce 80", price: 3300000, brand: "Lining", imageUrl: "...", stiffness: "Cứng", style: "Thiên công", inStockAt: ["SCD Quận 1", "SCD Quận 3", "SCD Quận 5"] },
+    { id: 7, name: "Vợt Cầu Lông Yonex Astrox 100ZZ Kurenai", price: 5079000, brand: "Yonex", imageUrl: "...", stiffness: "Siêu cứng", style: "Thiên công", inStockAt: ["SCD Premium", "SCD Quận 7"] },
+    { id: 8, name: "Vợt Cầu Lông Yonex Nanoflare 700 Pro", price: 4300000, brand: "Yonex", imageUrl: "...", stiffness: "Trung bình", style: "Công thủ toàn diện", inStockAt: ["SCD Quận 1", "SCD Quận 8"] },
+    { id: 9, name: "Vợt Cầu Lông Lining Axforce Cannon", price: 980000, brand: "Lining", imageUrl: "...", stiffness: "Dẻo", style: "Công thủ toàn diện", inStockAt: ["SCD Quận 3", "SCD Quận 5", "SCD Quận 7"] },
+    { id: 10, name: "Vợt Cầu Lông Mizuno Atlas S.1", price: 2880000, brand: "Mizuno", imageUrl: "...", stiffness: "Trung bình", style: "Thiên thủ", inStockAt: ["SCD Quận 1"] },
+    { id: 11, name: "Vợt Cầu Lông Yonex LD Force 2019", price: 2740000, brand: "Yonex", imageUrl: "...", stiffness: "Cứng", style: "Công thủ toàn diện", inStockAt: [] },
+    { id: 12, name: "Vợt Cầu Lông Proace Stroke 318II", price: 1000000, brand: "Proace", imageUrl: "...", stiffness: "Dẻo", style: "Công thủ toàn diện", inStockAt: ["SCD Quận 5", "SCD Quận 8"] }
 ];
 
 const priceRanges = {
@@ -25,10 +31,17 @@ const priceRanges = {
     'range5': { min: 3000000, max: Infinity }
 };
 
-const brands = ["Yonex", "Lining", "Victor", "Mizuno", "Adidas", "Proace"];
+const brands = ["Yonex", "Lining", "Victor", "Mizuno", "Adidas", "Proace", "Kumpoo"];
 
 function RacketPage() {
-    const [filters, setFilters] = useState({ price: null, brands: [] });
+    // BƯỚC 3: Mở rộng state với các bộ lọc mới
+    const [filters, setFilters] = useState({ 
+        price: null, 
+        brands: [],
+        stiffness: null,
+        style: null,
+        branches: []
+    });
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 9;
 
@@ -45,6 +58,22 @@ function RacketPage() {
         if (filters.brands.length > 0) {
             products = products.filter(p => filters.brands.includes(p.brand));
         }
+        
+        // BƯỚC 5: Cập nhật logic lọc
+        // Lọc theo độ cứng
+        if (filters.stiffness) {
+            products = products.filter(p => p.stiffness === filters.stiffness);
+        }
+
+        // Lọc theo lối đánh
+        if (filters.style) {
+            products = products.filter(p => p.style === filters.style);
+        }
+
+        // Lọc theo chi nhánh
+        if (filters.branches.length > 0) {
+            products = products.filter(p => p.inStockAt.some(branch => filters.branches.includes(branch)));
+        }
 
         return products;
     }, [filters]);
@@ -54,33 +83,38 @@ function RacketPage() {
     const startIndex = (currentPage - 1) * productsPerPage;
     const paginatedProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
 
-    // CÁC HÀM XỬ LÝ SỰ KIỆN
-    const handlePriceChange = (e) => {
-        setFilters(prev => ({ ...prev, price: e.target.value }));
-        setCurrentPage(1); // Reset về trang 1 khi lọc
-    };
-
-    const handleBrandChange = (e) => {
+    // BƯỚC 4: Tạo các hàm xử lý sự kiện mới
+    const handleFilterChange = (filterName, isCheckbox = false) => (e) => {
         const { value, checked } = e.target;
-        const currentBrands = filters.brands;
-        const newBrands = checked
-            ? [...currentBrands, value]
-            : currentBrands.filter(brand => brand !== value);
         
-        setFilters(prev => ({ ...prev, brands: newBrands }));
+        if (isCheckbox) {
+            const currentValues = filters[filterName];
+            const newValues = checked
+                ? [...currentValues, value]
+                : currentValues.filter(item => item !== value);
+            setFilters(prev => ({ ...prev, [filterName]: newValues }));
+        } else {
+            setFilters(prev => ({ ...prev, [filterName]: value }));
+        }
+        
         setCurrentPage(1); // Reset về trang 1 khi lọc
     };
     
+    // Sử dụng hàm factory để tạo các handler gọn hơn
+    const handlePriceChange = handleFilterChange('price');
+    const handleBrandChange = handleFilterChange('brands', true);
+    const handleStiffnessChange = handleFilterChange('stiffness');
+    const handleStyleChange = handleFilterChange('style');
+    const handleBranchChange = handleFilterChange('branches', true);
+
     return React.createElement(
-        'div',
-        { className: 'container' },
+        'div', { className: 'container' },
         React.createElement(
-            'main',
-            { className: 'product-page-layout' },
+            'main', { className: 'product-page-layout' },
             // --- SIDEBAR ---
             React.createElement(
-                'aside',
-                { className: 'sidebar' },
+                'aside', { className: 'sidebar' },
+                // BƯỚC 6: Render các bộ lọc mới ra giao diện
                 React.createElement(
                     'div', { className: 'filter-group' },
                     React.createElement('h3', null, 'CHỌN MỨC GIÁ'),
@@ -102,14 +136,43 @@ function RacketPage() {
                             ` ${brand}`
                         )))
                     )
+                ),
+                React.createElement(
+                    'div', { className: 'filter-group' },
+                    React.createElement('h3', null, 'ĐỘ CỨNG'),
+                    React.createElement('ul', null, 
+                        stiffnessOptions.map(stiff => React.createElement('li', { key: stiff }, React.createElement('label', null,
+                            React.createElement('input', { type: 'radio', name: 'stiffness', value: stiff, onChange: handleStiffnessChange }),
+                            ` ${stiff}`
+                        )))
+                    )
+                ),
+                React.createElement(
+                    'div', { className: 'filter-group' },
+                    React.createElement('h3', null, 'LỐI ĐÁNH'),
+                    React.createElement('ul', null, 
+                        playingStyles.map(style => React.createElement('li', { key: style }, React.createElement('label', null,
+                            React.createElement('input', { type: 'radio', name: 'style', value: style, onChange: handleStyleChange }),
+                            ` ${style}`
+                        )))
+                    )
+                ),
+                React.createElement(
+                    'div', { className: 'filter-group' },
+                    React.createElement('h3', null, 'CHI NHÁNH CÓ HÀNG'),
+                    React.createElement('ul', null, 
+                        branches.map(branch => React.createElement('li', { key: branch }, React.createElement('label', null,
+                            React.createElement('input', { type: 'checkbox', name: 'branch', value: branch, onChange: handleBranchChange }),
+                            ` ${branch}`
+                        )))
+                    )
                 )
             ),
             // --- PRODUCT CONTENT ---
             React.createElement(
-                'section',
-                { className: 'product-content' },
+                'section', { className: 'product-content' },
                 React.createElement('h1', { className: 'page-title' }, 'VỢT CẦU LÔNG'),
-                // -- Product Grid --
+                // ... (Phần hiển thị sản phẩm và phân trang giữ nguyên)
                 React.createElement(
                     'div',
                     { className: 'product-grid' },

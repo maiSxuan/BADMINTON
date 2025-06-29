@@ -12,12 +12,14 @@ import About from "../pages/customer/About";
 import Contact from "../pages/customer/Contact"
 import AddProducts from "../pages/admin/AddProducts";
 
-import ProductPage from "../pages/customer/ProductPage";
+//import ProductPage from "../pages/customer/ProductPage";
 //import RacketPage from "../pages/customer/Product/Racket";
+//import ShoePage from "../pages/customer/Product/Shoe";
+import BaloPage from "../pages/customer/Product/Balo";
 import UserListPage from "../pages/admin/UserList";
 import FranchisePolicy from "../pages/customer/FranchisePolicy";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
-const ProductsPage = ProductPage;
+const ProductsPage = BaloPage;
 const SalePage = () => <h1>Trang Sale Off</h1>;
 const FranchisePage = FranchisePolicy;
 const AboutPage = About;
