@@ -27,10 +27,9 @@ import FranchisePolicy from "../pages/customer/FranchisePolicy";
 import OrderManagement from "../pages/admin/OrderManagement";
 import CancelledOrders from "../pages/admin/CancelledOrdersPage";
 import AllProducts from "../pages/admin/AllProducts";
-
+import SaleOffPage from "../pages/customer/Saleoff";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = BaloPage;
-const SalePage = SaleOffPage;
 const FranchisePage = FranchisePolicy;
 const AboutPage = About;
 const ContactPage = Contact;
@@ -69,7 +68,7 @@ const publicRoutes = [
 
   {
     path: "/sale",
-    component: SalePage,
+    component: SaleOffPage,
     layout: (props) => (
       <DefaultLayout
         {...props}
