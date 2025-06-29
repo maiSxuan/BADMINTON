@@ -12,9 +12,11 @@ import About from "../pages/customer/About";
 import Contact from "../pages/customer/Contact"
 import AddProducts from "../pages/admin/AddProducts";
 
+
 //import ProductPage from "../pages/customer/ProductPage";
 //import RacketPage from "../pages/customer/Product/Racket";
 //import ShoePage from "../pages/customer/Product/Shoe";
+
 import BaloPage from "../pages/customer/Product/Balo";
 import UserListPage from "../pages/admin/UserList";
 import AddPromotionPage from "../pages/admin/AddPromotion";
@@ -22,6 +24,9 @@ import RevenuePage from "../pages/admin/RevenuePage";
 import BalancePage from "../pages/admin/BalancePage";
 import PromotionListPage from "../pages/admin/PromotionList";
 import FranchisePolicy from "../pages/customer/FranchisePolicy";
+import OrderManagement from "../pages/admin/OrderManagement";
+import CancelledOrders from "../pages/admin/CancelledOrdersPage";
+import AllProducts from "../pages/admin/AllProducts";
 
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = BaloPage;
@@ -37,9 +42,6 @@ const PaymentPage = () => <h1>Trang Hướng Dẫn Thanh Toán</h1>;
 // Tạo các component giữ chỗ cho các trang admin khác
 const LockAccountPage = () => <h1>Trang Khóa Tài Khoản</h1>;
 const ResetPasswordPage = () => <h1>Trang Reset Mật Khẩu</h1>;
-const AllOrdersPage = () => <h1>Trang Tất Cả Đơn Hàng</h1>;
-const CancelledOrdersPage = () => <h1>Trang Đơn Hàng Đã Hủy</h1>;
-const AllProductsPage = () => <h1>Trang Tất Cả Sản Phẩm</h1>;
 const ChatManagementPage = () => <h1>Trang Quản Lý Chat</h1>;
 const ReviewManagementPage = () => <h1>Trang Quản Lý Đánh Giá</h1>;
 
@@ -146,17 +148,17 @@ const publicRoutes = [
   },
 
   // Quản lý đơn hàng
-  { path: "/admin/all-orders", component: AllOrdersPage, layout: AdminLayout },
+  { path: "/admin/all-orders", component: OrderManagement, layout: AdminLayout },
   {
     path: "/admin/cancelled-orders",
-    component: CancelledOrdersPage,
+    component: CancelledOrders,
     layout: AdminLayout,
   },
 
   // Quản lý sản phẩm
   {
     path: "/admin/all-products",
-    component: AllProductsPage,
+    component: AllProducts,
     layout: AdminLayout,
   },
   { path: "/admin/add-product", component: AddProducts, layout: AdminLayout },
