@@ -11,6 +11,22 @@ import HomePage from "../pages/customer/Home";
 import About from "../pages/customer/About";
 import Contact from "../pages/customer/Contact"
 import AddProducts from "../pages/admin/AddProducts";
+<<<<<<< Updated upstream
+=======
+
+//import ProductPage from "../pages/customer/ProductPage";
+//import RacketPage from "../pages/customer/Product/Racket";
+//import ShoePage from "../pages/customer/Product/Shoe";
+import BaloPage from "../pages/customer/Product/Balo";
+import UserListPage from "../pages/admin/UserList";
+import AddPromotionPage from "../pages/admin/AddPromotion";
+import RevenuePage from "../pages/admin/RevenuePage";
+import BalancePage from "../pages/admin/BalancePage";
+import PromotionListPage from "../pages/admin/PromotionList";
+import FranchisePolicy from "../pages/customer/FranchisePolicy";
+import SaleOffPage from "../pages/customer/Saleoff";
+
+>>>>>>> Stashed changes
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = () => <h1>Trang Sản Phẩm</h1>;
 const SalePage = () => <h1>Trang Sale Off</h1>;
