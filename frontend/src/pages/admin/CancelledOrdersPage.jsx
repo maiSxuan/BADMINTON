@@ -218,7 +218,7 @@ const CancelledOrders = () => {
         </span>
       </div>
 
-      <div className="table-container">
+      <div className="cancelled-container">
         <table className="data-table">
           <thead>
             <tr>

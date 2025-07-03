@@ -214,6 +214,41 @@ const OrderManagement = () => {
       waitingForShipping: false,
       waitingForPickup: false,
     },
+    {
+      id: "V1234462",
+      product: "túi xách louis vuitton",
+      quantity: 1,
+      status: "Đã hủy",
+      paymentStatus: "Đã hoàn tiền",
+      total: "25,000,000 VND",
+      paymentMethod: "Chuyển khoản",
+      date: "09/06/2025 08:45:20",
+      delivery: "Giao hàng cao cấp",
+      isUrgent: false,
+      isWithin24h: false,
+      isOverdue: false,
+      isCancelledWithin24h: true,
+      waitingForShipping: false,
+      waitingForPickup: false,
+    },
+    {
+      id: "V1234462",
+      product: "túi xách louis vuitton",
+      quantity: 1,
+      status: "Đã hủy",
+      paymentStatus: "Đã hoàn tiền",
+      total: "25,000,000 VND",
+      paymentMethod: "Chuyển khoản",
+      date: "09/06/2025 08:45:20",
+      delivery: "Giao hàng cao cấp",
+      isUrgent: false,
+      isWithin24h: false,
+      isOverdue: false,
+      isCancelledWithin24h: true,
+      waitingForShipping: false,
+      waitingForPickup: false,
+    },
+    
   ]
 
   // Filter orders based on active tabs and search
@@ -309,7 +344,7 @@ const OrderManagement = () => {
       </div>
 
       {/* Orders Table */}
-      <div className="table-container">
+      <div className="orders-table-container">
         <table className="orders-table">
           <thead>
             <tr>
@@ -357,8 +392,8 @@ const OrderManagement = () => {
                     </div>
                   </td>
                   <td>
-                    <div className="action-cell">
-                      <button className="close-btn" onClick={() => handleDeleteOrder(order.id)}>
+                    <div className="action-cell-order">
+                      <button className="close-order-btn" onClick={() => handleDeleteOrder(order.id)}>
                         ✕
                       </button>
                       <button className="print-btn" onClick={() => handlePrintPackingSlip(order.id)}>
