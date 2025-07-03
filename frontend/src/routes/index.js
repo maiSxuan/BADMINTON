@@ -28,6 +28,9 @@ import OrderManagement from "../pages/admin/OrderManagement";
 import CancelledOrders from "../pages/admin/CancelledOrdersPage";
 import AllProducts from "../pages/admin/AllProducts";
 import SaleOffPage from "../pages/customer/Saleoff";
+import ReturnRefundForm from "../pages/customer/RefundPage";
+import ForgotPasswordStep1 from "../pages/customer/ForgotPassword1";
+import ForgotPasswordStep2 from "../pages/customer/ForgotPassword2";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = BaloPage;
 const FranchisePage = FranchisePolicy;
@@ -128,6 +131,23 @@ const publicRoutes = [
   { path: "/warranty", component: WarrantyPolicyPage, layout: DefaultLayout },
   { path: "/how-to-buy", component: HowToBuyPage, layout: DefaultLayout },
   { path: "/payment", component: PaymentPage, layout: DefaultLayout },
+  { path: "/return-refund", 
+    component: ReturnRefundForm, 
+    layout: (props) => (
+      <DefaultLayout
+        {...props}
+        showSidebar={false}
+        breadcrumbItems={[
+          { label: "Trang chủ", path: "/" },
+          { label: "Tra cứu", path: "/" }, //sua path
+          { label: "Lịch sử mua hàng", path: "/" }, //sua path
+          { label: "Yêu cầu đổi trả/hoàn tiền" },
+        ]}
+      />
+    ) },
+  { path: "/forgot-password", component: ForgotPasswordStep1, layout: DefaultLayout },
+  { path: "/recover-password", component: ForgotPasswordStep2, layout: DefaultLayout },
+
 
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)
@@ -178,7 +198,7 @@ const publicRoutes = [
   { path: "/admin/revenue", component: RevenuePage, layout: AdminLayout },
   { path: "/admin/balance", component: BalancePage, layout: AdminLayout },
 
-  //Khuyễn Mãi
+  //Khuyến Mãi
   { path: "/admin/add-promotion", component: AddPromotionPage, layout: AdminLayout },
   { path: "/admin/manage-promotion", component: PromotionListPage, layout: AdminLayout },
   //  404 Not Found
