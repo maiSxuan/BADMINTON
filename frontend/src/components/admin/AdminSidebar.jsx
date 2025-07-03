@@ -38,7 +38,7 @@ import './AdminSidebar.css';
     },
     {
       id: 'promotions',
-      title: 'Khuyễn mãi',
+      title: 'Khuyến mãi',
       subItems: [
         {label: 'Tạo chiến dịch', path:'/admin/add-promotion'},
         {label: 'Quản lí khuyến mãi', path:'/admin/manage-promotion'}
@@ -68,8 +68,8 @@ const AdminSidebar = () => {
 
         return (
           <div key={section.id} className="sidebar-section">
-            <div className="section-header" onClick={() => handleToggle(section.id)}>
-              <h3 className="section-title">{section.title}</h3>
+            <div className="admin-section-header" onClick={() => handleToggle(section.id)}>
+              <h3 className="admin-section-title">{section.title}</h3>
               <span className={`arrow ${isOpen ? 'down' : 'up'}`}></span>
             </div>
 

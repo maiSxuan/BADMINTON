@@ -26,7 +26,7 @@ const AdminHeader = ({ user }) => {
           <img src={bellIcon} alt="Thông báo" className="icon-bell" />
         </button>
 
-        <div className="separator"></div>
+        <div className="admin-separator"></div>
 
         <div className="user-profile">
           <div className="avatar">
