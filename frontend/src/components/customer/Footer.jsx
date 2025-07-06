@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <div className="footer">
       <div className="mid-footer">
-        <div className="container">
+        <div className="footer-container">
           <div className="row">
             <div className="footer-col logo-col">
               <Link to="/">
@@ -19,7 +19,7 @@ const Footer = () => {
             {/* Cột Thông tin liên hệ */}
             <div className="footer-col">
               <h4>Thông tin liên hệ</h4>
-              <div className="contact-info">
+              <div className="footer-contact-info">
                 <div>Email: scdbadmintonhelp@gmail.com</div>
                 <div>Hotline: 0948245045</div>
                 <div>Địa chỉ: 227 Nguyễn Văn Cừ, Quận 5, TP.HCM</div>

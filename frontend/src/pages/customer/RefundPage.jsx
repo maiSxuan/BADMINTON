@@ -31,7 +31,7 @@ export default function ReturnRefundForm() {
   };
 
   return (
-    <div className="container">
+    <div className="refund-container">
       <h1 className="title">Yêu cầu trả hàng/hoàn tiền</h1>
 
       <div className="form-container">

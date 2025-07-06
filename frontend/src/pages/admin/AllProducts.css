@@ -2,7 +2,7 @@
   padding: 24px;
   background-color: #f8f9fa;
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: Montserrat, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .add-product-btn{
@@ -41,7 +41,7 @@
 }
 
 .add-product-btn:hover {
-  background-color: #374151;
+  background-color: #fecaca;
 }
 
 .stats-grid {
@@ -150,7 +150,6 @@
 .products-table th {
   background-color: #FFF2FB;
   padding: 16px;
-  text-align: left;
   font-weight: 600;
   color: #374151;
   font-size: 14px;
@@ -160,8 +159,9 @@
 .products-table td {
   padding: 16px;
   border-bottom: 1px solid #f3f4f6;
-  vertical-align: top;
+  text-align: center;
 }
+
 
 .products-table tr:last-child td {
   border-bottom: none;
