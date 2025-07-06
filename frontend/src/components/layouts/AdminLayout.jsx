@@ -4,10 +4,11 @@ import { Outlet } from 'react-router-dom';
 import './AdminLayout.css'; 
 
 const AdminLayout = ({ children }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
   return (
     <div className="admin-layout">
 
-      <AdminHeader />
+      <AdminHeader user={user}/>
 
       <div className="admin-body-container">
         

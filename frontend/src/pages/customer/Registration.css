@@ -1,141 +1,148 @@
-.container {
-  height: 100vh;
+/* Container grid layout */
+.registration-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #fdf6fb;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding: 12px;
-  background-color: #fff2fb;
+  align-items: center;
+  padding: 40px 20px;
+  box-sizing: border-box;
 }
 
-.main-content {
+.registration-content {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 32px;
-  max-width: 1200px;
+  flex-direction: row;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  overflow: hidden;
+  max-width: 1000px;
   width: 100%;
 }
 
-@media (min-width: 1024px) {
-  .main-content {
-    flex-direction: row;
-    gap: 4rem;
-  }
+/* Logo section */
+.registration-logo {
+  background: #fceafd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  padding: 40px;
 }
 
-.logo-section {
+.registration-logo img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Form section */
+.registration-form-container {
+  width: 50%;
+  background: #fef3fb;
+  padding: 40px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: center;
 }
 
-@media (min-width: 1024px) {
-  .logo-section {
-    align-items: flex-start;
-  }
-}
-
-.logo-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0  180px 0 50px;
-}
-
-/* .logo-image {
-  width: 24rem;
-  height: 24rem;
-  object-fit: contain;
-  margin-bottom: 1rem;
-} */
-
-@media (min-width: 1024px) {
-  .logo-image {
-    width: 160px;
-    height: 160px;
-  }
-}
-
-.form-section {
-  width: 560px;
-  /* max-width: 35rem; */
-}
-
-.form-container {
-  border: 3px solid #000000;
-  border-radius: 15px;
-  padding: 12px 32px;
-  background-color: rgba(255, 255, 255, 0.5);
-}
-
-.form-title {
+.registration-title {
   font-size: 32px;
   font-weight: bold;
+  color: #333;
+  margin-bottom: 30px;
   text-align: center;
-  margin: 0 12px;
-  color: #000000;
 }
 
-.form {
+.registration-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-label {
-  color: #000000;
-  font-weight: 500;
-  font-size: 18px;
-  margin-bottom: 5px;
+  margin-bottom: 16px;
 }
 
 .form-input {
-  height: 32px;
-  border-radius: 9999px;
-  border: 2px solid #d1d5db;
-  background-color: rgba(255, 255, 255, 0.8);
-  color: #000000;
-  padding: 0 12px;
+  width: 100%;
+  height: 48px; /* hoặc 50px nếu bạn muốn to hơn */
+  padding: 0 20px; /* bỏ padding top/bottom */
+  border: 2px solid #d46db3;
+  border-radius: 25px;
   font-size: 16px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 48px; /* bằng chiều cao -> giúp text nằm giữa */
+  background-color: #fff;
+  color: #333;
+  box-sizing: border-box;
 }
+
 
 .form-input::placeholder {
-  color: #6b7280;
+  color: #999;
+  opacity: 1;
+  line-height: inherit;
 }
 
+
 .form-input:focus {
-  border-color: #ec84cd;
-  box-shadow: 0 0 0 3px rgba(236, 132, 205, 0.1);
+  border-color: #9e3f9f;
 }
 
 .submit-button {
-  width: 200px;
-  margin: 0 140px 0 140px;
-  height: 48px;
-  border-radius: 9999px;
+  margin-top: 20px;
+  background-color: #fff;
+  color: #000;
+  border: 2px solid #d46db3;
+  padding: 12px;
+  border-radius: 25px;
   font-size: 18px;
-  font-weight: bold;
-  color: #000000;
-  border: 2px solid #d1d5db;
-  background-color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  font-weight: bold;
 }
 
 .submit-button:hover {
-  background-color: #ec84cd;
-  color: #ffffff;
-  border-color: #ec84cd;
+  background-color: #d46db3;
+  color: #fff;
 }
 
-.submit-button:active {
-  transform: translateY(1px);
-} 
+.input-error {
+  color: red;
+  border-color: red;
+}
+
+.input-error::placeholder {
+  color: red;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input-wrapper .form-input {
+  width: 100%;
+  padding: 12px 20px 32px 20px; /* thêm padding bottom để đủ chỗ cho lỗi */
+  border: 2px solid #d46db3;
+  border-radius: 25px;
+  font-size: 16px;
+  background-color: #fff;
+  color: #333;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.input-wrapper.input-error .form-input {
+  border-color: red;
+}
+
+.input-error-text {
+  position: absolute;
+  bottom: 6px;
+  left: 20px;
+  font-size: 13px;
+  color: red;
+  background: #fff;
+  padding: 0 4px;
+  pointer-events: none;
+}

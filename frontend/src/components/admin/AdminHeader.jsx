@@ -1,20 +1,21 @@
 // src/components/AdminHeader/AdminHeader.jsx
 
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './AdminHeader.css';
+import React from "react";
+import { Link } from "react-router-dom";
+import "./AdminHeader.css";
 
-import bellIcon from '../../assets/icons/Bell.svg';
-import userAvatarDefault from '../../assets/icons/Admin.svg';
+import bellIcon from "../../assets/icons/Bell.svg";
+import userAvatarDefault from "../../assets/icons/Admin.svg";
 
-import Logo from '../common/logo';
+import Logo from "../common/logo";
 
-const AdminHeader = ({ user }) => {
+const AdminHeader = ({user}) => {
+  const userName = user?.fullName || "Đang tải...";
   return (
     <header className="admin-header">
       <div className="header-left">
         <Link to="/admin" className="logo-link">
-          <Logo size="mini"/>
+          <Logo size="mini" />
         </Link>
         <Link to="/admin" className="header-title-link">
           <h1 className="header-title">Kênh quản lý cửa hàng</h1>
@@ -30,12 +31,12 @@ const AdminHeader = ({ user }) => {
 
         <div className="user-profile">
           <div className="avatar">
-            <img 
-              src={user && user.avatarUrl ? user.avatarUrl : userAvatarDefault} 
-              alt="User Avatar" 
+            <img
+              src={user?.avatarUrl || userAvatarDefault}
+              alt="User Avatar"
             />
           </div>
-          <span className="user-name">{user ? user.name : 'Đang tải...'}</span>
+          <span className="user-name">{userName}</span>
         </div>
       </div>
     </header>
