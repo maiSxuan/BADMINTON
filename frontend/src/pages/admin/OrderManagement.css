@@ -110,7 +110,6 @@
   color: #adb5bd;
 }
 
-
 .orders-table-container {
   background-color: #ffffff;
   border-radius: 8px;
@@ -125,7 +124,7 @@
 }
 
 .orders-table th {
-  background-color: #FFF2FB;
+  background-color: #fff2fb;
   padding: 16px 12px;
   text-align: left;
   font-weight: 600;
@@ -151,7 +150,7 @@
 
 .close-order-btn {
   background-color: #dc3545;
-  color: #FFF2FB;
+  color: #fff2fb;
   border: none;
   border-radius: 50%;
   width: 22px;
@@ -344,13 +343,30 @@
   }
 
   .product-info {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
+}
 
-  .action-cell-order {
-    flex-direction: column;
-    gap: 8px;
-  }
+.action-cell-order {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.update-status-btn {
+  background-color: #fb6dd0;
+  color: #fff;
+  border: none;
+  margin-top: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.update-status-btn:hover {
+  background-color: #e3aed3;
 }

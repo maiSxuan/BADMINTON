@@ -1,7 +1,6 @@
 .default-layout {
   display: flex;
   min-height: 100vh;
-  margin-top: 60px; /* nếu Header có chiều cao cố định */
 }
 
 .default-sidebar {
@@ -9,7 +8,6 @@
   background-color: #ffe9f5;
   border-right: 1px solid #ffe9f5;
   padding: 16px;
-  margin-top: -3rem;
 }
 
 .default-main-content {

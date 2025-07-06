@@ -7,13 +7,6 @@
         "mongoose": "^8.16.0",
         "multer": "^2.0.1",
         "nodemon": "^3.1.10",
-=======
-        "cors": "^2.8.5",
-        "dotenv": "^16.6.1",
-        "express": "^5.1.0",
-        "lucide-react": "^0.525.0",
-        "mongoose": "^8.16.1",
->>>>>>> Stashed changes
         "react-router-dom": "^7.6.2",
         "react-slick": "^0.30.3",
         "recharts": "^3.0.2",

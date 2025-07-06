@@ -11,6 +11,29 @@ import HomePage from "../pages/customer/Home";
 import About from "../pages/customer/About";
 import Contact from "../pages/customer/Contact"
 import AddProducts from "../pages/admin/AddProducts";
+
+
+//import ProductPage from "../pages/customer/ProductPage";
+//import RacketPage from "../pages/customer/Product/Racket";
+//import ShoePage from "../pages/customer/Product/Shoe";
+
+import BaloPage from "../pages/customer/Product/Balo";
+import UserListPage from "../pages/admin/UserList";
+import AddPromotionPage from "../pages/admin/AddPromotion";
+import RevenuePage from "../pages/admin/RevenuePage";
+import BalancePage from "../pages/admin/BalancePage";
+import PromotionListPage from "../pages/admin/PromotionList";
+import FranchisePolicy from "../pages/customer/FranchisePolicy";
+import OrderManagement from "../pages/admin/OrderManagement";
+import CancelledOrders from "../pages/admin/CancelledOrdersPage";
+import AllProducts from "../pages/admin/AllProducts";
+import SaleOffPage from "../pages/customer/Saleoff";
+import ReturnRefundForm from "../pages/customer/RefundPage";
+import ForgotPasswordStep1 from "../pages/customer/ForgotPassword1";
+import ForgotPasswordStep2 from "../pages/customer/ForgotPassword2";
+import Login from "../pages/customer/Login";
+import Registration from "../pages/customer/Registration";
+import ProfilePage from "../pages/customer/ProfilePage";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = BaloPage;
 const FranchisePage = FranchisePolicy;
@@ -33,6 +56,7 @@ const ReviewManagementPage = () => <h1>Trang Quản Lý Đánh Giá</h1>;
 const publicRoutes = [
   // --- Public Routes với DefaultLayout ---
   { path: "/", component: HomePage, layout: DefaultLayout },
+  { path: "/ProfilePage", component: ProfilePage, layout: DefaultLayout},
 
   {
     path: "/products",
