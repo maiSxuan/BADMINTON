@@ -1,10 +1,10 @@
 Front end code ReactJS, tham khảo https://www.youtube.com/watch?v=jbfuzcrfjqQ
 - Cài NodeJS + npm
-- Cài react-slick: npm install react-slick --save
-npm install slick-carousel
--Cd frontend chạy: npm start 
-- lucide-react
-- recharts
+- Thiếu package nào -> chạy npm install -> tự đọc file package.json mà cài 
+frontend: cd frontend && npm start 
+backend: cd backend && node server.js
+sau này sẽ làm thêm .json ở ngoài folder root để khi chạy 1 lệnh chung thì chạy 2 lệnh này
+
 Backend package: npm install nodemon express mongoose dotenv 
     - nodemon dùng cho chạy server: nodemon server.js
     - moongoose dùng cho xử lí database lưu vào mongodb
@@ -18,6 +18,9 @@ Tutorial:
 -   Middleware: https://youtu.be/g4z5zwJMSuo?si=5OjUk2Js4PCXK7f1
 -   Cors middleware kết nối frontend tới backend: https://viblo.asia/p/cors-la-gi-cors-voi-nodejs-Qbq5QyyL5D8
 -   Phân trang pagination : https://youtu.be/IYCa1F-OWmk?si=eC7rC91rLiJ0JwZV
+
+
+
 frontend/
 ├── src/
 │   ├── assets/
