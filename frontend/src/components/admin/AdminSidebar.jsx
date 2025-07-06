@@ -10,8 +10,6 @@ import './AdminSidebar.css';
       title: 'Quản lý người dùng',
       subItems: [
         { label: 'Xem thông tin người dùng', path: '/admin/user-list' }, 
-        { label: 'Khóa tài khoản', path: '/admin/lock-account' },
-        { label: 'Reset mật khẩu', path: '/admin/reset-password' },
       ],
     },
     {
@@ -31,14 +29,6 @@ import './AdminSidebar.css';
       ],
     },
     {
-      id: 'customer-care',
-      title: 'Chăm sóc khách hàng',
-      subItems: [
-        { label: 'Quản lý chat', path: '/admin/chat-management' },
-        { label: 'Quản lý đánh giá', path: '/admin/review-management' },
-      ],
-    },
-    {
       id: 'finance',
       title: 'Tài chính',
       subItems: [
@@ -46,6 +36,14 @@ import './AdminSidebar.css';
         { label: 'Số dư tài khoản', path: '/admin/balance' },
       ],
     },
+    {
+      id: 'promotions',
+      title: 'Khuyễn mãi',
+      subItems: [
+        {label: 'Tạo chiến dịch', path:'/admin/add-promotion'},
+        {label: 'Quản lí khuyến mãi', path:'/admin/manage-promotion'}
+      ]
+    }
   ];
 
 const AdminSidebar = () => {

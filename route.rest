@@ -1,8 +1,8 @@
 ### Kiểm tra GET
-GET http://localhost:4000/add-product/685b77cec6385923144a8336
+GET http://localhost:4000/api/products/685b77cec6385923144a8336
 ###
 
-POST http://localhost:4000/add-product
+POST http://localhost:4000/api/products
 Content-Type: application/json
 
 {
@@ -15,11 +15,11 @@ Content-Type: application/json
 }
 
 ### Kiểm tra DELETE
-DELETE http://localhost:4000/add-product/685b77cec6385923144a8336
+DELETE http://localhost:4000/api/products/685b77cec6385923144a8336
 
 ### Kiểm tra PATCH
 
-PATCH http://localhost:4000/add-product/685d27c78728398630183d93
+PATCH http://localhost:4000/api/products/685d27c78728398630183d93
 Content-type: application/json
 
 {
@@ -31,3 +31,18 @@ Content-type: application/json
     "countInStock":"9"
 }
 
+### Kiểm tra GET
+GET http://localhost:4000/api/users
+
+
+### 
+
+POST http://localhost:4000/api/promotions
+Content-type: application/json
+
+{
+    "name":"Chiến dịch 8/8",
+    "startDate": "2025-8-8",
+    "endDate": "2025-8-9",
+    "description":"giảm giá"
+}

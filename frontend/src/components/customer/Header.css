@@ -67,21 +67,59 @@
 
 /* --- Thanh Navbar --- */
 .nav-container{
-    width:100%;  
+  width:100%;  
 }
 .navbar {
-    max-width: 100%;
+  max-width: 100%;
   display: flex;
   justify-content: space-between; 
   border-top: 1px solid #f0f0f0;
-    background-color: #FFE2F6;
+  background-color: #FFE2F6;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 .navbar a {
-    padding: 12px 16px; color: #333; text-decoration: none; font-weight: bold;
-    font-size: 14px; text-transform: uppercase;
+  padding: 12px 16px; 
+  color: #333; 
+  text-decoration: none; 
+  font-weight: bold;
+  font-size: 14px; 
+  text-transform: uppercase;
 }
 .navbar a:hover { color: crimson; }
 .navbar a.active { color: crimson; border-bottom: 2px solid crimson; }
 strong{
     color: crimson;
 }
+
+/* .user-dropdown {
+  position: relative;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #eee;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  width: 150px;
+  border-radius: 8px;
+}
+
+.dropdown-item {
+  padding: 10px;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: #333;
+}
+
+.dropdown-item:hover {
+  background-color: #f6f6f6;
+  color: #ec84cd;
+} */

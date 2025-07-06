@@ -11,26 +11,9 @@ import HomePage from "../pages/customer/Home";
 import About from "../pages/customer/About";
 import Contact from "../pages/customer/Contact"
 import AddProducts from "../pages/admin/AddProducts";
-<<<<<<< Updated upstream
-=======
-
-//import ProductPage from "../pages/customer/ProductPage";
-//import RacketPage from "../pages/customer/Product/Racket";
-//import ShoePage from "../pages/customer/Product/Shoe";
-import BaloPage from "../pages/customer/Product/Balo";
-import UserListPage from "../pages/admin/UserList";
-import AddPromotionPage from "../pages/admin/AddPromotion";
-import RevenuePage from "../pages/admin/RevenuePage";
-import BalancePage from "../pages/admin/BalancePage";
-import PromotionListPage from "../pages/admin/PromotionList";
-import FranchisePolicy from "../pages/customer/FranchisePolicy";
-import SaleOffPage from "../pages/customer/Saleoff";
-
->>>>>>> Stashed changes
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
-const ProductsPage = () => <h1>Trang Sản Phẩm</h1>;
-const SalePage = () => <h1>Trang Sale Off</h1>;
-const FranchisePage = () => <h1>Trang Chính Sách Nhượng Quyền</h1>;
+const ProductsPage = BaloPage;
+const FranchisePage = FranchisePolicy;
 const AboutPage = About;
 const ContactPage = Contact;
 const ReturnPolicyPage = () => <h1>Trang Chính Sách Đổi Trả</h1>;
@@ -39,16 +22,12 @@ const HowToBuyPage = () => <h1>Trang Hướng Dẫn Mua Hàng</h1>;
 const PaymentPage = () => <h1>Trang Hướng Dẫn Thanh Toán</h1>;
 
 // Tạo các component giữ chỗ cho các trang admin khác
-const UserListPage = () => <h1>Trang Danh Sách Người Dùng</h1>;
 const LockAccountPage = () => <h1>Trang Khóa Tài Khoản</h1>;
 const ResetPasswordPage = () => <h1>Trang Reset Mật Khẩu</h1>;
-const AllOrdersPage = () => <h1>Trang Tất Cả Đơn Hàng</h1>;
-const CancelledOrdersPage = () => <h1>Trang Đơn Hàng Đã Hủy</h1>;
-const AllProductsPage = () => <h1>Trang Tất Cả Sản Phẩm</h1>;
 const ChatManagementPage = () => <h1>Trang Quản Lý Chat</h1>;
 const ReviewManagementPage = () => <h1>Trang Quản Lý Đánh Giá</h1>;
-const RevenuePage = () => <h1>Trang Doanh Thu</h1>;
-const BalancePage = () => <h1>Trang Số Dư Tài Khoản</h1>;
+
+
 
 // Theo yêu cầu, tất cả sẽ được đặt trong publicRoutes để đơn giản hóa
 const publicRoutes = [
@@ -72,7 +51,7 @@ const publicRoutes = [
 
   {
     path: "/sale",
-    component: SalePage,
+    component: SaleOffPage,
     layout: (props) => (
       <DefaultLayout
         {...props}
@@ -132,6 +111,24 @@ const publicRoutes = [
   { path: "/warranty", component: WarrantyPolicyPage, layout: DefaultLayout },
   { path: "/how-to-buy", component: HowToBuyPage, layout: DefaultLayout },
   { path: "/payment", component: PaymentPage, layout: DefaultLayout },
+  { path: "/return-refund", 
+    component: ReturnRefundForm, 
+    layout: (props) => (
+      <DefaultLayout
+        {...props}
+        showSidebar={false}
+        breadcrumbItems={[
+          { label: "Trang chủ", path: "/" },
+          { label: "Tra cứu", path: "/" }, //sua path
+          { label: "Lịch sử mua hàng", path: "/" }, //sua path
+          { label: "Yêu cầu đổi trả/hoàn tiền" },
+        ]}
+      />
+    ) },
+  { path: "/forgot-password", component: ForgotPasswordStep1, layout: DefaultLayout },
+  { path: "/recover-password", component: ForgotPasswordStep2, layout: DefaultLayout },
+  { path: "/login", component: Login},
+  { path: "/registration", component: Registration},
 
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)
@@ -151,17 +148,17 @@ const publicRoutes = [
   },
 
   // Quản lý đơn hàng
-  { path: "/admin/all-orders", component: AllOrdersPage, layout: AdminLayout },
+  { path: "/admin/all-orders", component: OrderManagement, layout: AdminLayout },
   {
     path: "/admin/cancelled-orders",
-    component: CancelledOrdersPage,
+    component: CancelledOrders,
     layout: AdminLayout,
   },
 
   // Quản lý sản phẩm
   {
     path: "/admin/all-products",
-    component: AllProductsPage,
+    component: AllProducts,
     layout: AdminLayout,
   },
   { path: "/admin/add-product", component: AddProducts, layout: AdminLayout },
@@ -182,6 +179,9 @@ const publicRoutes = [
   { path: "/admin/revenue", component: RevenuePage, layout: AdminLayout },
   { path: "/admin/balance", component: BalancePage, layout: AdminLayout },
 
+  //Khuyến Mãi
+  { path: "/admin/add-promotion", component: AddPromotionPage, layout: AdminLayout },
+  { path: "/admin/manage-promotion", component: PromotionListPage, layout: AdminLayout },
   //  404 Not Found
   // { path: '*', component: NotFoundPage, layout: DefaultLayout }
 ];
