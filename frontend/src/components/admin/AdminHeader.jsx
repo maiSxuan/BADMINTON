@@ -6,20 +6,24 @@ import "./AdminHeader.css";
 
 import bellIcon from "../../assets/icons/Bell.svg";
 import userAvatarDefault from "../../assets/icons/Admin.svg";
-
+import { useNavigate } from "react-router-dom";
 import Logo from "../common/logo";
 
 const AdminHeader = ({user}) => {
   const userName = user?.fullName || "Đang tải...";
+  const navigate = useNavigate(); 
+  const gobackHome = () => {
+    navigate("/admin");
+  };
   return (
     <header className="admin-header">
       <div className="header-left">
         <Link to="/admin" className="logo-link">
           <Logo size="mini" />
         </Link>
-        <Link to="/admin" className="header-title-link">
+        <div className="header-title-link" onClick={gobackHome} style={{ cursor: "pointer" }}>
           <h1 className="header-title">Kênh quản lý cửa hàng</h1>
-        </Link>
+        </div>
       </div>
 
       <div className="header-right">
@@ -27,7 +31,7 @@ const AdminHeader = ({user}) => {
           <img src={bellIcon} alt="Thông báo" className="icon-bell" />
         </button>
 
-        <div className="separator"></div>
+        <div className="admin-separator"></div>
 
         <div className="user-profile">
           <div className="avatar">
