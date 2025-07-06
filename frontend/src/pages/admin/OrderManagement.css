@@ -296,8 +296,7 @@
 }
 
 .print-btn:hover {
-  background-color: #e9ecef;
-  border-color: #adb5bd;
+  background-color: #e3aed3;
 }
 
 .no-results {
@@ -357,14 +356,14 @@
   gap: 8px;
 }
 .update-status-btn {
+  padding: 8px 12px;
   background-color: #fb6dd0;
-  color: #fff;
-  border: none;
-  margin-top: 8px;
-  padding: 6px 10px;
-  cursor: pointer;
+  border: 1px solid #ffffff;
   border-radius: 4px;
-  font-size: 14px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #ffffff;
+  white-space: nowrap;
 }
 
 .update-status-btn:hover {

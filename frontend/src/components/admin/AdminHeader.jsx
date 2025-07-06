@@ -4,25 +4,22 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./AdminHeader.css";
 
-import bellIcon from '../../assets/icons/Bell.svg';
-import userAvatarDefault from '../../assets/icons/Admin.svg';
-import { useNavigate } from 'react-router-dom';
-import Logo from '../common/logo';
+import bellIcon from "../../assets/icons/Bell.svg";
+import userAvatarDefault from "../../assets/icons/Admin.svg";
 
-const AdminHeader = ({ user }) => {
-  const navigate = useNavigate(); 
-  const gobackHome = () => {
-    navigate("/admin");
-  };
+import Logo from "../common/logo";
+
+const AdminHeader = ({user}) => {
+  const userName = user?.fullName || "Đang tải...";
   return (
     <header className="admin-header">
       <div className="header-left">
         <Link to="/admin" className="logo-link">
           <Logo size="mini" />
         </Link>
-        <div className="header-title-link" onClick={gobackHome} style={{ cursor: "pointer" }}>
+        <Link to="/admin" className="header-title-link">
           <h1 className="header-title">Kênh quản lý cửa hàng</h1>
-        </div>
+        </Link>
       </div>
 
       <div className="header-right">
@@ -30,7 +27,7 @@ const AdminHeader = ({ user }) => {
           <img src={bellIcon} alt="Thông báo" className="icon-bell" />
         </button>
 
-        <div className="admin-separator"></div>
+        <div className="separator"></div>
 
         <div className="user-profile">
           <div className="avatar">
@@ -40,7 +37,6 @@ const AdminHeader = ({ user }) => {
             />
           </div>
           <span className="user-name">{userName}</span>
-          <span className="user-name">{user ? user.name : 'Admin'}</span>
         </div>
       </div>
     </header>

@@ -141,7 +141,7 @@ const UpdateOrderModal = ({ visible, order, onClose, onSave }) => {
           <button className="save-btn" onClick={handleSave}>
             Lưu
           </button>
-          <button className="close-btn" onClick={onClose}>
+          <button className="modal-close-btn" onClick={onClose}>
             Đóng
           </button>
         </div>
