@@ -7,6 +7,7 @@ const ImageUploader =  () => {
   const [file,setFile] = useState(null);
   const handleChange = ({target:{files}}) => {
     if (files[0]) {
+      console.log(files[0])
       setFileName(files[0].name);
       setFile(files[0]);
     }
@@ -21,7 +22,7 @@ const ImageUploader =  () => {
   return (
     <div>
       <form className="formBox" onClick= {()=>document.querySelector('input').click()}>
-        <input type="file" accept=".jpeg jpg .png" onChange={handleChange} hidden />
+        <input type="file" accept="/.jpeg .jpg .png" onChange={handleChange} hidden />
         {preview}
       </form>
     </div>

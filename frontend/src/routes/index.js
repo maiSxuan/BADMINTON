@@ -16,7 +16,8 @@ import AddProducts from "../pages/admin/AddProducts";
 //import ProductPage from "../pages/customer/ProductPage";
 //import RacketPage from "../pages/customer/Product/Racket";
 //import ShoePage from "../pages/customer/Product/Shoe";
-
+import ProductPage from "../pages/customer/ProductPage";
+import TestUploadPage from "../pages/testupload";
 import BaloPage from "../pages/customer/Product/Balo";
 import UserListPage from "../pages/admin/UserList";
 import AddPromotionPage from "../pages/admin/AddPromotion";
@@ -29,7 +30,7 @@ import CancelledOrders from "../pages/admin/CancelledOrdersPage";
 import AllProducts from "../pages/admin/AllProducts";
 import SaleOffPage from "../pages/customer/Saleoff";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
-const ProductsPage = BaloPage;
+const ProductsPage = ProductPage;
 const FranchisePage = FranchisePolicy;
 const AboutPage = About;
 const ContactPage = Contact;
@@ -128,7 +129,6 @@ const publicRoutes = [
   { path: "/warranty", component: WarrantyPolicyPage, layout: DefaultLayout },
   { path: "/how-to-buy", component: HowToBuyPage, layout: DefaultLayout },
   { path: "/payment", component: PaymentPage, layout: DefaultLayout },
-
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)
   { path: "/admin", component: AdminHome, layout: AdminLayout },
@@ -181,6 +181,9 @@ const publicRoutes = [
   //Khuyễn Mãi
   { path: "/admin/add-promotion", component: AddPromotionPage, layout: AdminLayout },
   { path: "/admin/manage-promotion", component: PromotionListPage, layout: AdminLayout },
+  
+
+  {path: "/test", component: TestUploadPage},
   //  404 Not Found
   // { path: '*', component: NotFoundPage, layout: DefaultLayout }
 ];
