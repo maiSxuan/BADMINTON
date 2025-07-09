@@ -7,8 +7,8 @@ const Variation = require ('../models/VariationModel')
 const VariationOption = require ('../models/VariationOptionModel')
 const ProductItem = require ('../models/ProductItemModel')
 const ProductConfiguration = require('../models/ProductConfigurationModel')
-const cloudinary = require("../config/cloudinary");
-const productController = require('../Controllers/productController');
+const cloudinary = require("../../config/cloudinary");
+const productController = require('../controllers/productController');
 //getting all
 router.get('/',async (req,res)=>{
     try{

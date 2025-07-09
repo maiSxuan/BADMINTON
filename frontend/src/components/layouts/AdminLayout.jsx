@@ -3,8 +3,7 @@ import AdminSidebar from '../admin/AdminSidebar';
 import { Outlet } from 'react-router-dom'; 
 import './AdminLayout.css'; 
 
-// const AdminLayout = ({ children }) => {
-//   
+
 import Breadcrumb from '../common/breadcrumb';
 const AdminLayout = ({ children, breadcrumbItems = [] }) => {
   const user = JSON.parse(localStorage.getItem("user"));

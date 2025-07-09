@@ -1,7 +1,9 @@
 // src/routes/index.js
 
-// Layout mặc định cho người dùng, có Header và Footer
+// Layout mặc định cho người dùng, có Header và Footer, Sidebar, Breadcrumb
 import DefaultLayout from "../components/layouts/DefaultLayout";
+// Layot cho cart, đơn hàng,... 
+import HeaderFooterLayout from "../components/layouts/HeaderFooterLayout";
 // Layout cho trang quản trị, có AdminHeader và AdminSidebar
 import AdminLayout from "../components/layouts/AdminLayout";
 
@@ -35,6 +37,8 @@ import ForgotPasswordStep2 from "../pages/customer/ForgotPassword2";
 import Login from "../pages/customer/Login";
 import Registration from "../pages/customer/Registration";
 import ProfilePage from "../pages/customer/ProfilePage";
+import CartPage from "../pages/customer/Cart";
+import OrderHistoryPage from "../pages/customer/OrderHistory";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = ProductPage;
 const FranchisePage = FranchisePolicy;
@@ -154,7 +158,8 @@ const publicRoutes = [
   { path: "/recover-password", component: ForgotPasswordStep2, layout: DefaultLayout },
   { path: "/login", component: Login},
   { path: "/registration", component: Registration},
-
+    {path: "/cart", component:CartPage, layout: HeaderFooterLayout},
+    {path: "/order-history", component: OrderHistoryPage, layout:HeaderFooterLayout},
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)
   { path: "/admin", component: AdminHome, layout: AdminLayout },
