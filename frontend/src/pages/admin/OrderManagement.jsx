@@ -1,39 +1,52 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import "./OrderManagement.css"
-import OrderDetail from "./OrderDetail" // Declare the OrderDetail variable
+import { useState, useMemo } from "react";
+import "./OrderManagement.css";
+import { OrderDetail, UpdateOrderModal } from "./OrderDetail"; // Declare the OrderDetail variable
 
 const OrderManagement = () => {
-  const [activeTab, setActiveTab] = useState("Tất cả")
-  const [activeStatusTab, setActiveStatusTab] = useState("Tất cả")
-  const [activeFilterTab, setActiveFilterTab] = useState("")
-  const [searchId, setSearchId] = useState("")
-  const [selectedOrder, setSelectedOrder] = useState(null)
-  const [showOrderDetail, setShowOrderDetail] = useState(false)
+  const [activeTab, setActiveTab] = useState("Tất cả");
+  const [activeStatusTab, setActiveStatusTab] = useState("Tất cả");
+  const [activeFilterTab, setActiveFilterTab] = useState("");
+  const [searchId, setSearchId] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showOrderDetail, setShowOrderDetail] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [orderToUpdate, setOrderToUpdate] = useState(null);
 
-  const mainTabs = ["Tất cả", "Chưa thanh toán", "Đang giao", "Đã vận chuyển", "Đã hoàn thành", "Đã hủy"]
+  const mainTabs = [
+    "Tất cả",
+    "Chưa thanh toán",
+    "Đang giao",
+    "Đã vận chuyển",
+    "Đã hoàn thành",
+    "Đã hủy",
+  ];
 
-  const statusTabs = ["Tất cả", "Đang chờ vận chuyển 0", "Đang chờ lấy hàng 1"]
+  const statusTabs = ["Tất cả", "Đang chờ vận chuyển 0", "Đang chờ lấy hàng 1"];
 
-  const filterTabs = ["Vận chuyển trong 24 giờ", "Quá hạn vận chuyển", "Hủy trong 24 giờ"]
+  const filterTabs = [
+    "Vận chuyển trong 24 giờ",
+    "Quá hạn vận chuyển",
+    "Hủy trong 24 giờ",
+  ];
 
   const handleDeleteOrder = (orderId) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa đơn hàng này?")) {
       // Remove order from allOrders array
-      const updatedOrders = allOrders.filter((order) => order.id !== orderId)
-      // You would typically update state here or call an API
-      console.log("Đã xóa đơn hàng:", orderId)
-      alert("Đã xóa đơn hàng thành công!")
+      const updatedOrders = allOrders.filter((order) => order.id !== orderId);
+      setAllOrders(updatedOrders);
+      console.log("Đã xóa đơn hàng:", orderId);
+      alert("Đã xóa đơn hàng thành công!");
     }
-  }
+  };
 
   const handlePrintPackingSlip = (orderId) => {
     // Find the order to print
-    const orderToPrint = allOrders.find((order) => order.id === orderId)
+    const orderToPrint = allOrders.find((order) => order.id === orderId);
     if (!orderToPrint) {
-      alert("Không tìm thấy đơn hàng!")
-      return
+      alert("Không tìm thấy đơn hàng!");
+      return;
     }
 
     // Create print content with all order information
@@ -42,7 +55,7 @@ const OrderManagement = () => {
       <head>
         <title>Phiếu Đóng Gói - ${orderToPrint.id}</title>
         <style>
-          body { font-family: Arial, sans-serif; padding: 20px; }
+          body { font-family: Montserrat, Arial, sans-serif; padding: 20px; }
           .header { text-align: center; margin-bottom: 30px; }
           .order-info { margin-bottom: 20px; }
           .order-info h3 { margin-bottom: 10px; color: #333; }
@@ -120,32 +133,66 @@ const OrderManagement = () => {
         </div>
       </body>
     </html>
-  `
+  `;
 
     // Open new window and print
-    const printWindow = window.open("", "_blank")
-    printWindow.document.write(printContent)
-    printWindow.document.close()
-    printWindow.focus()
-    printWindow.print()
-    printWindow.close()
-  }
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  };
+
+  const handleUpdateStatus = (orderId) => {
+    const order = allOrders.find((o) => o.id === orderId);
+    if (order) {
+      setOrderToUpdate(order);
+      setShowUpdateModal(true);
+    }
+  };
+
+  const handleModalUpdate = (updatedOrder) => {
+    // Đây chỉ là ví dụ. Thường bạn sẽ gọi API hoặc setState
+    // console.log("Updated order:", updatedOrder);
+
+    // alert(`Đơn hàng ${updatedOrder.id} đã được cập nhật!`);
+
+    // setShowUpdateModal(false);
+    // setOrderToUpdate(null);
+    setAllOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order.id === updatedOrder.id
+          ? {
+              ...order,
+              status: updatedOrder.status,
+              delivery: updatedOrder.delivery,
+            }
+          : order
+      )
+    );
+
+    alert(`Đơn hàng ${updatedOrder.id} đã được cập nhật!`);
+
+    setShowUpdateModal(false);
+    setOrderToUpdate(null);
+  };
 
   const handleOrderIdClick = (orderId) => {
-    const order = allOrders.find((order) => order.id === orderId)
+    const order = allOrders.find((order) => order.id === orderId);
     if (order) {
-      setSelectedOrder(order)
-      setShowOrderDetail(true)
+      setSelectedOrder(order);
+      setShowOrderDetail(true);
     }
-  }
+  };
 
   const handleBackToOrders = () => {
-    setShowOrderDetail(false)
-    setSelectedOrder(null)
-  }
+    setShowOrderDetail(false);
+    setSelectedOrder(null);
+  };
 
   // Sample orders data
-  const allOrders = [
+  const [allOrders, setAllOrders] = useState([
     {
       id: "V1234459",
       product: "vợt yonex 88d pro 2024",
@@ -214,52 +261,92 @@ const OrderManagement = () => {
       waitingForShipping: false,
       waitingForPickup: false,
     },
-  ]
+    {
+      id: "V1234462",
+      product: "túi xách louis vuitton",
+      quantity: 1,
+      status: "Đã hủy",
+      paymentStatus: "Đã hoàn tiền",
+      total: "25,000,000 VND",
+      paymentMethod: "Chuyển khoản",
+      date: "09/06/2025 08:45:20",
+      delivery: "Giao hàng cao cấp",
+      isUrgent: false,
+      isWithin24h: false,
+      isOverdue: false,
+      isCancelledWithin24h: true,
+      waitingForShipping: false,
+      waitingForPickup: false,
+    },
+    {
+      id: "V1234462",
+      product: "túi xách louis vuitton",
+      quantity: 1,
+      status: "Đã hủy",
+      paymentStatus: "Đã hoàn tiền",
+      total: "25,000,000 VND",
+      paymentMethod: "Chuyển khoản",
+      date: "09/06/2025 08:45:20",
+      delivery: "Giao hàng cao cấp",
+      isUrgent: false,
+      isWithin24h: false,
+      isOverdue: false,
+      isCancelledWithin24h: true,
+      waitingForShipping: false,
+      waitingForPickup: false,
+    },
+  ]);
 
   // Filter orders based on active tabs and search
   const filteredOrders = useMemo(() => {
-    let filtered = allOrders
+    let filtered = allOrders;
 
     // Filter by main tab
     if (activeTab !== "Tất cả") {
-      filtered = filtered.filter((order) => order.status === activeTab)
+      filtered = filtered.filter((order) => order.status === activeTab);
     }
 
     // Filter by status tab
     if (activeStatusTab === "Đang chờ vận chuyển 0") {
-      filtered = filtered.filter((order) => order.waitingForShipping)
+      filtered = filtered.filter((order) => order.waitingForShipping);
     } else if (activeStatusTab === "Đang chờ lấy hàng 1") {
-      filtered = filtered.filter((order) => order.waitingForPickup)
+      filtered = filtered.filter((order) => order.waitingForPickup);
     }
 
     // Filter by filter tab
     if (activeFilterTab === "Vận chuyển trong 24 giờ") {
-      filtered = filtered.filter((order) => order.isWithin24h)
+      filtered = filtered.filter((order) => order.isWithin24h);
     } else if (activeFilterTab === "Quá hạn vận chuyển") {
-      filtered = filtered.filter((order) => order.isOverdue)
+      filtered = filtered.filter((order) => order.isOverdue);
     } else if (activeFilterTab === "Hủy trong 24 giờ") {
-      filtered = filtered.filter((order) => order.isCancelledWithin24h)
+      filtered = filtered.filter((order) => order.isCancelledWithin24h);
     }
 
     // Filter by search ID
     if (searchId.trim()) {
-      filtered = filtered.filter((order) => order.id.toLowerCase().includes(searchId.toLowerCase()))
+      filtered = filtered.filter((order) =>
+        order.id.toLowerCase().includes(searchId.toLowerCase())
+      );
     }
 
-    return filtered
-  }, [activeTab, activeStatusTab, activeFilterTab, searchId, allOrders])
+    return filtered;
+  }, [activeTab, activeStatusTab, activeFilterTab, searchId, allOrders]);
 
   const handleSearch = () => {
     // Search is handled automatically by the useMemo hook
-    console.log("Searching for:", searchId)
-  }
+    console.log("Searching for:", searchId);
+  };
 
   return (
     <div className="order-management">
       {/* Main Navigation Tabs */}
       <div className="tab-container">
         {mainTabs.map((tab) => (
-          <button key={tab} className={`tab ${activeTab === tab ? "active" : ""}`} onClick={() => setActiveTab(tab)}>
+          <button
+            key={tab}
+            className={`tab ${activeTab === tab ? "active" : ""}`}
+            onClick={() => setActiveTab(tab)}
+          >
             {tab}
           </button>
         ))}
@@ -285,8 +372,12 @@ const OrderManagement = () => {
         {filterTabs.map((tab) => (
           <button
             key={tab}
-            className={`tab filter-tab ${activeFilterTab === tab ? "active" : ""}`}
-            onClick={() => setActiveFilterTab(activeFilterTab === tab ? "" : tab)}
+            className={`tab filter-tab ${
+              activeFilterTab === tab ? "active" : ""
+            }`}
+            onClick={() =>
+              setActiveFilterTab(activeFilterTab === tab ? "" : tab)
+            }
           >
             {tab}
           </button>
@@ -305,11 +396,10 @@ const OrderManagement = () => {
           onChange={(e) => setSearchId(e.target.value)}
           className="search-input"
         />
-        
       </div>
 
       {/* Orders Table */}
-      <div className="table-container">
+      <div className="orders-table-container">
         <table className="orders-table">
           <thead>
             <tr>
@@ -327,7 +417,10 @@ const OrderManagement = () => {
                   <td>
                     <div className="order-id-cell">
                       <div className="order-info">
-                        <div className="order-id clickable" onClick={() => handleOrderIdClick(order.id)}>
+                        <div
+                          className="order-id clickable"
+                          onClick={() => handleOrderIdClick(order.id)}
+                        >
                           {order.id}
                         </div>
                         <div className="product-info">
@@ -339,30 +432,52 @@ const OrderManagement = () => {
                     </div>
                   </td>
                   <td>
-                    <span className={`status-badge ${order.status.toLowerCase().replace(/\s+/g, "-")}`}>
+                    <span
+                      className={`status-badge ${order.status
+                        .toLowerCase()
+                        .replace(/\s+/g, "-")}`}
+                    >
                       {order.status}
                     </span>
                   </td>
                   <td>
                     <div className="payment-info">
                       <div className="total">Tổng: {order.total}</div>
-                      <div className="payment-method">{order.paymentMethod}</div>
+                      <div className="payment-method">
+                        {order.paymentMethod}
+                      </div>
                       <div className="date">{order.date}</div>
                     </div>
                   </td>
                   <td>
                     <div className="delivery-info">
-                      <div className="delivery-status">Giao hàng tiêu chuẩn</div>
-                      <div className="delivery-service">J&T Express</div>
+                      <div className="delivery-status">
+                        {order.delivery.split(" - ")[0]}
+                      </div>
+                      <div className="delivery-service">
+                        {order.delivery.split(" - ")[1]}
+                      </div>
                     </div>
                   </td>
                   <td>
-                    <div className="action-cell">
-                      <button className="close-btn" onClick={() => handleDeleteOrder(order.id)}>
+                    <div className="action-cell-order">
+                      <button
+                        className="close-order-btn"
+                        onClick={() => handleDeleteOrder(order.id)}
+                      >
                         ✕
                       </button>
-                      <button className="print-btn" onClick={() => handlePrintPackingSlip(order.id)}>
+                      <button
+                        className="print-btn"
+                        onClick={() => handlePrintPackingSlip(order.id)}
+                      >
                         In phiếu đóng gói
+                      </button>
+                      <button
+                        className="update-status-btn"
+                        onClick={() => handleUpdateStatus(order.id)}
+                      >
+                        Cập nhật trạng thái giao hàng
                       </button>
                     </div>
                   </td>
@@ -378,9 +493,23 @@ const OrderManagement = () => {
           </tbody>
         </table>
       </div>
-      {showOrderDetail && selectedOrder && <OrderDetail order={selectedOrder} onBack={handleBackToOrders} />}
-    </div>
-  )
-}
+      {showOrderDetail && selectedOrder && (
+        <OrderDetail order={selectedOrder} onBack={handleBackToOrders} />
+      )}
 
-export default OrderManagement
+      {showUpdateModal && orderToUpdate && (
+        <UpdateOrderModal
+          visible={showUpdateModal}
+          order={orderToUpdate}
+          onClose={() => {
+            setShowUpdateModal(false);
+            setOrderToUpdate(null);
+          }}
+          onSave={handleModalUpdate}
+        />
+      )}
+    </div>
+  );
+};
+
+export default OrderManagement;

@@ -43,7 +43,7 @@
   border: 1px solid #f0f0f0;
   border-radius: 4px;
   font-size: 14px;
-  background-color: #fff1f3;
+  background-color: #FFF2FB;
 }
 .form-textarea {
   resize: vertical;
@@ -85,13 +85,13 @@
 }
 
 .tab-button.active {
-  background-color: #fdf2f8;
+  background-color: #eeadda;
   color: #ec4899;
 }
 
 .tab-button.inactive {
   background-color: white;
-  color: #6b7280;
+  color: #eeadda;
 }
 
 .tab-button.inactive:hover {

@@ -29,6 +29,12 @@ import OrderManagement from "../pages/admin/OrderManagement";
 import CancelledOrders from "../pages/admin/CancelledOrdersPage";
 import AllProducts from "../pages/admin/AllProducts";
 import SaleOffPage from "../pages/customer/Saleoff";
+import ReturnRefundForm from "../pages/customer/RefundPage";
+import ForgotPasswordStep1 from "../pages/customer/ForgotPassword1";
+import ForgotPasswordStep2 from "../pages/customer/ForgotPassword2";
+import Login from "../pages/customer/Login";
+import Registration from "../pages/customer/Registration";
+import ProfilePage from "../pages/customer/ProfilePage";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = ProductPage;
 const FranchisePage = FranchisePolicy;
@@ -51,6 +57,7 @@ const ReviewManagementPage = () => <h1>Trang Quản Lý Đánh Giá</h1>;
 const publicRoutes = [
   // --- Public Routes với DefaultLayout ---
   { path: "/", component: HomePage, layout: DefaultLayout },
+  { path: "/ProfilePage", component: ProfilePage, layout: DefaultLayout},
 
   {
     path: "/products",
@@ -129,6 +136,25 @@ const publicRoutes = [
   { path: "/warranty", component: WarrantyPolicyPage, layout: DefaultLayout },
   { path: "/how-to-buy", component: HowToBuyPage, layout: DefaultLayout },
   { path: "/payment", component: PaymentPage, layout: DefaultLayout },
+  { path: "/return-refund", 
+    component: ReturnRefundForm, 
+    layout: (props) => (
+      <DefaultLayout
+        {...props}
+        showSidebar={false}
+        breadcrumbItems={[
+          { label: "Trang chủ", path: "/" },
+          { label: "Tra cứu", path: "/" }, //sua path
+          { label: "Lịch sử mua hàng", path: "/" }, //sua path
+          { label: "Yêu cầu đổi trả/hoàn tiền" },
+        ]}
+      />
+    ) },
+  { path: "/forgot-password", component: ForgotPasswordStep1, layout: DefaultLayout },
+  { path: "/recover-password", component: ForgotPasswordStep2, layout: DefaultLayout },
+  { path: "/login", component: Login},
+  { path: "/registration", component: Registration},
+
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)
   { path: "/admin", component: AdminHome, layout: AdminLayout },
@@ -147,20 +173,57 @@ const publicRoutes = [
   },
 
   // Quản lý đơn hàng
-  { path: "/admin/all-orders", component: OrderManagement, layout: AdminLayout },
+  { path: "/admin/all-orders", component: OrderManagement, layout: (props) => (
+  <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Quản lý đơn hàng", path: "/admin" },
+      { label: "Tất cả đơn hàng", path: "/admin/all-orders" },
+    ]}
+  />
+  )},
+
   {
     path: "/admin/cancelled-orders",
     component: CancelledOrders,
-    layout: AdminLayout,
+    layout: (props) => (
+  <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Quản lý đơn hàng", path: "/admin" },
+      { label: "Đơn hủy", path: "/admin/cancelled-orders" },
+    ]}
+  />
+  )
   },
 
   // Quản lý sản phẩm
   {
     path: "/admin/all-products",
     component: AllProducts,
-    layout: AdminLayout,
+    layout: (props) => (
+  <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Quản lý sản phẩm", path: "/admin" },
+      { label: "Tất cả sản phẩm", path: "/admin/all-products" },
+    ]}
+  />
+  )
   },
-  { path: "/admin/add-product", component: AddProducts, layout: AdminLayout },
+  { path: "/admin/add-product", component: AddProducts, layout: (props) => (
+  <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Quản lý sản phẩm", path: "/admin" },
+      { label: "Thêm sản phẩm", path: "/admin/add-products" },
+    ]}
+  />
+  ) },
 
   // Chăm sóc khách hàng
   {
@@ -175,10 +238,28 @@ const publicRoutes = [
   },
 
   // Tài chính
-  { path: "/admin/revenue", component: RevenuePage, layout: AdminLayout },
-  { path: "/admin/balance", component: BalancePage, layout: AdminLayout },
+  { path: "/admin/revenue", component: RevenuePage, layout: (props) => (
+  <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Tài chính", path: "/admin" },
+      { label: "Doanh thu", path: "/admin/revenue" },
+    ]}
+  />
+  ) },
+  { path: "/admin/balance", component: BalancePage, layout: (props) => (
+  <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Tài chính", path: "/admin" },
+      { label: "Số dư tài khoản", path: "/admin/balance" },
+    ]}
+  />
+  ) },
 
-  //Khuyễn Mãi
+  //Khuyến Mãi
   { path: "/admin/add-promotion", component: AddPromotionPage, layout: AdminLayout },
   { path: "/admin/manage-promotion", component: PromotionListPage, layout: AdminLayout },
   

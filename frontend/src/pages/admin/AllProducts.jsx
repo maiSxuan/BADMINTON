@@ -3,7 +3,11 @@
 import { useState } from "react"
 import "./AllProducts.css"
 import AddProducts from "./AddProducts"
+import { useNavigate } from "react-router-dom";
+
 const AllProducts = () => {
+  const navigate = useNavigate(); 
+
   const [searchTerm, setSearchTerm] = useState("")
   const [filterValue, setFilterValue] = useState("Tất cả")
   const [selectedProduct, setSelectedProduct] = useState(null)
@@ -74,13 +78,16 @@ const AllProducts = () => {
     const matchesFilter = filterValue === "Tất cả" || product.category === filterValue
     return matchesSearch && matchesFilter
   })
+  const handleAdd = () => {
+    navigate("/admin/add-product"); 
+  };
 
   return (
     <div className="product-management">
       {currentPage === "list" && (
         <>
 
-              <button className="add-product-btn" onClick={() => setCurrentPage("add")}>
+              <button className="add-product-btn" onClick={handleAdd}>
                 <span>+</span> Thêm sản phẩm mới
               </button>
             
@@ -118,7 +125,7 @@ const AllProducts = () => {
             </div>
           </div>
 
-          <div className="table-container">
+          <div className="products-table-container">
             <table className="products-table">
               <thead>
                 <tr>
@@ -229,11 +236,8 @@ const AllProducts = () => {
           )}
         </>
       )}
-      {currentPage === "add" && <AddProducts onBack={() => setCurrentPage("list")} />}
     </div>
   )
 }
-
-
 
 export default AllProducts

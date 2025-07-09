@@ -1,6 +1,8 @@
-import { useState } from "react"
-import "./Registration.css"
-import Logo from "../../components/common/logo"
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./Registration.css";
+import Logo from "../../components/common/logo";
 
 const Registration = () => {
   const [formData, setFormData] = useState({
@@ -10,16 +12,26 @@ const Registration = () => {
     email: "",
     password: "",
     confirmPassword: "",
-  })
+  });
 
   const [errors, setErrors] = useState({});
+  // const [errors, setServerError] = useState("");
+  const navigate = useNavigate();
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
-    }))
-  }
+    }));
+
+    if (errors[field]) {
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
+  };
 
   const validate = () => {
     const newErrors = {};
@@ -27,7 +39,7 @@ const Registration = () => {
     const phoneRegex = /^(0|\+84)[0-9]{9}$/;
 
     if (!formData.fullName.trim())
-      newErrors.fullName = "Họ và tên không được để trống";
+      newErrors.fullName = "Tên đăng nhập không được để trống";
     if (!formData.phone.trim())
       newErrors.phone = "Số điện thoại không được để trống";
     else if (!phoneRegex.test(formData.phone))
@@ -36,8 +48,7 @@ const Registration = () => {
     if (!formData.address.trim())
       newErrors.address = "Địa chỉ không được để trống";
 
-    if (!formData.email.trim())
-      newErrors.email = "Email không được để trống";
+    if (!formData.email.trim()) newErrors.email = "Email không được để trống";
     else if (!emailRegex.test(formData.email))
       newErrors.email = "Email không hợp lệ";
 
@@ -47,131 +58,165 @@ const Registration = () => {
       newErrors.confirmPassword = "Mật khẩu xác nhận không chính xác";
 
     return newErrors;
-  }
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const validateErrors = validate();
     setErrors(validateErrors);
-    
-    if (Object.keys(validateErrors).length === 0)
-      console.log("Form submitted:", formData)
-  }
 
-  const ErrorText = ({ message }) => (
-    <span style={{ color: "red", fontSize: "0.875rem" }}>{ message }</span>
-  );
+    if (Object.keys(validateErrors).length === 0) {
+      try {
+        const response = await axios.post(
+          "http://localhost:4000/api/auth/register",
+          {
+            fullName: formData.fullName,
+            phone: formData.phone,
+            address: formData.address,
+            email: formData.email,
+            password: formData.password,
+          }
+        );
+
+        localStorage.setItem("token", response.data.token);
+        alert("Đăng ký thành công!");
+        navigate("/login");
+      } catch (error) {
+        const field = error.response?.data?.field;
+        const message = error.response?.data?.message || "Đăng ký thất bại";
+
+        // Nếu có field cụ thể từ server, gán lỗi vào đúng trường
+        if (field) {
+          setErrors((prev) => ({ ...prev, [field]: message }));
+        } else {
+          // Trường hợp lỗi không rõ, gán lỗi toàn cục (ví dụ server hỏng)
+          alert(message);
+        }
+      }
+    }
+  };
 
   return (
-    <div className="container">
-      <div className="main-content">
-        {/* Logo Section */}
-        <div className="logo-section">
-          <div className="logo-container">
-            <Logo size="medium" />
-          </div>
+    <div className="registration-container">
+      <div className="registration-content">
+        <div className="registration-logo">
+          <Logo size="medium" />
         </div>
 
-        {/* Registration Form */}
-        <div className="form-section">
-          <div className="form-container">
-            <h1 className="form-title">ĐĂNG KÝ</h1>
+        <div className="registration-form-container">
+          <h1 className="registration-title">ĐĂNG KÝ</h1>
 
-            <form onSubmit={handleSubmit} className="form">
-              <div className="form-group">
-                <label htmlFor="fullName" className="form-label">
-                  Họ và tên
-                </label>
+          <form onSubmit={handleSubmit} className="registration-form">
+            <div className="form-group">
+              <div
+                className={`input-wrapper ${errors.fullName ? "input-error" : ""}`}
+              >
                 <input
-                  id="fullName"
                   type="text"
+                  placeholder="Tên đăng nhập"
                   value={formData.fullName}
                   onChange={(e) => handleInputChange("fullName", e.target.value)}
                   className="form-input"
                 />
-                {errors.fullName && <ErrorText message={errors.fullName} />}
+                {errors.fullName && (
+                  <span className="input-error-text">{errors.fullName}</span>
+                )}
               </div>
+            </div>
 
-              <div className="form-group">
-                <label htmlFor="phone" className="form-label">
-                  Số điện thoại
-                </label>
+            <div className="form-group">
+              <div
+                className={`input-wrapper ${errors.phone ? "input-error" : ""}`}
+              >
                 <input
-                  id="phone"
                   type="tel"
+                  placeholder="Số điện thoại"
                   value={formData.phone}
                   onChange={(e) => handleInputChange("phone", e.target.value)}
                   className="form-input"
                 />
-                {errors.phone && <ErrorText message={errors.phone} />}
+                {errors.phone && (
+                  <span className="input-error-text">{errors.phone}</span>
+                )}
               </div>
-
-              <div className="form-group">
-                <label htmlFor="address" className="form-label">
-                  Địa chỉ
-                </label>
+            </div>
+            
+            <div className="form-group">
+              <div
+                className={`input-wrapper ${errors.address ? "input-error" : ""}`}
+              >
                 <input
-                  id="address"
                   type="text"
+                  placeholder="Địa chỉ"
                   value={formData.address}
                   onChange={(e) => handleInputChange("address", e.target.value)}
                   className="form-input"
                 />
-                {errors.address && <ErrorText message={errors.address} />}
+                {errors.address && (
+                  <span className="input-error-text">{errors.address}</span>
+                )}
               </div>
+            </div>
 
-              <div className="form-group">
-                <label htmlFor="email" className="form-label">
-                  Email
-                </label>
+            <div className="form-group">
+              <div
+                className={`input-wrapper ${errors.email ? "input-error" : ""}`}
+              >
                 <input
-                  id="email"
                   type="email"
+                  placeholder="Email"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
                   className="form-input"
                 />
-                {errors.email && <ErrorText message={errors.email} />}
+                {errors.email && (
+                  <span className="input-error-text">{errors.email}</span>
+                )}
               </div>
+            </div>
 
-              <div className="form-group">
-                <label htmlFor="password" className="form-label">
-                  Nhập mật khẩu
-                </label>
+            <div className="form-group">
+              <div
+                className={`input-wrapper ${errors.password ? "input-error" : ""}`}
+              >
                 <input
-                  id="password"
                   type="password"
+                  placeholder="Nhập mật khẩu"
                   value={formData.password}
                   onChange={(e) => handleInputChange("password", e.target.value)}
                   className="form-input"
                 />
-                {errors.password && <ErrorText message={errors.password} />}
+                {errors.password && (
+                  <span className="input-error-text">{errors.password}</span>
+                )}
               </div>
+            </div>
 
-              <div className="form-group">
-                <label htmlFor="confirmPassword" className="form-label">
-                  Xác nhận mật khẩu
-                </label>
+            <div className="form-group">
+              <div
+                className={`input-wrapper ${errors.confirmPassword ? "input-error" : ""}`}
+              >
                 <input
-                  id="confirmPassword"
                   type="password"
+                  placeholder="Xác nhận mật khẩu"
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                   className="form-input"
                 />
-                {errors.confirmPassword && <ErrorText message={errors.confirmPassword} />}
+                {errors.confirmPassword && (
+                  <span className="input-error-text">{errors.confirmPassword}</span>
+                )}
               </div>
+            </div>
 
-              <button type="submit" className="submit-button">
-                ĐĂNG KÝ
-              </button>
-            </form>
-          </div>
+            <button type="submit" className="submit-button">
+              ĐĂNG KÝ
+            </button>
+          </form>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Registration
+export default Registration;

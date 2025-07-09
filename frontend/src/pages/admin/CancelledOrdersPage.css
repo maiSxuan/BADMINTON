@@ -2,7 +2,7 @@
   padding: 20px;
   background-color: #f8f9fa;
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: Montserrat, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .page-title {
@@ -108,8 +108,8 @@
   background-color: #f3f4f6;
 }
 
-.table-container {
-  background-color: #FFF2FB;
+.cancelled-container {
+  background-color: rgb(255, 255, 255);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -132,14 +132,14 @@
 
 .data-table td {
   padding: 16px;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid #ffffff;
   font-size: 14px;
   color: #374151;
   vertical-align: top;
 }
 
 .data-table tbody tr:hover {
-  background-color: #f9fafb;
+  background-color: #ffffff;
 }
 
 .id-cell {

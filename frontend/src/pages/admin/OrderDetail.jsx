@@ -1,9 +1,10 @@
-"use client"
+"use client";
 
-import "./OrderDetail.css"
+import React from "react";
+import "./OrderDetail.css";
 
 const OrderDetail = ({ order, onBack }) => {
-  if (!order) return null
+  if (!order) return null;
 
   return (
     <div className="order-detail-overlay">
@@ -69,7 +70,7 @@ const OrderDetail = ({ order, onBack }) => {
 
         {/* Customer Information */}
         <div className="customer-info-section">
-          <h3>Tin nhân khách hàng</h3>
+          <h3>Thông tin khách hàng</h3>
           <div className="customer-placeholder">
             <p>Thông tin khách hàng sẽ được hiển thị ở đây</p>
           </div>
@@ -84,7 +85,69 @@ const OrderDetail = ({ order, onBack }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default OrderDetail
+const UpdateOrderModal = ({ visible, order, onClose, onSave }) => {
+  const [orderStatus, setOrderStatus] = React.useState("");
+  const [shippingProvider, setShippingProvider] = React.useState("");
+
+  const handleSave = () => {
+    onSave({
+      id: order.id,
+      status: orderStatus,
+      delivery: shippingProvider,
+    });
+    onClose();
+  };
+
+  if (!visible) return null;
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h3>Cập nhật trạng thái giao hàng</h3>
+
+        <div className="section">
+          <label>Trạng thái đơn hàng</label>
+          <select
+            value={orderStatus}
+            onChange={(e) => setOrderStatus(e.target.value)}
+          >
+            <option value="">-- Chọn trạng thái --</option>
+            <option>Chờ lấy hàng</option>
+            <option>Đã lấy hàng</option>
+            <option>Đang vận chuyển</option>
+            <option>Đang giao</option>
+            <option>Giao thành công</option>
+            <option>Giao không thành công</option>
+          </select>
+        </div>
+
+        <div className="section">
+          <label>Chọn tên đơn vị giao hàng</label>
+          <select
+            value={shippingProvider}
+            onChange={(e) => setShippingProvider(e.target.value)}
+          >
+            <option value="">-- Chọn đơn vị --</option>
+            <option>Giao hàng tiêu chuẩn - J&T Express</option>
+            <option>Giao hàng tiết kiệm - VN Post</option>
+            <option>Giao hàng siêu tốc - Ahamove</option>
+          </select>
+        </div>
+
+        <div className="modal-buttons">
+          <button className="save-btn" onClick={handleSave}>
+            Lưu
+          </button>
+          <button className="modal-close-btn" onClick={onClose}>
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export { OrderDetail, UpdateOrderModal };
