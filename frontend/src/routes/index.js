@@ -153,6 +153,7 @@ const publicRoutes = [
   { path: "/recover-password", component: ForgotPasswordStep2, layout: DefaultLayout },
   { path: "/login", component: Login},
   { path: "/registration", component: Registration},
+  
 
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)

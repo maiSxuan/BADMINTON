@@ -1,59 +1,46 @@
-/* Container grid layout */
 .registration-container {
   width: 100%;
   min-height: 100vh;
-  background-color: #fdf6fb;
-}
-.refund-container {
-  height: 100vh;
+  background-color: #ffe3f8;
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 40px 20px;
+  justify-content: center;
+  padding: 40px;
   box-sizing: border-box;
 }
 
 .registration-content {
   display: flex;
-  flex-direction: row;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  overflow: hidden;
-  max-width: 1000px;
   width: 100%;
+  max-width: 1080px;
+  height: 100%;
+  background: transparent;
 }
 
-/* Logo section */
 .registration-logo {
-  background: #fceafd;
+  width: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 50%;
   padding: 40px;
 }
 
-.registration-logo img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Form section */
 .registration-form-container {
   width: 50%;
-  background: #fef3fb;
+  background-color: #fef3fb;
   padding: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  border-radius: 25px;
+  border: 4px solid #000;
 }
 
 .registration-title {
-  font-size: 32px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 30px;
+  font-size: 36px;
+  font-weight: 900;
+  color: #000;
+  margin-bottom: 32px;
   text-align: center;
 }
 
@@ -62,84 +49,66 @@
   flex-direction: column;
 }
 
-.form-group {
-  margin-bottom: 16px;
+.registration-form-group {
+  margin-bottom: 20px;
 }
 
-.form-input {
+.registration-form-input {
   width: 100%;
-  height: 48px; /* hoặc 50px nếu bạn muốn to hơn */
-  padding: 0 20px; /* bỏ padding top/bottom */
+  height: 48px;
+  padding: 0 20px;
   border: 2px solid #d46db3;
-  border-radius: 25px;
+  border-radius: 20px;
   font-size: 16px;
-  line-height: 48px; /* bằng chiều cao -> giúp text nằm giữa */
   background-color: #fff;
   color: #333;
   box-sizing: border-box;
 }
 
-
-.form-input::placeholder {
+.registration-form-input::placeholder {
   color: #999;
-  opacity: 1;
-  line-height: inherit;
 }
 
-
-.form-input:focus {
-  border-color: #9e3f9f;
-}
-
-.submit-button {
+.registration-submit-button {
   margin-top: 20px;
   background-color: #fff;
   color: #000;
   border: 2px solid #d46db3;
-  padding: 12px;
   border-radius: 25px;
+  padding: 12px;
   font-size: 18px;
+  font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-weight: bold;
 }
 
-.submit-button:hover {
+.registration-submit-button:hover {
   background-color: #d46db3;
   color: #fff;
 }
 
-.input-error {
-  color: red;
-  border-color: red;
-}
-
-.input-error::placeholder {
-  color: red;
-}
-
-.input-wrapper {
+.registration-input-wrapper {
   position: relative;
   width: 100%;
 }
 
-.input-wrapper .form-input {
-  width: 100%;
-  padding: 12px 20px 32px 20px; /* thêm padding bottom để đủ chỗ cho lỗi */
-  border: 2px solid #d46db3;
-  border-radius: 25px;
-  font-size: 16px;
-  background-color: #fff;
-  color: #333;
-  box-sizing: border-box;
-  outline: none;
-}
-
-.input-wrapper.input-error .form-input {
+.registration-input-error {
   border-color: red;
 }
 
+.registration-input-error::placeholder {
+  color: red;
+}
+
 .input-error-text {
+  font-size: 13px;
+  color: red;
+  margin-top: 6px;
+  padding-left: 4px;
+  transition: all 0.3s ease;
+}
+
+/* .input-error-text {
   position: absolute;
   bottom: 6px;
   left: 20px;
@@ -148,4 +117,4 @@
   background: #fff;
   padding: 0 4px;
   pointer-events: none;
-}
+} */

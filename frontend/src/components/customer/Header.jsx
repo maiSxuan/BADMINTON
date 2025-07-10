@@ -107,6 +107,7 @@
 import { NavLink } from "react-router-dom";
 import "./Header.css";
 import DropdownMenu from "../customer/DropdownMenu";
+import DropdownHeader from "./DropdownHeader";
 
 // Import các component/ảnh
 import Logo from "../common/logo";
@@ -116,6 +117,23 @@ import searchIcon from "../../assets/icons/Info.svg";
 import search from "../../assets/icons/Search.svg";
 
 const Header = () => {
+  const isLoggedIn = !!localStorage.getItem("token");
+
+  const accountMenu = isLoggedIn
+    ? [
+        { label: "Tài khoản của tôi", to: "/account/profile" },
+        { label: "Đăng xuất", to: "/logout" },
+      ]
+    : [
+        { label: "Đăng nhập", to: "/login" },
+        { label: "Đăng ký", to: "/registration" },
+      ];
+
+  const orderTrackingMenu = [
+    { label: "Theo dõi đơn hàng", to: "/order-tracking" },
+    { label: "Lịch sử mua hàng", to: "/order-history" },
+  ];
+
   return (
     <header className="site-header">
       <div className="main-header">
@@ -147,15 +165,26 @@ const Header = () => {
         </div>
 
         <div className="right-group header-group user-actions-group">
-          <NavLink to="/order-tracking" className="action-item">
+          {/* <NavLink to="/order-tracking" className="action-item">
             <img src={searchIcon} alt="Tra cứu đơn hàng" />
             <span>TRA CỨU</span>
-          </NavLink>
+          </NavLink> */}
+          <DropdownHeader 
+            icon={searchIcon}
+            label="TRA CỨU"
+            menuItems={orderTrackingMenu}
+          />
 
-          <NavLink to="/account" className="action-item">
+          {/* <NavLink to="/account" className="action-item">
             <img src={userIcon} alt="Tài khoản" />
             <span>TÀI KHOẢN</span>
-          </NavLink>
+          </NavLink> */}
+
+          <DropdownHeader 
+            icon={userIcon}
+            label="TÀI KHOẢN"
+            menuItems={accountMenu}
+          />
 
           <NavLink to="/cart" className="action-item cart">
             <img src={cartIcon} alt="Giỏ hàng" />

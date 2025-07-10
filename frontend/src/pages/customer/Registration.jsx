@@ -48,7 +48,8 @@ const Registration = () => {
     if (!formData.address.trim())
       newErrors.address = "Địa chỉ không được để trống";
 
-    if (!formData.email.trim()) newErrors.email = "Email không được để trống";
+    if (!formData.email.trim())
+      newErrors.email = "Email không được để trống";
     else if (!emailRegex.test(formData.email))
       newErrors.email = "Email không hợp lệ";
 
@@ -107,16 +108,15 @@ const Registration = () => {
           <h1 className="registration-title">ĐĂNG KÝ</h1>
 
           <form onSubmit={handleSubmit} className="registration-form">
-            <div className="form-group">
-              <div
-                className={`input-wrapper ${errors.fullName ? "input-error" : ""}`}
-              >
+            <div className="registration-form-group">
+              <div className={`registration-input-wrapper ${errors.fullName ? "registration-input-error" : ""}`}>
                 <input
                   type="text"
+                  id="fullName"
                   placeholder="Tên đăng nhập"
                   value={formData.fullName}
                   onChange={(e) => handleInputChange("fullName", e.target.value)}
-                  className="form-input"
+                  className="registration-form-input"
                 />
                 {errors.fullName && (
                   <span className="input-error-text">{errors.fullName}</span>
@@ -124,33 +124,31 @@ const Registration = () => {
               </div>
             </div>
 
-            <div className="form-group">
-              <div
-                className={`input-wrapper ${errors.phone ? "input-error" : ""}`}
-              >
+            <div className="registration-form-group">
+              <div className={`registration-input-wrapper ${errors.phone ? "registration-input-error" : ""}`} >
                 <input
                   type="tel"
+                  id="phone"
                   placeholder="Số điện thoại"
                   value={formData.phone}
                   onChange={(e) => handleInputChange("phone", e.target.value)}
-                  className="form-input"
+                  className="registration-form-input"
                 />
                 {errors.phone && (
                   <span className="input-error-text">{errors.phone}</span>
                 )}
               </div>
             </div>
-            
-            <div className="form-group">
-              <div
-                className={`input-wrapper ${errors.address ? "input-error" : ""}`}
-              >
+
+            <div className="registration-form-group">
+              <div className={`registration-input-wrapper ${errors.address ? "registration-input-error" : ""}`}>
                 <input
                   type="text"
+                  id="address"
                   placeholder="Địa chỉ"
                   value={formData.address}
                   onChange={(e) => handleInputChange("address", e.target.value)}
-                  className="form-input"
+                  className="registration-form-input"
                 />
                 {errors.address && (
                   <span className="input-error-text">{errors.address}</span>
@@ -158,16 +156,15 @@ const Registration = () => {
               </div>
             </div>
 
-            <div className="form-group">
-              <div
-                className={`input-wrapper ${errors.email ? "input-error" : ""}`}
-              >
+            <div className="registration-form-group">
+              <div className={`registration-input-wrapper ${errors.email ? "registration-input-error" : ""}`}>
                 <input
                   type="email"
+                  id="email"
                   placeholder="Email"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  className="form-input"
+                  className="registration-form-input"
                 />
                 {errors.email && (
                   <span className="input-error-text">{errors.email}</span>
@@ -175,16 +172,15 @@ const Registration = () => {
               </div>
             </div>
 
-            <div className="form-group">
-              <div
-                className={`input-wrapper ${errors.password ? "input-error" : ""}`}
-              >
+            <div className="registration-form-group">
+              <div className={`registration-input-wrapper ${errors.password ? "registration-input-error" : ""}`}>
                 <input
                   type="password"
+                  id="password"
                   placeholder="Nhập mật khẩu"
                   value={formData.password}
                   onChange={(e) => handleInputChange("password", e.target.value)}
-                  className="form-input"
+                  className="registration-form-input"
                 />
                 {errors.password && (
                   <span className="input-error-text">{errors.password}</span>
@@ -192,16 +188,15 @@ const Registration = () => {
               </div>
             </div>
 
-            <div className="form-group">
-              <div
-                className={`input-wrapper ${errors.confirmPassword ? "input-error" : ""}`}
-              >
+            <div className="registration-form-group">
+              <div className={`registration-input-wrapper ${errors.confirmPassword ? "registration-input-error" : ""}`}>
                 <input
                   type="password"
+                  id="confirmPassword"
                   placeholder="Xác nhận mật khẩu"
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                  className="form-input"
+                  className="registration-form-input"
                 />
                 {errors.confirmPassword && (
                   <span className="input-error-text">{errors.confirmPassword}</span>
@@ -209,11 +204,12 @@ const Registration = () => {
               </div>
             </div>
 
-            <button type="submit" className="submit-button">
+            <button type="submit" className="registration-submit-button">
               ĐĂNG KÝ
             </button>
           </form>
         </div>
+
       </div>
     </div>
   );

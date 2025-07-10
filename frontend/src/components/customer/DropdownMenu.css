@@ -22,10 +22,10 @@
 .dropdown-menu {
   position: absolute;
   top: 100%;
-  left: 50%;
+  left: 80%;
   transform: translateX(-300px);
   background-color: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   border-radius: 0 0 8px 8px;
   min-width: 1250px;
   max-height: 400px;

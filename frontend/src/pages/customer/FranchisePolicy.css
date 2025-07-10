@@ -96,7 +96,7 @@ ul {
   margin-right: auto;
 }
 
-.title {
+.policy-title {
   font-size: 30px;
   font-weight: 700;
   color: #1f2937;
@@ -104,11 +104,11 @@ ul {
   text-align: center;
 }
 
-.section {
+.policy-section {
   margin: 0 50px 40px 50px;
 }
 
-.section-title {
+.policy-section-title {
   font-size: 24px;
   font-weight: 600;
   color: #6b21a8;
@@ -116,18 +116,18 @@ ul {
   text-align: left;
 }
 
-.section ul {
+.policy-section ul {
   padding-left: 20px;
   color: #000;
   line-height: 28px;
 }
 
-.section li {
+.policy-section li {
   margin-bottom: 12px;
   list-style-type: disc;
 }
 
-.section-image {
+.policy-section-image {
   display: block;
   max-width: 100%;
   height: auto;
@@ -143,21 +143,20 @@ ul {
   vertical-align: middle;
 }
 
-.intro-link,
-.contact-link {
+.policy-contact-link {
   color: #e93030;
   text-decoration: none;
 }
 
-.intro-title {
+/* .intro-title {
   color: #374151;
   line-height: 28px;
   padding-left: 20px;
-}
+} */
 
-.intro-link li,
+/* .intro-link li,
 .intro-link a {
   color: #374151;
   margin-bottom: 12px;
   line-height: 25.6px;
-}
+} */

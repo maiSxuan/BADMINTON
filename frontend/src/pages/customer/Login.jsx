@@ -157,57 +157,57 @@ export default function Login() {
 
   return (
     <div className="login-container">
-      <div className="logo-section">
+      <div className="login-logo-section">
         <Logo size="medium" />
       </div>
 
       <form className="login-form" onSubmit={handleSubmit}>
-        <div className="input-group">
+        <div className="login-input-group">
           <input
             type="text"
             placeholder="Email/SĐT"
             value={emailOrPhone}
             onChange={(e) => setEmailOrPhone(e.target.value)}
-            className="form-input"
+            className="login-form-input"
             required
             aria-label="Email hoặc Số điện thoại"
           />
         </div>
 
-        <div className="input-group">
+        <div className="login-input-group">
           <input
             type="password"
             placeholder="Mật khẩu"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="form-input"
+            className="login-form-input"
             required
             aria-label="Mật khẩu"
           />
         </div>
 
-        {error && <div className="form-error">{error}</div>}
+        {error && <div className="login-form-error">{error}</div>}
 
-        <div className="form-options">
-          <div className="checkbox-group">
+        <div className="login-form-options">
+          <div className="login-checkbox-group">
             <input
               type="checkbox"
               id="remember"
               checked={rememberPassword}
               onChange={(e) => setRememberPassword(e.target.checked)}
-              className="checkbox"
+              className="login-checkbox"
               aria-label="Nhớ mật khẩu"
             />
-            <label htmlFor="remember" className="checkbox-label">
+            <label htmlFor="remember" className="login-checkbox-label">
               Nhớ mật khẩu
             </label>
           </div>
-          <Link to="/forgot-password" className="forgot-password-link">
+          <Link to="/forgot-password" className="login-forgot-password-link">
             Quên mật khẩu?
           </Link>
         </div>
 
-        <div className="button-group">
+        <div className="login-button-group">
           <button type="submit" className="login-button">
             ĐĂNG NHẬP
           </button>
