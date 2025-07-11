@@ -99,118 +99,148 @@ const Registration = () => {
 
   return (
     <div className="registration-container">
-      <div className="registration-content">
-        <div className="registration-logo">
-          <Logo size="medium" />
+      {/* <div className="refund-container"> */}
+        <div className="registration-content">
+          <div className="registration-logo">
+            <Logo size="medium" />
+          </div>
+
+          <div className="registration-form-container">
+            <h1 className="registration-title">ĐĂNG KÝ</h1>
+
+            <form onSubmit={handleSubmit} className="registration-form">
+              <div className="registration-form-group">
+                <div
+                  className={`registration-input-wrapper ${
+                    errors.fullName ? "registration-input-error" : ""
+                  }`}
+                >
+                  <input
+                    type="text"
+                    placeholder="Tên đăng nhập"
+                    value={formData.fullName}
+                    onChange={(e) =>
+                      handleInputChange("fullName", e.target.value)
+                    }
+                    className="registration-form-input"
+                  />
+                  {errors.fullName && (
+                    <span className="input-error-text">{errors.fullName}</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="registration-form-group">
+                <div
+                  className={`registration-input-wrapper ${
+                    errors.phone ? "registration-input-error" : ""
+                  }`}
+                >
+                  <input
+                    type="tel"
+                    placeholder="Số điện thoại"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    className="registration-form-input"
+                  />
+                  {errors.phone && (
+                    <span className="input-error-text">{errors.phone}</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="registration-form-group">
+                <div
+                  className={`registration-input-wrapper ${
+                    errors.address ? "registration-input-error" : ""
+                  }`}
+                >
+                  <input
+                    type="text"
+                    placeholder="Địa chỉ"
+                    value={formData.address}
+                    onChange={(e) =>
+                      handleInputChange("address", e.target.value)
+                    }
+                    className="registration-form-input"
+                  />
+                  {errors.address && (
+                    <span className="input-error-text">{errors.address}</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="registration-form-group">
+                <div
+                  className={`registration-input-wrapper ${
+                    errors.email ? "registration-input-error" : ""
+                  }`}
+                >
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    className="registration-form-input"
+                  />
+                  {errors.email && (
+                    <span className="input-error-text">{errors.email}</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="registration-form-group">
+                <div
+                  className={`registration-input-wrapper ${
+                    errors.password ? "registration-input-error" : ""
+                  }`}
+                >
+                  <input
+                    type="password"
+                    placeholder="Nhập mật khẩu"
+                    value={formData.password}
+                    onChange={(e) =>
+                      handleInputChange("password", e.target.value)
+                    }
+                    className="registration-form-input"
+                  />
+                  {errors.password && (
+                    <span className="input-error-text">{errors.password}</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="registration-form-group">
+                <div
+                  className={`registration-input-wrapper ${
+                    errors.confirmPassword ? "registration-input-error" : ""
+                  }`}
+                >
+                  <input
+                    type="password"
+                    placeholder="Xác nhận mật khẩu"
+                    value={formData.confirmPassword}
+                    onChange={(e) =>
+                      handleInputChange("confirmPassword", e.target.value)
+                    }
+                    className="registration-form-input"
+                  />
+                  {errors.confirmPassword && (
+                    <span className="input-error-text">
+                      {errors.confirmPassword}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <button type="submit" className="registration-submit-button">
+                ĐĂNG KÝ
+              </button>
+            </form>
+          </div>
         </div>
 
-        <div className="registration-form-container">
-          <h1 className="registration-title">ĐĂNG KÝ</h1>
-
-          <form onSubmit={handleSubmit} className="registration-form">
-            <div className="registration-form-group">
-              <div className={`registration-input-wrapper ${errors.fullName ? "registration-input-error" : ""}`}>
-                <input
-                  type="text"
-                  id="fullName"
-                  placeholder="Tên đăng nhập"
-                  value={formData.fullName}
-                  onChange={(e) => handleInputChange("fullName", e.target.value)}
-                  className="registration-form-input"
-                />
-                {errors.fullName && (
-                  <span className="input-error-text">{errors.fullName}</span>
-                )}
-              </div>
-            </div>
-
-            <div className="registration-form-group">
-              <div className={`registration-input-wrapper ${errors.phone ? "registration-input-error" : ""}`} >
-                <input
-                  type="tel"
-                  id="phone"
-                  placeholder="Số điện thoại"
-                  value={formData.phone}
-                  onChange={(e) => handleInputChange("phone", e.target.value)}
-                  className="registration-form-input"
-                />
-                {errors.phone && (
-                  <span className="input-error-text">{errors.phone}</span>
-                )}
-              </div>
-            </div>
-
-            <div className="registration-form-group">
-              <div className={`registration-input-wrapper ${errors.address ? "registration-input-error" : ""}`}>
-                <input
-                  type="text"
-                  id="address"
-                  placeholder="Địa chỉ"
-                  value={formData.address}
-                  onChange={(e) => handleInputChange("address", e.target.value)}
-                  className="registration-form-input"
-                />
-                {errors.address && (
-                  <span className="input-error-text">{errors.address}</span>
-                )}
-              </div>
-            </div>
-
-            <div className="registration-form-group">
-              <div className={`registration-input-wrapper ${errors.email ? "registration-input-error" : ""}`}>
-                <input
-                  type="email"
-                  id="email"
-                  placeholder="Email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  className="registration-form-input"
-                />
-                {errors.email && (
-                  <span className="input-error-text">{errors.email}</span>
-                )}
-              </div>
-            </div>
-
-            <div className="registration-form-group">
-              <div className={`registration-input-wrapper ${errors.password ? "registration-input-error" : ""}`}>
-                <input
-                  type="password"
-                  id="password"
-                  placeholder="Nhập mật khẩu"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange("password", e.target.value)}
-                  className="registration-form-input"
-                />
-                {errors.password && (
-                  <span className="input-error-text">{errors.password}</span>
-                )}
-              </div>
-            </div>
-
-            <div className="registration-form-group">
-              <div className={`registration-input-wrapper ${errors.confirmPassword ? "registration-input-error" : ""}`}>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  placeholder="Xác nhận mật khẩu"
-                  value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                  className="registration-form-input"
-                />
-                {errors.confirmPassword && (
-                  <span className="input-error-text">{errors.confirmPassword}</span>
-                )}
-              </div>
-            </div>
-
-            <button type="submit" className="registration-submit-button">
-              ĐĂNG KÝ
-            </button>
-          </form>
-        </div>
-
-      </div>
+      {/* </div> */}
     </div>
   );
 };

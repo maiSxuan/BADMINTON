@@ -9,6 +9,16 @@
   box-sizing: border-box;
 }
 
+/* .refund-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  box-sizing: border-box;
+} */
+
 .registration-content {
   display: flex;
   width: 100%;
@@ -108,13 +118,3 @@
   transition: all 0.3s ease;
 }
 
-/* .input-error-text {
-  position: absolute;
-  bottom: 6px;
-  left: 20px;
-  font-size: 13px;
-  color: red;
-  background: #fff;
-  padding: 0 4px;
-  pointer-events: none;
-} */
