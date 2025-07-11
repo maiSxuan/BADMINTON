@@ -55,7 +55,6 @@ const OrderManagement = () => {
       <head>
         <title>Phiếu Đóng Gói - ${orderToPrint.id}</title>
         <style>
-          body { font-family: Montserrat, Arial, sans-serif; padding: 20px; }
           .header { text-align: center; margin-bottom: 30px; }
           .order-info { margin-bottom: 20px; }
           .order-info h3 { margin-bottom: 10px; color: #333; }
