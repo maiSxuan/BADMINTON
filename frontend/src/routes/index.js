@@ -34,6 +34,7 @@ import ForgotPasswordStep2 from "../pages/customer/ForgotPassword2";
 import Login from "../pages/customer/Login";
 import Registration from "../pages/customer/Registration";
 import ProfilePage from "../pages/customer/ProfilePage";
+import ShippingInfo from "../pages/customer/ShippingInfo";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = BaloPage;
 const FranchisePage = FranchisePolicy;
@@ -153,6 +154,7 @@ const publicRoutes = [
   { path: "/recover-password", component: ForgotPasswordStep2, layout: DefaultLayout },
   { path: "/login", component: Login},
   { path: "/registration", component: Registration},
+  { path: "/registration-shipping-info", component: ShippingInfo, layout: DefaultLayout},
   
 
   // --- Admin Routes với AdminLayout ---
