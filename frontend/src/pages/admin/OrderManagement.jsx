@@ -424,7 +424,7 @@ const OrderManagement = () => {
                           {order.id}
                         </div>
                         <div className="product-info">
-                          <div className="product-image"></div>
+                          <div className="product-images" ></div>
                           <span>{order.product}</span>
                           <span className="quantity">x{order.quantity}</span>
                         </div>

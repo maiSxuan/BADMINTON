@@ -197,9 +197,9 @@
   color: #6c757d;
 }
 
-.product-image {
-  width: 10px;
-  height: 10px;
+.product-images {
+  width: 60px;
+  height: 60px;
   background-color: #e9ecef;
   border-radius: 4px;
   flex-shrink: 0;
