@@ -1,21 +1,23 @@
-const Product = require ('../models/ProductModel');
-const ProductItem = require ('../models/ProductItemModel')
+const Product = require('../models/ProductModel');
+// SỬA LẠI DÒNG NÀY: DÙNG DẤU GẠCH CHÉO '/' THAY VÌ DẤU CHẤM '.'
+const ProductItem = require('../models/ProductItemModel');
 
 exports.getProductDetailsById = async (req, res) => {
   try {
-    const product = await Product.findById(req.body.id);
+    const productId = req.params.id;
+
+    const product = await Product.findOne({ _id: productId });
 
     if (!product) {
       return res.status(404).json({ message: 'Sản phẩm không tồn tại' });
     }
 
-    // Truy vấn tất cả ProductItem có product_id trùng (dùng regex nếu cần gần đúng)
-    const variants = await ProductItem.find({ product_id: { $regex: `${req.body.id}` } });
-    console.log(variants)
-    // Trả về cả hai
+    const variants = await ProductItem.find({ product_id: productId });
+
     res.status(200).json({
-      product,
-      variants
+      success: true,
+      product: product,
+      variants: variants
     });
 
   } catch (error) {

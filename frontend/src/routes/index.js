@@ -39,6 +39,7 @@ import Registration from "../pages/customer/Registration";
 import ProfilePage from "../pages/customer/ProfilePage";
 import CartPage from "../pages/customer/Cart";
 import OrderHistoryPage from "../pages/customer/OrderHistory";
+import ProductDetailPage from "../pages/customer/ProductDetail";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = ProductPage;
 const FranchisePage = FranchisePolicy;
@@ -160,10 +161,11 @@ const publicRoutes = [
   { path: "/registration", component: Registration},
     {path: "/cart", component:CartPage, layout: HeaderFooterLayout},
     {path: "/order-history", component: OrderHistoryPage, layout:HeaderFooterLayout},
+    {path: "/products/:id",component: ProductDetailPage,layout:DefaultLayout},
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)
   { path: "/admin", component: AdminHome, layout: AdminLayout },
-
+    
   // Quản lý người dùng
   { path: "/admin/user-list", component: UserListPage, layout: AdminLayout },
   {

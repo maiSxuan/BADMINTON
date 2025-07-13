@@ -18,10 +18,6 @@ router.get('/',async (req,res)=>{
         res.status(500).json ({message:err.message})
     }
 })
-//getting one
-router.get('/:id',getProduct,(req,res)=>{
-    res.json(res.product)
-})
 //create one
 router.post('/', async (req,res)=>{
     const product = new Product({

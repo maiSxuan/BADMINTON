@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './OrderHistory.css';
 
 const mockOrders = [
@@ -19,7 +20,7 @@ const mockOrders = [
     },
     {
       _id: 'ORDER001',
-      status: 'Giao hàng thành công', 
+      status: 'Hoàn thành', 
       totalPrice: 280000,
       items: [
         {
@@ -85,7 +86,7 @@ const OrderHistoryPage = () => {
     const [activeTab, setActiveTab] = useState('Tất cả');
     const [orders, setOrders] = useState([]);
     const [filteredOrders, setFilteredOrders] = useState([]);
-
+    const navigate = useNavigate();
     useEffect(() => {
         const sortedOrders = mockOrders.sort((a, b) => {
             const order = ['Chờ xác nhận', 'Hoàn thành', 'Đã hủy', 'Chờ giao hàng'];
@@ -147,7 +148,7 @@ const OrderHistoryPage = () => {
                             {order.status === 'Hoàn thành' && (
                                 <div className="review-section">
                                     <span>Đánh giá sản phẩm</span>
-                                    <button className="btn btn-red">Viết đánh giá</button>
+                                    <button className="btn btn-red">Viết đánh giá</button> 
                                 </div>
                             )}
 
@@ -164,6 +165,9 @@ const OrderHistoryPage = () => {
                                         <>
                                             <button className="btn btn-red">Mua lại</button>
                                             <button className="btn btn-gray">Xem chi tiết</button>
+                                            <button onClick={() => navigate('/return-refund')} className="btn btn-gray">
+                                                Trả hàng/hoàn tiền
+                                            </button>
                                         </>
                                     )}
                                      {order.status === 'Chờ giao hàng' && (

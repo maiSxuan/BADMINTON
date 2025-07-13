@@ -1,9 +1,7 @@
 // 1. Import đầy đủ các hook cần thiết
 import React, { useState, useRef } from 'react';
 import {ImagePlus} from 'lucide-react'
-// ===================================================================
-// COMPONENT IMAGE UPLOADER (Được định nghĩa riêng)
-// ===================================================================
+
 const ImageUploader = ({ onUploadSuccess }) => {
   const [file, setFile] = useState(null);
   const fileInputRef = useRef(null);
@@ -38,7 +36,6 @@ const ImageUploader = ({ onUploadSuccess }) => {
 
         const data = await res.json();
         
-        // Gọi callback để báo cho component cha biết đã upload thành công
         if(onUploadSuccess) {
             onUploadSuccess(data.imageUrl);
         }
@@ -50,7 +47,6 @@ const ImageUploader = ({ onUploadSuccess }) => {
     };
   };
   
-  // Dùng ref để kích hoạt input đã bị ẩn
   const handleClick = () => {
     fileInputRef.current.click();
   };
@@ -62,7 +58,7 @@ const ImageUploader = ({ onUploadSuccess }) => {
         accept=".jpg,.jpeg,.png"
         onChange={handleChange}
         ref={fileInputRef}
-        style={{ display: 'none' }} // Ẩn input bằng style
+        style={{ display: 'none' }}
       />
       <img 
         src={file ? URL.createObjectURL(file) : <ImagePlus/>} 
@@ -73,15 +69,8 @@ const ImageUploader = ({ onUploadSuccess }) => {
   );
 };
 
-
-// ===================================================================
-// COMPONENT TRANG TEST
-// ===================================================================
 const TestUploadPage = () => {
-    // State để lưu URL ảnh sau khi upload thành công
     const [uploadedImageUrl, setUploadedImageUrl] = useState('');
-
-    // Hàm callback để nhận URL từ component ImageUploader
     const handleUploadSuccess = (imageUrl) => {
         console.log("Upload thành công! URL:", imageUrl);
         setUploadedImageUrl(imageUrl);
