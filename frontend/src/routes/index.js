@@ -1,7 +1,9 @@
 // src/routes/index.js
 
-// Layout mặc định cho người dùng, có Header và Footer
+// Layout mặc định cho người dùng, có Header và Footer, Sidebar, Breadcrumb
 import DefaultLayout from "../components/layouts/DefaultLayout";
+// Layot cho cart, đơn hàng,... 
+import HeaderFooterLayout from "../components/layouts/HeaderFooterLayout";
 // Layout cho trang quản trị, có AdminHeader và AdminSidebar
 import AdminLayout from "../components/layouts/AdminLayout";
 
@@ -16,7 +18,8 @@ import AddProducts from "../pages/admin/AddProducts";
 //import ProductPage from "../pages/customer/ProductPage";
 //import RacketPage from "../pages/customer/Product/Racket";
 //import ShoePage from "../pages/customer/Product/Shoe";
-
+import ProductPage from "../pages/customer/ProductPage";
+import TestUploadPage from "../pages/testupload";
 import BaloPage from "../pages/customer/Product/Balo";
 import UserListPage from "../pages/admin/UserList";
 import AddPromotionPage from "../pages/admin/AddPromotion";
@@ -35,8 +38,11 @@ import Login from "../pages/customer/Login";
 import Registration from "../pages/customer/Registration";
 import ProfilePage from "../pages/customer/ProfilePage";
 import ShippingInfo from "../pages/customer/ShippingInfo";
+import CartPage from "../pages/customer/Cart";
+import OrderHistoryPage from "../pages/customer/OrderHistory";
+import ProductDetailPage from "../pages/customer/ProductDetail";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
-const ProductsPage = BaloPage;
+const ProductsPage = ProductPage;
 const FranchisePage = FranchisePolicy;
 const AboutPage = About;
 const ContactPage = Contact;
@@ -155,12 +161,13 @@ const publicRoutes = [
   { path: "/login", component: Login},
   { path: "/registration", component: Registration},
   { path: "/registration-shipping-info", component: ShippingInfo, layout: DefaultLayout},
-  
-
+    {path: "/cart", component:CartPage, layout: HeaderFooterLayout},
+    {path: "/order-history", component: OrderHistoryPage, layout:HeaderFooterLayout},
+    {path: "/products/:id",component: ProductDetailPage,layout:DefaultLayout},
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)
   { path: "/admin", component: AdminHome, layout: AdminLayout },
-
+    
   // Quản lý người dùng
   { path: "/admin/user-list", component: UserListPage, layout: AdminLayout },
   {
@@ -264,6 +271,9 @@ const publicRoutes = [
   //Khuyến Mãi
   { path: "/admin/add-promotion", component: AddPromotionPage, layout: AdminLayout },
   { path: "/admin/manage-promotion", component: PromotionListPage, layout: AdminLayout },
+  
+
+  {path: "/test", component: TestUploadPage},
   //  404 Not Found
   // { path: '*', component: NotFoundPage, layout: DefaultLayout }
 ];

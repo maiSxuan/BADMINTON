@@ -1,7 +1,7 @@
 // ProductPage.js
 import React, { useState, useMemo } from 'react';
 import './ProductPage.css'; // Import file CSS
-
+import {Link} from 'react-router-dom';
 // Dữ liệu giả lập - Trong dự án thật, bạn sẽ lấy từ API
 const allMockProducts = [
     { id: 1, name: "Vợt Cầu Lông Victor Thruster Ryuga Metallic", prod: "Vợt cầu lông", price: 3980000, brand: "Victor", imageUrl: "https://cdn.shopvnb.com/uploads/gallery/vot-cau-long-victor-tk-ryuga-metallic-chinh-hang_1702259879.webp", inStockAt: ["SCD Premium", "SCD Quận 3", "SCD Quận 5"] },
@@ -180,13 +180,19 @@ function ProductPage() {
                     'div',
                     { className: 'product-grid' },
                     paginatedProducts.length > 0
-                        ? paginatedProducts.map(product => React.createElement(
-                            'div',
-                            { key: product.id, className: 'product-card' },
-                            React.createElement('img', { src: product.imageUrl, alt: product.name }),
-                            React.createElement('h4', null, product.name),
-                            React.createElement('p', { className: 'price' }, `${product.price.toLocaleString('vi-VN')} ₫`)
-                        ))
+                        ? paginatedProducts.map(product =>
+                React.createElement(
+                    Link,
+                    {
+                    key: product.id,
+                    className: 'product-card',
+                    to: `/products/${product.id}`  // <-- đường dẫn đến trang chi tiết
+                    },
+                    React.createElement('img', { src: product.imageUrl, alt: product.name }),
+                    React.createElement('h4', null, product.name),
+                    React.createElement('p', { className: 'price' }, `${product.price.toLocaleString('vi-VN')} ₫`)
+                )
+                )
                         : React.createElement('p', { className: 'no-products' }, 'Không tìm thấy sản phẩm phù hợp.')
                 ),
                 // -- Pagination --
