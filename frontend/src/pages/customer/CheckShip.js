@@ -1,7 +1,7 @@
 // OrderTrackingPage.jsx
 
 import React, { useState } from 'react';
-import './OrderTrackingPage.css';
+import './CheckShip.css';
 import { Truck } from 'lucide-react'; // Gợi ý: Dùng thư viện icon như lucide-react
 import productImg from '../../assets/images/test.png'; // Sử dụng lại đường dẫn ảnh của bạn
 
