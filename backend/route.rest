@@ -13,7 +13,14 @@ Content-Type: application/json
     "description":"Vợt này rất tuyệt vời",
     "brand": "VNB"
 }
+### Test ngành hàng
+POST http://localhost:4000/api/products/categories
+Content-Type: application/json
 
+{
+    "_id":"giay-cau-long",
+    "name":"Giày cầu lông"
+}
 ### Kiểm tra DELETE
 DELETE http://localhost:4000/api/products/685b77cec6385923144a8336
 
@@ -45,4 +52,68 @@ Content-type: application/json
     "startDate": "2025-8-8",
     "endDate": "2025-8-9",
     "description":"giảm giá"
+}
+###
+@baseUrl = http://localhost:4000/api
+# ----- PROMPT 8: Giày Cầu Lông Mizuno Wave Claw Neo 2 -----
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{   
+    "_id":"giay-cau-long-taro-tr024-2",
+  "name": "Giày cầu lông Taro TR024-1",
+  "description": "<h2 style='font-size: 24px; color: #333; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 20px;'>Giới thiệu chi tiết Giày cầu lông Taro TR024-1</h2><p style='font-size: 16px; line-height: 1.6;'>Bạn đang muốn tìm kiếm một đôi giày cầu lông giá rẻ, chất lượng, dành cho người mới chơi nhưng chưa biết đâu là sản phẩm tốt nhất trên vô vàn các mặt hàng trên thị trường hiện nay? Thì sản phẩm <strong>Giày cầu lông Taro TR024-1</strong> được phát hành và cho ra mắt bởi TARO - Thương hiệu cầu lông mới ở thị trường Việt Nam luôn hướng đến những điều cần thiết nhất cho các lông thủ.</p><p style='font-size: 16px; line-height: 1.6;'>Giày Taro TR024-1 có chất liệu da bóng mép ngoài giúp tăng độ bền khi cọ sát. Mép trong và mũi trên của giày bằng chất liệu da đã qua xử lí che lấp làm giảm độ mài mòn khi tiếp xúc sàn trong quá trình di chuyển sai bước. Cổ giày ôm khít tạo cảm giác an toàn khi di chuyển. Đế giày có độ êm khi tạo độ đàn hồi trong quá trình bật nhảy, di chuyển.</p><img src='URL_ANH_GIAY_O_DAY' alt='Giày cầu lông Taro TR024-1' style='max-width: 100%; height: auto; border-radius: 8px; margin-top: 15px; margin-bottom: 25px;'><p style='font-size: 16px; line-height: 1.6;'>Mặt trên của đôi giày được thiết kế nhiều lưới thoáng khí giúp thoát mồ hôi nhanh chóng giúp bạn dễ chịu để tập trung cho những trận cầu hoặc các hoạt động mạnh khác. Giày cầu lông Taro TR024-1 gồm có 3 phiên bản: màu trắng xanh, màu đen vàng và màu xanh ngọc.</p><h3 style='font-size: 20px; color: #333; margin-top: 30px; margin-bottom: 15px;'>Thông số kỹ thuật của Giày cầu lông Taro TR024-1</h3><ul style='font-size: 16px; line-height: 1.8; padding-left: 20px;'><li><strong>Size:</strong> 37-44</li><li><strong>Thân giày/ Upper:</strong> Da PU, lưới thoáng khí nhiều lớp</li><li><strong>Đế giữa/ Midsole:</strong> EVA đàn hồi cao, đế chống xoắn TPU</li><li><strong>Đế ngoài/ Outsole:</strong> Sợi carbon ổn định, cao su chống mài mòn</li><li><strong>Bên trong/ Inner materials:</strong> Lưới thoáng khí nhiều lớp</li></ul><h3 style='font-size: 20px; color: #333; margin-top: 30px; margin-bottom: 15px;'>Bảng quy đổi Size Giày</h3><img src='URL_BANG_SIZE_O_DAY' alt='Bảng size giày cầu lông Taro' style='max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;'><p style='font-size: 14px; font-style: italic; color: #777;'>Vui lòng đo chiều dài bàn chân từ gót đến ngón chân. Nếu bàn chân của bạn dày hoặc rộng, chúng tôi khuyên bạn nên chọn lớn hơn một size.</p><h3 style='font-size: 20px; color: #333; margin-top: 30px; margin-bottom: 15px;'>Ưu điểm nổi bật của Giày cầu lông Taro TR024-1</h3><ul style='font-size: 16px; line-height: 1.8; padding-left: 20px;'><li>Giày cầu lông Taro TR024-1 được sản xuất tỉ mỉ bằng các vật liệu cao cấp đảm bảo bền bỉ cao, bám sân tốt.</li><li>Form giày cứng cáp, chất liệu dễ dàng vệ sinh khi bụi bẩn.</li><li>Phần đế giày được sản xuất trên công nghệ hiện đại nhất cho độ bền cao và thoải mái.</li><li>Phần đế làm từ chất liệu cao su cao cấp, dẻo và êm chân, giúp người chơi di chuyển dễ dàng đem lại cảm giác dễ chịu.</li></ul>",
+  "category": "vot-cau-long",
+  "main_image": "https://res.cloudinary.com/dwex11tdu/image/upload/v1751561471/aet4dssdrjamjhks8lhj.webp"
+}
+###
+POST http://localhost:4000/api/products/product-items
+Content-Type: application/json
+
+{
+  "name": "Vợt cầu lông Yonex Astrox Trắng M",
+  "description": "<h2 style='font-size: 24px; color: #333; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 20px;'>Giới thiệu chi tiết Giày cầu lông Taro TR024-1</h2><p style='font-size: 16px; line-height: 1.6;'>Bạn đang muốn tìm kiếm một đôi giày cầu lông giá rẻ, chất lượng, dành cho người mới chơi nhưng chưa biết đâu là sản phẩm tốt nhất trên vô vàn các mặt hàng trên thị trường hiện nay? Thì sản phẩm <strong>Giày cầu lông Taro TR024-1</strong> được phát hành và cho ra mắt bởi TARO - Thương hiệu cầu lông mới ở thị trường Việt Nam luôn hướng đến những điều cần thiết nhất cho các lông thủ.</p><p style='font-size: 16px; line-height: 1.6;'>Giày Taro TR024-1 có chất liệu da bóng mép ngoài giúp tăng độ bền khi cọ sát. Mép trong và mũi trên của giày bằng chất liệu da đã qua xử lí che lấp làm giảm độ mài mòn khi tiếp xúc sàn trong quá trình di chuyển sai bước. Cổ giày ôm khít tạo cảm giác an toàn khi di chuyển. Đế giày có độ êm khi tạo độ đàn hồi trong quá trình bật nhảy, di chuyển.</p><img src='URL_ANH_GIAY_O_DAY' alt='Giày cầu lông Taro TR024-1' style='max-width: 100%; height: auto; border-radius: 8px; margin-top: 15px; margin-bottom: 25px;'><p style='font-size: 16px; line-height: 1.6;'>Mặt trên của đôi giày được thiết kế nhiều lưới thoáng khí giúp thoát mồ hôi nhanh chóng giúp bạn dễ chịu để tập trung cho những trận cầu hoặc các hoạt động mạnh khác. Giày cầu lông Taro TR024-1 gồm có 3 phiên bản: màu trắng xanh, màu đen vàng và màu xanh ngọc.</p><h3 style='font-size: 20px; color: #333; margin-top: 30px; margin-bottom: 15px;'>Thông số kỹ thuật của Giày cầu lông Taro TR024-1</h3><ul style='font-size: 16px; line-height: 1.8; padding-left: 20px;'><li><strong>Size:</strong> 37-44</li><li><strong>Thân giày/ Upper:</strong> Da PU, lưới thoáng khí nhiều lớp</li><li><strong>Đế giữa/ Midsole:</strong> EVA đàn hồi cao, đế chống xoắn TPU</li><li><strong>Đế ngoài/ Outsole:</strong> Sợi carbon ổn định, cao su chống mài mòn</li><li><strong>Bên trong/ Inner materials:</strong> Lưới thoáng khí nhiều lớp</li></ul><h3 style='font-size: 20px; color: #333; margin-top: 30px; margin-bottom: 15px;'>Bảng quy đổi Size Giày</h3><img src='URL_BANG_SIZE_O_DAY' alt='Bảng size giày cầu lông Taro' style='max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;'><p style='font-size: 14px; font-style: italic; color: #777;'>Vui lòng đo chiều dài bàn chân từ gót đến ngón chân. Nếu bàn chân của bạn dày hoặc rộng, chúng tôi khuyên bạn nên chọn lớn hơn một size.</p><h3 style='font-size: 20px; color: #333; margin-top: 30px; margin-bottom: 15px;'>Ưu điểm nổi bật của Giày cầu lông Taro TR024-1</h3><ul style='font-size: 16px; line-height: 1.8; padding-left: 20px;'><li>Giày cầu lông Taro TR024-1 được sản xuất tỉ mỉ bằng các vật liệu cao cấp đảm bảo bền bỉ cao, bám sân tốt.</li><li>Form giày cứng cáp, chất liệu dễ dàng vệ sinh khi bụi bẩn.</li><li>Phần đế giày được sản xuất trên công nghệ hiện đại nhất cho độ bền cao và thoải mái.</li><li>Phần đế làm từ chất liệu cao su cao cấp, dẻo và êm chân, giúp người chơi di chuyển dễ dàng đem lại cảm giác dễ chịu.</li></ul>",
+  "product_id": "giay-cau-long-taro-tr024-2",  
+  "qty_in_stock": 25,
+  "product_images": [
+    "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559915/maxdhq9vdqrg1ogvm30v.webp",
+     "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559915/t1soerkhf1qge1x4m2uy.webp",
+     "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559914/fvsofzy2fq70knitld6p.webp",
+     "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559914/tmhqzyb4slug5axqnifo.webp"
+  ],
+  "price": 2450000
+}
+###
+POST {{baseUrl}}/products/variation
+Content-Type: application/json
+
+{   
+  "name": "Size",
+  "category_id": "giay-cau-long"
+}
+###
+POST {{baseUrl}}/products/categories
+Content-Type: application/json
+
+{   
+  "name": "Vợt cầu lông"
+}
+
+###
+POST {{baseUrl}}/products/variation-option
+Content-Type: application/json
+
+{   
+  "variation_id":"mau-sac",
+  "value": "trang"
+}
+
+
+###
+POST http://localhost:4000/api/products/product-configuration
+Content-Type: application/json
+
+{
+  "variation_option_id":"trang",
+  "product_item_id":"vot-cau-long-yonex-astrox-trang-l"
 }

@@ -7,21 +7,37 @@ sau này sẽ làm thêm .json ở ngoài folder root để khi chạy 1 lệnh 
 
 Front end code ReactJS, tham khảo https://www.youtube.com/watch?v=jbfuzcrfjqQ
 - Cài NodeJS + npm
+- Cài react-slick: npm install react-slick --save
+npm install slick-carousel
+-Cd frontend chạy: npm start 
+- lucide-react
+- recharts
+Backend package: npm install nodemon express mongoose dotenv cloudinary slugify
 
 Backend package: npm install nodemon express mongoose dotenv 
+
     - nodemon dùng cho chạy server: nodemon server.js
     - moongoose dùng cho xử lí database lưu vào mongodb
     - Tạo cluster trên atlas (cloud) của mongodb
     - Tạo một file .env để lưu đường dẫn vd MONGO_DB = mongodb+srv://{tài khoản}:{mật khẩu}m@cluster0.y4bqdbq.mongodb.net/ rồi vào server.js
     - (Tạo database bằng mongodb compass connect vào mongodb+srv://{tài khoản}:{mật khẩu}m@cluster0.y4bqdbq.mongodb.net/ là đc)
     - Connect bằng mongoose.connect (`${process.env.MONGO_DB}`)
->>>>>>> DanAnh
+
+    - Cloudinary: cloud dùng để lưu trữ ảnh thật, mongodb lưu trữ url dẫn đến cloud này (code trong folder config)
+    - slugify: tạo id dựa vào tên
+
+
+
 Tutorial: 
 -   Tạo rest API : https://youtu.be/fgTGADljAeg?si=SygecJM5XrQvWJwK 
 -   Thiết kế database + kết nối mongodb: https://youtu.be/uGT_5p8K6OE?si=Yab5lkrcJaYjMjbJ
 -   Middleware: https://youtu.be/g4z5zwJMSuo?si=5OjUk2Js4PCXK7f1
 -   Cors middleware kết nối frontend tới backend: https://viblo.asia/p/cors-la-gi-cors-voi-nodejs-Qbq5QyyL5D8
 -   Phân trang pagination : https://youtu.be/IYCa1F-OWmk?si=eC7rC91rLiJ0JwZV
+
+- 
+
+
 
 
 
