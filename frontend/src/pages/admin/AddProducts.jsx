@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import VideoUploader from '../../components/common/VideoUploader';
 import ImageUploader from '../../components/common/ImageUploader';
 import './AddProducts.css';
 import ProductClassification from "./ProductClassification"
@@ -54,19 +53,6 @@ const AddProducts = () => {
               <div className="form-description">
                 <p>Tỉ lệ ảnh 1:1</p>
                 <p>Hình ảnh đại diện hiển thị trên cửa hàng</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Video sản phẩm */}
-          <div className="form-row">
-            <label className="form-label">Video sản phẩm</label>
-            <div className="form-control">
-              <VideoUploader />
-              <div className="form-description">
-                <p>Kích thước tối đa 20MB</p>
-                <p>Thời lượng: 10 - 60s</p>
-                <p>Định dạng: mp4</p>
               </div>
             </div>
           </div>

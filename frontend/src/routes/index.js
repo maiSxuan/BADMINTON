@@ -161,7 +161,7 @@ const publicRoutes = [
   { path: "/registration", component: Registration},
     {path: "/cart", component:CartPage, layout: HeaderFooterLayout},
     {path: "/order-history", component: OrderHistoryPage, layout:HeaderFooterLayout},
-    {path: "/products/:id",component: ProductDetailPage,layout:DefaultLayout},
+    {path: "/products/:slug",component: ProductDetailPage,layout:DefaultLayout},
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)
   { path: "/admin", component: AdminHome, layout: AdminLayout },
