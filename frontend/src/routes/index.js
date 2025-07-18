@@ -37,11 +37,13 @@ import Login from "../pages/customer/Login";
 import Registration from "../pages/customer/Registration";
 import ProfilePage from "../pages/customer/ProfilePage";
 import ShippingInfo from "../pages/customer/ShippingInfo";
+
+import OrderSuccess from "../pages/customer/CheckShip";
 import CartPage from "../pages/customer/Cart";
 import OrderHistoryPage from "../pages/customer/OrderHistory";
 import ProductDetailPage from "../pages/customer/ProductDetail";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
-const ProductsPage = ProductPage;
+const ProductsPage = ProductPage
 const FranchisePage = FranchisePolicy;
 const AboutPage = About;
 const ContactPage = Contact;
