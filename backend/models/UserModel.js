@@ -1,15 +1,56 @@
-const mongoose = require('mongoose')
-const userSchema = new mongoose.Schema(
-    {
-        name: {type: String, required:true},
-        password: {type: String, required: true},
-        email: {type:String, required:true},
-        isAdmin: {type:Boolean, default:false, required:true},
-        isLock: {type:Boolean, default: false, required: true},
-    },
-    {
-        timestamps: true
-    }
-)
-const User = mongoose.model("User",userSchema);
-module.exports = User;
+const mongoose = require('mongoose');
+const {v4 : uuidv4} = require("uuid");
+
+const userSchema = new mongoose.Schema({
+  userID: {
+    type: String,
+    required: true,
+    unique: true,
+    default: () => uuidv4(),
+  },
+
+  name: {
+    type: String,
+    required: true,
+    lowercase: true,
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    lowercase: true,
+  },
+  phone: {
+    type: String,
+    trim: true,
+  },
+  gender: {
+    type: String,
+    enum: ['male', 'female', 'other'], // hoặc để tự do nếu bạn muốn
+    lowercase: true,
+  },
+  date_of_birth: {
+    type: Date,
+  },
+  address: {
+    type: String,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  status: {
+    type: Number,
+    default: 1, // 1 = hoạt động, 0 = khóa, tùy hệ thống
+  },
+  user_type: {
+    type: String,
+    enum: ['ADMIN', 'USER', 'GUEST'],
+    default: 'USER',
+  },
+}, { timestamps: { createdAt: 'create_at', updatedAt: 'update_at' } });
+
+module.exports = mongoose.model('User', userSchema);

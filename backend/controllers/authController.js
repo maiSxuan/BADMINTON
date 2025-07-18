@@ -1,9 +1,10 @@
-const User = require("../models/User");
+const User = require("../models/UserModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { v4: uuidv4 } = require("uuid");
 
 const createToken = (user) => {
-  return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+  return jwt.sign({ id: user._id, role: user.user_type }, process.env.JWT_SECRET, {
     expiresIn: "2d",
   });
 };
@@ -31,12 +32,13 @@ exports.register = async (req, res) => {
 
     const role = email.endsWith("@admin.com") ? "admin" : "user";
     const newUser = await User.create({
-      fullName,
+      userID: uuidv4(),
+      name: fullName,
       phone,
       address,
       email,
       password: hashed,
-      role,
+      user_type: role.toUpperCase(),
     });
 
     const token = createToken(newUser);
@@ -45,7 +47,7 @@ exports.register = async (req, res) => {
       user: {
         email: newUser.email,
         fullName: newUser.fullName,
-        role: newUser.role,
+        role: newUser.user_type,
       },
     });
   } catch (err) {

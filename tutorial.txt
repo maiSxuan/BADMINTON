@@ -14,7 +14,7 @@ npm install slick-carousel
 - recharts
 Backend package: npm install nodemon express mongoose dotenv cloudinary slugify
 
-Backend package: npm install nodemon express mongoose dotenv 
+Backend package: npm install nodemon express mongoose dotenv uuid
 
     - nodemon dùng cho chạy server: nodemon server.js
     - moongoose dùng cho xử lí database lưu vào mongodb

@@ -122,7 +122,7 @@ const Header = () => {
   const accountMenu = isLoggedIn
     ? [
         { label: "Tài khoản của tôi", to: "/account/profile" },
-        { label: "Đăng xuất", to: "/logout" },
+        { label: "Đăng xuất", to: "/Login" },
       ]
     : [
         { label: "Đăng nhập", to: "/login" },

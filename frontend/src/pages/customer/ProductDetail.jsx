@@ -113,8 +113,7 @@ const ProductDetail = () => {
               {variants.map((variant) => (
                 <button
                   key={variant._id}
-                  className={`variant-btn ${selectedVariant?._id === variant._id ? 'active' : ''}`}
-                  onClick={() => handleVariantSelect(variant)}
+                  className={selectedVariant && selectedVariant._id === variant._id ? 'variant-btn active' : 'variant-btn'}
                 >
                   {variant.name}
                 </button>

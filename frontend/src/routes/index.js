@@ -39,7 +39,7 @@ import Registration from "../pages/customer/Registration";
 import ProfilePage from "../pages/customer/ProfilePage";
 import ShippingInfo from "../pages/customer/ShippingInfo";
 
-import OrderSuccess from "../pages/customer/CheckShip";
+import CheckShip from "../pages/customer/CheckShip";
 import CartPage from "../pages/customer/Cart";
 import OrderHistoryPage from "../pages/customer/OrderHistory";
 import ProductDetailPage from "../pages/customer/ProductDetail";
@@ -65,7 +65,6 @@ const ReviewManagementPage = () => <h1>Trang Quản Lý Đánh Giá</h1>;
 const publicRoutes = [
   // --- Public Routes với DefaultLayout ---
   { path: "/", component: HomePage, layout: DefaultLayout },
-  { path: "/ProfilePage", component: ProfilePage, layout: DefaultLayout},
 
   {
     path: "/products",
@@ -140,6 +139,7 @@ const publicRoutes = [
       />
     )
   },
+  { path: "/ProfilePage", component: ProfilePage, layout: DefaultLayout},
   { path: "/return", component: ReturnPolicyPage, layout: DefaultLayout },
   { path: "/warranty", component: WarrantyPolicyPage, layout: DefaultLayout },
   { path: "/how-to-buy", component: HowToBuyPage, layout: DefaultLayout },
@@ -163,9 +163,11 @@ const publicRoutes = [
   { path: "/login", component: Login},
   { path: "/registration", component: Registration},
   { path: "/registration-shipping-info", component: ShippingInfo, layout: DefaultLayout},
-    {path: "/cart", component:CartPage, layout: HeaderFooterLayout},
-    {path: "/order-history", component: OrderHistoryPage, layout:HeaderFooterLayout},
-    {path: "/products/:id",component: ProductDetailPage,layout:DefaultLayout},
+  {path: "/cart", component:CartPage, layout: HeaderFooterLayout},
+  {path: "/order-history", component: OrderHistoryPage, layout:HeaderFooterLayout},
+  {path: "/products/:id",component: ProductDetailPage,layout:DefaultLayout},
+  {path: "/order-tracking", component: CheckShip, layout: DefaultLayout},
+
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)
   { path: "/admin", component: AdminHome, layout: AdminLayout },

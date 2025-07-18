@@ -7,9 +7,14 @@ exports.protect = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Gán thông tin người dùng vào req.user
+    req.user = {
+      id: decoded.id,
+      role: decoded.role, // ⚠️ bạn cần truyền "role" vào khi tạo token!
+    };
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
   }
 };
+
+module.exports = authMiddleware;
