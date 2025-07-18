@@ -1,13 +1,22 @@
-const express = require ('express');
-// npm install cors
-// const cors = require('cors') 
-require ('dotenv').config();
-const {default: mongoose} = require("mongoose");
-const app = express()
-const port  = process.env.PORT || 4001
+// ====== BƯỚC 1: DEPENDENCIES ======
+// Không cần require('cors') nữa
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+// Các module khác
+const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const path = require("path");
+const bcrypt = require('bcryptjs'); 
 
-app.use(express.json())
+const app = express();
+const port = process.env.PORT || 4000;
 
+// ====== BƯỚC 2: THIẾT LẬP MIDDLEWARE ======
+// Middleware để parse JSON body
+app.use(express.json());
+
+// Middleware để xử lý CORS thủ công (thay thế cho app.use(cors()))
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
@@ -18,21 +27,48 @@ app.use(function(req, res, next) {
   next();
 });
 
-//hoặc dùng 
-// app.use(cors())
+// ====== BƯỚC 3: KẾT NỐI DATABASE ======
+mongoose.connect(process.env.MONGO_DB)
+    .then(() => {
+        console.log("Connect to MongoDB success!");
+    })
+    .catch((err) => {
+        console.error("MongoDB connection error:", err);
+    });
 
-mongoose.connect (`${process.env.MONGO_DB}`)
-.then(()=>{
-    console.log("Connect db success!");
-})
-.catch((err)=>{
-    console.log(err)
-})
+// ====== BƯỚC 4: API ROUTES ======
+// Import các router
+const productsRouter = require('./routes/productsRouter');
+const userRouter = require('./routes/usersRouter');
+const promotionRouter = require('./routes/promotionRouter');
+const authRoutes = require('./routes/authRoutes');
+const categoryRouter = require('./routes/categoryRoutes');
+const brandRouter = require('./routes/brandRoutes');
+const uploadRouter = require('./routes/uploadRoutes');
+// Sử dụng các routes
+app.use('/api/products', productsRouter);
+app.use('/api/users', userRouter);
+app.use('/api/promotions', promotionRouter);
+app.use('/api/auth', authRoutes);
+app.use('/api/categories', categoryRouter);
+app.use('/api/brands', brandRouter);
+app.use('/api/upload', uploadRouter); 
+// Route mặc định
+app.get("/", (req, res) => {
+    res.send("Express App is running successfully!");
+});
 
-const productsRouter = require ('./routes/productsRouter')
-app.use('/api/products',productsRouter)
-const userRouter = require ('./routes/usersRouter')
-app.use('/api/users',userRouter)
-const promotionRouter = require('./routes/promotionRouter')
-app.use('/api/promotions',promotionRouter)
-app.listen(port, ()=>{console.log("Server started on port: ",+ port)})
+
+// ====== BƯỚC 5: CODE NHÁP (MULTER) ======
+/*
+... (phần code multer giữ nguyên dưới dạng comment)
+*/
+
+// ====== BƯỚC 6: KHỞI CHẠY SERVER ======
+app.listen(port, (error) => {
+    if (!error) {
+        console.log("Server started on port: " + port);
+    } else {
+        console.log("Error starting server: " + error);
+    }
+});
