@@ -3,7 +3,9 @@ const Product = require('../models/productModel2'); // Sử dụng model đã th
 
 const getProductBySlug = async (req, res) => {
     try {
-        const product = await Product.findOne({ slug: req.params.slug, is_published: true });
+        const product = await Product.findOne({ slug: req.params.slug, is_published: true })
+                                            .populate('brand') 
+                                     .populate('category_ids'); 
 
         if (product) {
             res.json(product);

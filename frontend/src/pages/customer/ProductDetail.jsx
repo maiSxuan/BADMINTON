@@ -80,7 +80,7 @@ const ProductDetailPage = () => {
                 <div className="product-info-section">
                     <div className="product-meta">
                         <span>Mã: {product.slug}</span>
-                        <span>Thương hiệu: {product.brand}</span>
+                        <span>Thương hiệu: {product.brand.name}</span>
                         <span style={{ color: isOutOfStock ? 'red' : 'green' }}>
                             Tình trạng: {isOutOfStock ? 'Tạm hết hàng' : 'Còn hàng'}
                         </span>

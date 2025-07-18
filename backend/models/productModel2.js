@@ -21,7 +21,11 @@ const ProductSchema = new Schema({
     name: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, index: true },
     description: { type: String },
-    brand: { type: String },
+    brand: {
+        type: Schema.Types.ObjectId,
+        ref: 'Brand', 
+        required: true
+    },
     category_ids: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
     is_published: { type: Boolean, default: true },
     variants: [VariantSchema] 
