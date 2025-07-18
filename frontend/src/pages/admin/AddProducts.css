@@ -201,3 +201,40 @@
   margin-top: 10px;
   float: right;
 }
+.form-submit-row {
+    display: flex;
+    justify-content: flex-end; /* Đẩy nút về phía bên phải */
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.final-save-btn {
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #c0269e; /* Màu hồng đậm */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.final-save-btn:hover {
+    background-color: #a32084;
+}
+
+.final-save-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+select.form-input {
+  -webkit-appearance: none; /* Tắt giao diện mặc định trên Chrome, Safari, Edge */
+  -moz-appearance: none;    /* Tắt giao diện mặc định trên Firefox */
+  appearance: none;          /* Tắt giao diện mặc định theo tiêu chuẩn */
+  border-radius: 0px;
+  /* Đảm bảo padding đều hai bên vì không còn mũi tên */
+  padding-right: 10px; 
+}

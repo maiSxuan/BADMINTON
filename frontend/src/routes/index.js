@@ -14,13 +14,12 @@ import About from "../pages/customer/About";
 import Contact from "../pages/customer/Contact"
 import AddProducts from "../pages/admin/AddProducts";
 
-
 //import ProductPage from "../pages/customer/ProductPage";
 //import RacketPage from "../pages/customer/Product/Racket";
 //import ShoePage from "../pages/customer/Product/Shoe";
 import ProductPage from "../pages/customer/ProductPage";
 import TestUploadPage from "../pages/testupload";
-import BaloPage from "../pages/customer/Product/Balo";
+//import BaloPage from "../pages/customer/Product/Balo";
 import UserListPage from "../pages/admin/UserList";
 import AddPromotionPage from "../pages/admin/AddPromotion";
 import RevenuePage from "../pages/admin/RevenuePage";
@@ -153,7 +152,7 @@ const publicRoutes = [
         breadcrumbItems={[
           { label: "Trang chủ", path: "/" },
           { label: "Tra cứu", path: "/" }, //sua path
-          { label: "Lịch sử mua hàng", path: "/" }, //sua path
+          { label: "Lịch sử mua hàng", path: "/order-history" }, //sua path
           { label: "Yêu cầu đổi trả/hoàn tiền" },
         ]}
       />
@@ -165,8 +164,8 @@ const publicRoutes = [
   { path: "/registration-shipping-info", component: ShippingInfo, layout: DefaultLayout},
   {path: "/cart", component:CartPage, layout: HeaderFooterLayout},
   {path: "/order-history", component: OrderHistoryPage, layout:HeaderFooterLayout},
-  {path: "/products/:id",component: ProductDetailPage,layout:DefaultLayout},
   {path: "/order-tracking", component: CheckShip, layout: DefaultLayout},
+  {path: "/products/:slug",component: ProductDetailPage,layout:DefaultLayout},
 
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)

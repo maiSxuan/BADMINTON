@@ -12,7 +12,7 @@ npm install slick-carousel
 -Cd frontend chạy: npm start 
 - lucide-react
 - recharts
-Backend package: npm install nodemon express mongoose dotenv cloudinary slugify
+Backend package: npm install nodemon express mongoose dotenv cloudinary slugify multer
 
 Backend package: npm install nodemon express mongoose dotenv uuid
 
