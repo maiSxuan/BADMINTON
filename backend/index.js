@@ -10,15 +10,22 @@ const path = require("path");
 const bcrypt = require('bcryptjs'); 
 const cors = require("cors");
 const { error } = require("console");
-
+const app = express();
+app.use(express.json());
+app.use(cors());
 //ADD const routes
 // const productRoutes = require("./routes/productRoutes");
 // const userRoutes = require("./routes/userRoutes");
 const authRoutes = require('./routes/authRoutes');
+const productRoutes = require('./routes/productRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const ratingRoutes = require('./routes/ratingRoutes');
 
-const app = express();
-app.use(express.json());
-app.use(cors());
+app.use('/products', productRoutes);
+app.use('/orders', orderRoutes);
+app.use('/ratings', ratingRoutes);
+
+
 
 //database connection with mongodb
 mongoose.connect(process.env.MONGODB_URI)

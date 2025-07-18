@@ -117,3 +117,60 @@ Content-Type: application/json
   "variation_option_id":"trang",
   "product_item_id":"vot-cau-long-yonex-astrox-trang-l"
 }
+### 1. Tạo sản phẩm mới
+POST http://localhost:4000/products/item
+Content-Type: application/json
+
+{
+  "name": "Vợt cầu lông Yonex Arcsaber 11",
+  "description": "Vợt cân bằng cho người chơi chuyên nghiệp",
+  "brand": "Yonex",
+  "category": "Racket",
+  "variants": [
+    {
+      "color": "Đỏ",
+      "price": 2800000,
+      "stock": 15
+    },
+    {
+      "color": "Xanh",
+      "price": 2800000,
+      "stock": 15
+    }
+  ]
+}
+
+### 2. Tạo đơn hàng (lưu ý: thay PRODUCT_ID và USER_ID bằng ID thực tế)
+POST http://localhost:4000/orders
+Content-Type: application/json
+
+{
+  "user": "686a2957bfe14efa46963eb1",
+  "items": [
+    {
+      "product_item": "687a03e644854d60e021c936",
+      "price": 2800000,
+      "quantity": 1
+    }
+  ],
+  "shipping_address": "12 Lê Lợi, Hà Nội",
+  "phone_number": "0987654321",
+  "total_amount": 2800000
+}
+### 3. Gửi đánh giá cho sản phẩm (thay ORDER_ID, PRODUCT_ID, USER_ID)
+POST http://localhost:4000/ratings
+Content-Type: application/json
+
+{
+  "orderId": "687a044244854d60e021c93b",
+  "productId": "687a03e644854d60e021c936",
+  "userId": "686a2957bfe14efa46963eb1",
+  "rating": 5,
+  "comment": "Vợt rất tốt, đánh đầm tay!"
+}
+
+###
+
+### 4. Lấy danh sách đánh giá theo sản phẩm (thay PRODUCT_ID)
+GET http://localhost:4000/ratings/product/687a03e644854d60e021c936
+

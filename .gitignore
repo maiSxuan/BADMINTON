@@ -22,3 +22,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 node_modules
+
+# Không push file .env lên
+**/.env
+**/.env.*
+backend/.env
+
+
