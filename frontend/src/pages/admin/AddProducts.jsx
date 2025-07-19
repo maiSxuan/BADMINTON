@@ -334,18 +334,6 @@ const AddProducts = () => {
             {activeTab === "basic" && (
                 <>
                     <div className="form-row">
-                        <label className="form-label">Hình ảnh sản phẩm (Tối đa 5)</label>
-                        <div className="form-control" style={{ flexDirection: 'row', gap: '10px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-                            {Array.from({ length: 5 }).map((_, index) => (
-                                <ImageUploader
-                                    key={index}
-                                    onUploadSuccess={(imageInfo) => setImages(prev => [...prev, imageInfo])}
-                                    onImageRemove={(publicId) => setImages(prev => prev.filter(img => img.public_id !== publicId))}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                    <div className="form-row">
                         <label className="form-label">Ảnh bìa</label>
                         <div className="form-control">
                             <ImageUploader
