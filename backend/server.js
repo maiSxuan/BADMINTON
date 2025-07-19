@@ -28,7 +28,7 @@ app.use(function(req, res, next) {
 });
 
 // ====== BƯỚC 3: KẾT NỐI DATABASE ======
-mongoose.connect(process.env.MONGO_DB)
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
         console.log("Connect to MongoDB success!");
     })
@@ -45,6 +45,7 @@ const authRoutes = require('./routes/authRoutes');
 const categoryRouter = require('./routes/categoryRoutes');
 const brandRouter = require('./routes/brandRoutes');
 const uploadRouter = require('./routes/uploadRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 // Sử dụng các routes
 app.use('/api/products', productsRouter);
 app.use('/api/users', userRouter);
@@ -53,6 +54,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRouter);
 app.use('/api/brands', brandRouter);
 app.use('/api/upload', uploadRouter); 
+app.use('/api/cart', cartRoutes);
 // Route mặc định
 app.get("/", (req, res) => {
     res.send("Express App is running successfully!");

@@ -1,8 +1,8 @@
 const express = require ('express')
 const router=  express.Router()
 const User = require('../models/UserModel')
-const authMiddleware = require('../middlewares/authMiddleware'); // xác thực JWT
-const roleMiddleware = require('../middlewares/roleMiddleware');
+const authMiddleware = require('../middleware/authMiddleware'); // xác thực JWT
+const roleMiddleware = require('../middleware/roleMiddleware');
 
 
 router.get("/", authMiddleware, roleMiddleware("ADMIN"), async (req, res) => {
