@@ -37,3 +37,30 @@ exports.getAllUsers = async (req, res) => {
     res.status(500).json({ message: "Lỗi server", error: err.message });
   }
 };
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
+    if (!deletedUser) {
+      return res.status(404).json({ message: "Không tìm thấy người dùng" });
+    }
+    res.json({ message: "Xóa người dùng thành công" });
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi server", error: err.message });
+  }
+};
+
+
+exports.toggleUserStatus = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "Không tìm thấy người dùng" });
+
+    user.status = user.status === 1 ? 0 : 1;
+    await user.save();
+
+    res.json({ message: "Cập nhật trạng thái thành công", status: user.status });
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi server", error: err.message });
+  }
+};
