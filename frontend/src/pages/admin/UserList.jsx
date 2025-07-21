@@ -2,6 +2,8 @@
   import "./UserList.css"
   import  Pagination  from '../../components/common/Pagination';
   import { Trash, SquarePen,Lock,LockOpen } from 'lucide-react';
+  import axios from "axios";
+
   const UserListPage = () => {
     //lấy data
     const [users, setUsers] = useState([]);
@@ -9,18 +11,14 @@
     const [currentPage, setCurrentPage] = useState(1);
     let usersPerPage = 10;
     useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const response = await fetch("http://localhost:4000/api/users"); 
-        if (!response.ok) {
-          throw new Error(`Lỗi HTTP: ${response.status}`);
+      const getUserData = async () => {
+        try {
+          const response = await axios.get("http://localhost:4000/api/users/user-list"); 
+          setUsers(response.data);
+        } catch (err) {
+          console.error("Lỗi khi lấy dữ liệu người dùng:", err);
         }
-        const data = await response.json();
-        setUsers(data);
-      } catch (err) {
-        console.error("Lỗi khi lấy dữ liệu người dùng:", err);
-      }
-    };
+      };
 
     getUserData(); 
   }, []);
@@ -86,17 +84,17 @@
                 </tr>
               </thead>
               <tbody>
-                {currentUsers.filter((user) => !user.isAdmin )
+                {currentUsers.filter((user) => user.user_type !== 'ADMIN' )
                 .map((user) => (
                   <tr key={user._id}>
                     <td>{user.name}</td>
                     <td>{user.email}</td>
                     <td>
-                      {new Date(user.createdAt).toLocaleDateString("vi-VN")}
+                      {new Date(user.create_at).toLocaleDateString("vi-VN")}
                     </td>
                     <td className="center-cell-center">
                         <button onClick={() => handleLockUser(user._id)}>
-                          {user.isLock ? <Lock color="red" size="20" /> : <LockOpen color="green" size="20" />}
+                          {user.status === 0 ? <Lock color="red" size="20" /> : <LockOpen color="green" size="20" />}
                         </button>
                     </td>
 
