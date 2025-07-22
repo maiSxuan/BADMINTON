@@ -25,6 +25,7 @@ const PurchasePage = () => {
     shippingMethod: "",
     saveInfo: false,
   })
+  const user = JSON.parse(localStorage.getItem("user"))
   const [orderNote, setOrderNote] = useState("")
   const [discountCode, setDiscountCode] = useState("")
   const [deliveryMethod, setDeliveryMethod] = useState("nhanh")
@@ -56,14 +57,24 @@ const PurchasePage = () => {
   ])
 
   // Khởi tạo dữ liệu từ Cart
-  useEffect(() => {
-    if (location.state && location.state.selectedItems) {
-      setCartItems(location.state.selectedItems)
-    } else {
-      // Nếu không có dữ liệu từ Cart, chuyển về trang Cart
-      navigate("/cart")
+useEffect(() => {
+//   if (location.state && location.state.selectedItems) {
+//     setCartItems(location.state.selectedItems)
+//   } else {
+    const testItem = {
+      product_id: "68769383ec6c802345648de6",
+      name: "Giày Cầu Lông Taro TR024-1",
+      sku_code: "TR024-1-WHT-36",
+      variant: "Trắng xanh",
+      size: "36",
+      quantity: 1,
+      price: 499000,
+      thumbnail_url: "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559915/maxdhq9vdqrg1ogvm30v.webp"
     }
-  }, [location.state, navigate])
+    setCartItems([testItem])
+    // navigate("/cart") 
+//   }
+}, [location.state])
 
   const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
@@ -98,7 +109,6 @@ const PurchasePage = () => {
     if (!shippingInfo.city) errors.push("Vui lòng chọn tỉnh/thành phố")
     if (!shippingInfo.district) errors.push("Vui lòng chọn quận/huyện")
     if (!shippingInfo.ward) errors.push("Vui lòng chọn phường/xã")
-    if (!shippingInfo.shippingMethod) errors.push("Vui lòng chọn phương thức giao hàng")
 
     if (errors.length > 0) {
       showToastMessage(errors[0])
@@ -108,29 +118,59 @@ const PurchasePage = () => {
   }
 
   const handlePlaceOrder = async () => {
-    setIsLoading(true)
-    try {
-      const orderData = {
-        items: cartItems,
-        shippingInfo,
-        orderNote,
-        discountCode,
-        deliveryMethod,
-        totalAmount,
-      }
+  setIsLoading(true)
 
-      // Mock API call
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+  try {
+    const user = JSON.parse(localStorage.getItem("user"))
+    const userId = user?.id
 
-      setOrderId(`SE${Date.now().toString().slice(-6)}`)
+const orderData = {
+  userId: userId,
+  items: cartItems.map(item => ({
+    product: item.product_id,
+    variant_name: item.variant || "Mặc định",
+    sku_code: item.sku_code,
+    size: item.size || "",
+    quantity: item.quantity,
+    price: item.price,
+    list_price: item.price,
+    thumbnail_url: item.thumbnail_url || item.image || ""
+  })),
+  totalAmount: totalAmount,
+  shippingInfo: {
+    phone: shippingInfo.phone,
+    address: shippingInfo.address
+  },
+  orderNote: orderNote,
+  deliveryMethod: deliveryMethod
+}
+
+
+    alert(userId)
+    const response = await fetch('http://localhost:4000/api/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData)
+    })
+
+    const data = await response.json()
+
+    if (response.ok) {
+      setOrderId(data.orderId)
       setCurrentStep("tracking")
       showToastMessage("Đặt hàng thành công")
-    } catch (error) {
-      showToastMessage("Có lỗi xảy ra, vui lòng thử lại")
-    } finally {
-      setIsLoading(false)
+    } else {
+      console.error("Lỗi từ backend:", data)
+      showToastMessage(data.message || "Có lỗi xảy ra khi đặt hàng")
     }
+  } catch (error) {
+    console.error('Lỗi gửi đơn hàng:', error)
+    showToastMessage("Có lỗi xảy ra, vui lòng thử lại")
+  } finally {
+    setIsLoading(false)
   }
+}
+
 
   const copyOrderId = () => {
     navigator.clipboard.writeText(orderId)
@@ -319,21 +359,6 @@ const PurchasePage = () => {
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="shippingMethod">Phương thức giao hàng *</label>
-                    <select
-                      id="shippingMethod"
-                      value={shippingInfo.shippingMethod}
-                      onChange={(e) => handleInputChange("shippingMethod", e.target.value)}
-                    >
-                      <option value="">Chọn phương thức giao hàng</option>
-                      <option value="standard">Giao hàng tiêu chuẩn</option>
-                      <option value="express">Giao hàng nhanh</option>
-                      <option value="same-day">Giao hàng trong ngày</option>
-                      <option value="pickup">Nhận tại cửa hàng</option>
-                    </select>
-                  </div>
-
-                  <div className="form-group">
                     <label htmlFor="note">Ghi chú (tùy chọn)</label>
                     <textarea
                       id="note"
@@ -405,8 +430,8 @@ const PurchasePage = () => {
                   <div className="product-list">
                     {cartItems.map((item) => (
                       <div key={item.id} className="product-item small">
-                        <div className="product-image small">
-                          <img src={item.image || "/placeholder.svg"} alt={item.name} />
+                        <div className="item-image-container">
+                            <img src={item.imageUrl || "/placeholder.svg"} alt={item.name} className="item-image" />
                         </div>
                         <div className="product-details">
                           <h4>{item.name}</h4>
@@ -508,7 +533,6 @@ const PurchasePage = () => {
                     <div className="info-box">
                       <h4>Thông tin vận chuyển:</h4>
                       <div className="shipping-method">
-                        <span>🚛</span>
                         <span>Chuyển phát nhanh</span>
                       </div>
                     </div>
@@ -534,26 +558,32 @@ const PurchasePage = () => {
                     Mã đơn hàng: <strong>{orderId}</strong>
                   </span>
                   <button className="btn btn-outline btn-small" onClick={copyOrderId}>
-                    📋 Sao chép
+                    Sao chép
                   </button>
                 </div>
 
                 {/* Sản phẩm */}
                 <div className="product-list">
-                  {cartItems.map((item) => (
-                    <div key={item.id} className="product-item small">
-                      <div className="product-image small">
-                        <img src={item.image || "/placeholder.svg"} alt={item.name} />
-                      </div>
-                      <div className="product-details">
-                        <h4>{item.name}</h4>
-                        <p className="variant">{item.variant}</p>
-                        <p className="quantity">x{item.quantity}</p>
-                      </div>
-                      <p className="product-price">{(item.price * item.quantity).toLocaleString("vi-VN")}đ</p>
-                    </div>
-                  ))}
+                    {cartItems.map((item) => (
+                        <div key={item.id} className="product-item small">
+                        <div className="item-image-container">
+                            <img src={item.imageUrl || "/placeholder.svg"} alt={item.name} className="item-image" />
+                        </div>
+
+                        <div className="product-info">
+                            <div className="product-details">
+                            <h4>{item.name}</h4>
+                            <p className="variant">{item.variant}</p>
+                            <p className="quantity">x{item.quantity}</p>
+                            </div>
+                            <p className="product-price">
+                            {(item.price * item.quantity).toLocaleString("vi-VN")}đ
+                            </p>
+                        </div>
+                        </div>
+                    ))}
                 </div>
+
 
                 {/* Tổng tiền */}
                 <div className="total-section">
@@ -566,7 +596,6 @@ const PurchasePage = () => {
                 {/* Nút hành động */}
                 <div className="modal-actions">
                   <button className="btn btn-outline">Hủy đơn hàng</button>
-                  <button className="btn btn-outline">Đánh giá đơn hàng</button>
                   <button className="btn btn-primary" onClick={() => navigate("/cart")}>
                     Quay lại giỏ hàng
                   </button>

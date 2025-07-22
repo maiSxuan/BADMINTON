@@ -14,7 +14,7 @@ body {
 /* Container chính */
 .cart-page-container {
   min-height: 100vh;
-  background-color: #fce7f3;
+  background-color: #ffffff;
   padding: 1rem;
 }
 
@@ -46,7 +46,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: white;
+  background-color: #FFE2F6;
   padding: 1rem 1.5rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
@@ -62,7 +62,7 @@ body {
 .select-checkbox {
   width: 1.25rem;
   height: 1.25rem;
-  accent-color: #d946ef;
+  accent-color: #FFE2F6;
   cursor: pointer;
 }
 
@@ -74,7 +74,7 @@ body {
 }
 
 .selected-info {
-  color: #d946ef;
+  color: #FFE2F6;
   font-weight: 600;
   font-size: 0.9rem;
 }
@@ -100,7 +100,7 @@ body {
 }
 
 .cart-item.selected {
-  border-color: #d946ef;
+  border-color: #FFE2F6;
   background-color: #fdf4ff;
 }
 
@@ -276,7 +276,7 @@ body {
 .total-value {
   font-size: 1.25rem;
   font-weight: bold;
-  color: #d946ef;
+  color: #e85fe1;
 }
 
 .cart-actions {
@@ -313,23 +313,23 @@ body {
 }
 
 .continue-shopping-btn.primary {
-  background-color: #d946ef;
+  background-color: #FFE2F6;
   color: white;
   border: none;
 }
 
 .continue-shopping-btn.primary:hover {
-  background-color: #c026d3;
+  background-color: #fccaec;
 }
 
 .checkout-btn {
-  background-color: #d946ef;
+  background-color: #fb90d9;
   color: white;
   min-width: 150px;
 }
 
 .checkout-btn:hover:not(:disabled) {
-  background-color: #c026d3;
+  background-color: #FFE2F6;
 }
 
 .checkout-btn:disabled {
