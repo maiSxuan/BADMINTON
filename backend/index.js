@@ -21,7 +21,9 @@ const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const ratingRoutes = require('./routes/ratingRoutes');
+const usersRouter = require("./routes/usersRouter");
 
+app.use("/api/users", usersRouter);
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
 app.use('/ratings', ratingRoutes);
