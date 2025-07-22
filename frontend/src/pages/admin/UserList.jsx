@@ -2,6 +2,8 @@
   import "./UserList.css"
   import  Pagination  from '../../components/common/Pagination';
   import { Trash, SquarePen,Lock,LockOpen } from 'lucide-react';
+  import axios from "axios";
+
   const UserListPage = () => {
     //lấy data
     const [users, setUsers] = useState([]);
@@ -9,18 +11,14 @@
     const [currentPage, setCurrentPage] = useState(1);
     let usersPerPage = 10;
     useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const response = await fetch("http://localhost:4000/api/users"); 
-        if (!response.ok) {
-          throw new Error(`Lỗi HTTP: ${response.status}`);
+      const getUserData = async () => {
+        try {
+          const response = await axios.get("http://localhost:4000/api/users/user-list"); 
+          setUsers(response.data);
+        } catch (err) {
+          console.error("Lỗi khi lấy dữ liệu người dùng:", err);
         }
-        const data = await response.json();
-        setUsers(data);
-      } catch (err) {
-        console.error("Lỗi khi lấy dữ liệu người dùng:", err);
-      }
-    };
+      };
 
     getUserData(); 
   }, []);
@@ -30,44 +28,29 @@
     const currentUsers = users.slice(indexOfFirstUSer,indexOfLastUser)
     const paginate = (pageNumbers) => setCurrentPage(pageNumbers)
     const handleDeleteUser = async (id) => {
-      if (!window.confirm("Bạn có chắc chắn muốn xóa người dùng này?")) return;
+      const confirm = window.confirm("Bạn có chắc chắn muốn xóa người dùng này?");
+      if (!confirm) return;
 
       try {
-        const response = await fetch("http://localhost:4000/admin/user-list/" + id, {
-          method: "DELETE",
-        });
-
-        if (!response.ok) {
-            const data = await response.json();
-            throw new Error(data.message || `Lỗi HTTP: ${response.status}`);
-        }
-        setUsers(prevUsers => prevUsers.filter(user => user._id !== id));
-        alert("Xóa người dùng thành công.");
+        await axios.delete(`http://localhost:4000/api/users/${id}`);
+        setUsers(prev => prev.filter(user => user._id !== id));
+        alert("Xóa người dùng thành công");
       } catch (err) {
-        alert(`Lỗi: ${err.message}`);
+        alert("Lỗi khi xóa người dùng: " + err.message);
       }
     };
   const handleLockUser = async (id) => {
     if (!window.confirm("Bạn có chắc chắn muốn thay đổi trạng thái người dùng này?")) return;
     try {
-      const response = await fetch("http://localhost:4000/admin/user-list/" + id, {
-        method: "PATCH",
-      });
-
-      if (!response.ok) {
-        throw new Error(`Lỗi HTTP: ${response.status}`);
-      }
-
-      const result = await response.json();
-
-      // Cập nhật lại danh sách người dùng
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user._id === id ? { ...user, isLock: result.isLock } : user
+      const res = await axios.patch(`http://localhost:4000/api/users/status/${id}`);
+      setUsers(prev =>
+        prev.map(user =>
+          user._id === id ? { ...user, status: res.data.status } : user
         )
       );
+      alert("Cập nhật trạng thái thành công");
     } catch (err) {
-      alert(`Lỗi: ${err.message}`);
+      alert("Lỗi khi cập nhật trạng thái: " + err.message);
     }
   };
     return (
@@ -86,25 +69,27 @@
                 </tr>
               </thead>
               <tbody>
-                {currentUsers.filter((user) => !user.isAdmin )
+                {currentUsers.filter((user) => user.user_type !== 'ADMIN' )
                 .map((user) => (
                   <tr key={user._id}>
                     <td>{user.name}</td>
                     <td>{user.email}</td>
                     <td>
-                      {new Date(user.createdAt).toLocaleDateString("vi-VN")}
+                      {new Date(user.create_at).toLocaleDateString("vi-VN")}
                     </td>
                     <td className="center-cell-center">
-                        <button onClick={() => handleLockUser(user._id)}>
-                          {user.isLock ? <Lock color="red" size="20" /> : <LockOpen color="green" size="20" />}
-                        </button>
+                        {user.status === 0 ? (
+                          <Lock color="red" size="20" />
+                        ) : (
+                          <LockOpen color="green" size="20" />
+                        )}
                     </td>
 
                     <td className="center-cell-center">
-                        <button>
+                        <button onClick={() => handleLockUser(user._id)}>
                           <SquarePen color="grey" size="20" />
                         </button>
-                        <button onClickCapture={() => handleDeleteUser(user._id)}>
+                        <button onClick={() => handleDeleteUser(user._id)}>
                           <Trash color="red" size="20" />
                         </button>
                     </td>
