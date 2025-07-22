@@ -1,240 +1,199 @@
 .add-product-form {
   display: flex;
   flex-direction: column;
-  gap: 35px; 
+  gap: 25px;
 }
-
-.form-row {
-  display: flex; 
-  align-items: flex-start; 
-  gap: 40px; 
-}
-
-.form-label {
-  flex-basis: 200px; 
-  flex-shrink: 0; 
-  
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  text-align: right;
-  padding-top: 10px;
-}
-
-.form-control {
-  flex-grow: 1; 
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.form-description {
-  font-size: 14px;
-  color: #666;
-}
-.form-description p {
-  margin: 0 0 5px 0;
-}
-
-.form-input, .form-textarea {
-  width: 100%;
-  max-width: 600px;
-  padding: 10px;
-  border: 1px solid #f0f0f0;
-  border-radius: 4px;
-  font-size: 14px;
-  background-color: #FFF2FB;
-}
-.form-textarea {
-  resize: vertical;
-}
-
-.form-control .image-uploader-wrapper,
-.form-control .video-uploader-wrapper {
-  flex-shrink: 0;
+.tab-wrapper {
+  margin-bottom: 10px;
 }
 .tab-container {
   display: flex;
-  width: 100%;               /* kéo full chiều ngang */
-  border: 1px solid #d1d5db;
+  width: fit-content;
   border-radius: 8px;
   overflow: hidden;
+  border: 1px solid #fbcfe8;
 }
-/* Tab Navigation */
-.tab-navigation {
-  background: white;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  margin-bottom: 24px;
-  overflow: hidden;
-}
-
-.tab-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
 .tab-button {
-  padding: 16px 24px;
-  font-size: 14px;
-  font-weight: 500;
-  text-align: center;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.tab-button.active {
-  background-color: #eeadda;
-  color: #ec4899;
-}
-
-.tab-button.inactive {
-  background-color: white;
-  color: #eeadda;
-}
-
-.tab-button.inactive:hover {
-  background-color: #f9fafb;
-}
-
-.tab-button:first-child {
-  border-right: 1px solid #e5e7eb;
-}
-
-.tab-button {
-  flex: 1;
   padding: 12px 24px;
   font-size: 14px;
   font-weight: 500;
   border: none;
   background-color: white;
-  color: #6b7280;
+  color: #8c2f6d;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  border-right: 1px solid #d1d5db;
+  border-right: 1px solid #fbcfe8;
 }
-
 .tab-button:last-child {
   border-right: none;
 }
-
 .tab-button.active {
-  background-color: #ffe4e6;
-  color: #c0269e;           
+  background-color: #fdf2f8;
+  color: #be185d;
 }
-.sales-section {
-  background-color: #fff7fb;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-.classification-header {
+.form-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
+  align-items: flex-start;
+  gap: 20px;
 }
-
-.classification-title {
-  font-size: 16px;
-  font-weight: bold;
+.form-label {
+  flex-basis: 150px;
+  flex-shrink: 0;
+  text-align: right;
+  padding-top: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
 }
-
-.apply-all-btn {
-  background-color: #10b981;
-  color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.classification-table-section {
-  margin-top: 12px;
-}
-
-.table-header,
-.table-row {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-  margin-bottom: 8px;
-  align-items: center;
-}
-
-.table-header {
-  background-color: #fce7f3;
-  font-weight: bold;
-  color: #444;
-  padding: 10px;
-  border-radius: 4px;
-}
-
-.table-cell {
+.form-control {
+  flex-grow: 1;
   display: flex;
-}
-
-.table-input {
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 600px; /* Thêm giới hạn chiều rộng ở đây */
   width: 100%;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
 }
-
-.remove-btn {
-  background-color: #f87171;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.add-btn {
-  background-color: #22c55e;
-  color: white;
-  border: none;
-  padding: 8px 16px;
+.form-input, .form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #fbcfe8;
   border-radius: 6px;
-  cursor: pointer;
-  margin-top: 10px;
-  float: right;
+  font-size: 14px;
+  background-color: #fdf2f8;
+  color: #555;
+  box-sizing: border-box; /* Quan trọng */
+}
+.form-input:focus, .form-textarea:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 0 0 2px #fbcfe8;
+}
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
 }
 .form-submit-row {
-    display: flex;
-    justify-content: flex-end; /* Đẩy nút về phía bên phải */
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #f3e8f0;
 }
-
 .final-save-btn {
-    padding: 12px 30px;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-    background-color: #c0269e; /* Màu hồng đậm */
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+  padding: 12px 30px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #7b1a4b;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
-
-.final-save-btn:hover {
-    background-color: #a32084;
-}
-
 .final-save-btn:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 
-select.form-input {
-  -webkit-appearance: none; /* Tắt giao diện mặc định trên Chrome, Safari, Edge */
-  -moz-appearance: none;    /* Tắt giao diện mặc định trên Firefox */
-  appearance: none;          /* Tắt giao diện mặc định theo tiêu chuẩn */
-  border-radius: 0px;
-  /* Đảm bảo padding đều hai bên vì không còn mũi tên */
-  padding-right: 10px; 
+/* === BẮT ĐẦU SỬA LỖI DROPDOWN === */
+
+.autocomplete-wrapper {
+  position: relative;
+  width: 100%; /* Đảm bảo wrapper chiếm toàn bộ chiều rộng của .form-control */
+}
+
+.autocomplete-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0; /* right: 0 sẽ làm nó tự động co giãn theo chiều rộng của cha */
+  background-color: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.autocomplete-suggestions li {
+  padding: 10px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.autocomplete-suggestions li:hover {
+  background-color: #fdf2f8;
+}
+
+.autocomplete-suggestions .add-new {
+  color: #be185d;
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* === KẾT THÚC SỬA LỖI DROPDOWN === */
+
+.cover-image-uploader {
+  width: 120px;
+  height: 120px;
+  border: 2px dashed #fbcfe8;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: #fdf2f8;
+  transition: all 0.2s ease;
+}
+.cover-image-uploader:hover {
+  border-color: #ec4899;
+  background-color: #fce7f3;
+}
+.image-upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #ec4899;
+}
+.image-upload-placeholder svg {
+  width: 32px;
+  height: 32px;
+}
+.image-upload-placeholder span {
+  font-size: 14px;
+  font-weight: 500;
+}
+.image-preview-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.uploaded-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.remove-image-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
 }
