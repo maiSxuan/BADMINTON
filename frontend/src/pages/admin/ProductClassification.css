@@ -1,4 +1,4 @@
-.sales-info-container {
+  /* .sales-info-container {
   padding: 20px;
   background-color: #fff;
   border-radius: 8px;
@@ -16,7 +16,6 @@
   padding-bottom: 10px;
 }
 
-/* Classification Section */
 .classification-section {
   margin-bottom: 40px;
   padding: 20px;
@@ -69,8 +68,6 @@
   border-color: #ec4899;
   box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.1);
 }
-
-/* Options Grid */
 .options-header {
   display: flex;
   justify-content: space-between;
@@ -195,8 +192,6 @@
   object-fit: cover;
   border-radius: 4px;
 }
-
-/* Price and Inventory Table */
 .price-inventory-section {
   margin-bottom: 30px;
 }
@@ -302,7 +297,6 @@
   accent-color: #ec4899;
 }
 
-/* Apply All Section */
 .apply-all-section {
   background-color: #f0f9ff;
   border: 1px solid #bae6fd;
@@ -367,8 +361,6 @@
   color: #374151;
   cursor: pointer;
 }
-
-/* Secondary Classification */
 .secondary-classification {
   margin-top: 30px;
   padding-top: 30px;
@@ -382,7 +374,6 @@
   font-style: italic;
 }
 
-/* Saved Classifications Table */
 .saved-classifications-section {
   margin-top: 40px;
   padding-top: 30px;
@@ -529,7 +520,6 @@
   font-style: italic;
 }
 
-/* Bulk Input Section */
 .bulk-input-section {
   background-color: #fcb1d7;
   border: 1px solid #ec4899;
@@ -602,4 +592,281 @@
 .bulk-apply-btn:disabled {
   background-color: #9ca3af;
   cursor: not-allowed;
+}   */
+
+.classification-section {
+  margin-bottom: 25px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.classification-header {
+  margin-bottom: 15px;
+}
+
+.classification-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.classification-name-input {
+  width: 300px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+.classification-name-input:focus {
+  outline: none;
+  border-color: #ec4899;
+}
+
+.options-header {
+  margin-bottom: 15px;
+}
+
+.options-title {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
+}
+
+.option-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #fff;
+}
+.option-item.selected {
+  border-color: #ec4899;
+  background-color: #fdf2f8;
+}
+
+.option-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.option-header .option-checkbox {
+  margin: 0;
+  width: 16px;
+  height: 16px;
+  accent-color: #ec4899;
+}
+
+.remove-option-btn {
+  background: none;
+  border: none;
+  color: #a1a1aa;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+.remove-option-btn:hover {
+  color: #ef4444;
+}
+
+.option-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+.image-upload-area {
+  border: 2px dashed #d1d5db;
+  border-radius: 4px;
+  margin-top: 10px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.image-upload-text {
+  font-size: 12px;
+  color: #6b7280;
+}
+.uploaded-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.add-option-btn-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 155px;
+  border-radius: 8px;
+  padding: 20px;
+  border: 2px dashed #ec4899;
+  background-color: #fff;
+  color: #ec4899;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.add-option-btn-grid:hover {
+  background-color: #fdf2f8;
+  border-color: #d83786;
+  color: #d83786;
+}
+
+.price-inventory-section {
+  margin-top: 30px;
+}
+
+.price-inventory-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.bulk-input-section {
+  background-color: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.bulk-input-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.bulk-input-title {
+  font-size: 14px;
+  font-weight: 500;
+}
+.bulk-apply-btn {
+  background-color: #df3d8e;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.bulk-input-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+.bulk-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #f9a8d4;
+  border-radius: 4px;
+}
+
+.price-inventory-grid {
+  display: grid;
+  grid-template-columns: 150px 150px 1fr 1fr 1fr;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-container {
+  display: contents;
+}
+
+.table-header-cell,
+.table-cell {
+  padding: 12px 10px;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  background-color: #fff;
+}
+
+.table-header-cell {
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+  background-color: #fdf2f8;
+  border-bottom: 2px solid #fbcfe8;
+}
+
+.price-inventory-grid > *:nth-child(5n) {
+  border-right: none;
+}
+
+.price-inventory-grid > *:nth-last-child(-n + 5) {
+  border-bottom: none;
+}
+
+.parent-cell {
+  background-color: #f9fafb;
+}
+
+.table-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+  box-sizing: border-box;
+}
+.table-input:focus {
+  outline: none;
+  border-color: #ec4899;
+}
+
+.variant-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.variant-image {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.variant-name {
+  font-weight: 500;
+  color: #374151;
+}
+
+.save-button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+.save-current-btn {
+  background-color: #7b1a4b;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.no-variants-message {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+  font-style: italic;
 }

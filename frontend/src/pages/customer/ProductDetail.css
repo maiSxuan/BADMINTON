@@ -37,6 +37,7 @@
 .product-info-section {
     flex: 1;
     min-width: 300px; /* Thêm chiều rộng tối thiểu để tránh bị bóp quá nhỏ */
+    margin: 0;
 }
 
 .main-image-container {
