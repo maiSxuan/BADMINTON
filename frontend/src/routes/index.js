@@ -37,6 +37,7 @@ import Login from "../pages/customer/Login";
 import Registration from "../pages/customer/Registration";
 import ProfilePage from "../pages/customer/ProfilePage";
 import ShippingInfo from "../pages/customer/ShippingInfo";
+import CheckDeal from "../pages/customer/CheckDeal";
 
 import CheckShip from "../pages/customer/CheckShip";
 import CartPage from "../pages/customer/Cart";
@@ -165,6 +166,7 @@ const publicRoutes = [
   {path: "/cart", component:CartPage, layout: HeaderFooterLayout},
   {path: "/order-history", component: OrderHistoryPage, layout:HeaderFooterLayout},
   {path: "/order-tracking", component: CheckShip, layout: DefaultLayout},
+  {path: "order-confirmation", component: CheckDeal, layout: DefaultLayout},
   {path: "/products/:slug",component: ProductDetailPage,layout:DefaultLayout},
 
   // --- Admin Routes với AdminLayout ---
