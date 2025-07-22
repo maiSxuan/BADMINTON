@@ -1,10 +1,10 @@
 :root {
-    --bg-color: #121212;
-    --surface-color: #1e1e1e;
-    --primary-color: #d98d26;
-    --text-color: #e0e0e0;
+    --bg-color: #ffffff;
+    --surface-color: #ffffff;
+    --primary-color: #ec84cd;
+    --text-color: #000000;
     --text-muted-color: #888;
-    --border-color: #333;
+    --border-color: #888686;
 }
 
 .page-container {
@@ -16,7 +16,7 @@
 
 .status-message {
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1rem;
     margin-top: 50px;
     color: var(--text-color);
 }
@@ -127,7 +127,7 @@
 
 .variant-option {
     border: 2px solid var(--border-color);
-    background-color: var(--surface-color);
+    background-color: transparent;
     padding: 5px;
     border-radius: 4px;
     cursor: pointer;
@@ -137,9 +137,13 @@
     transition: all 0.2s;
 }
 
-.variant-option.active, .variant-option:hover {
+.variant-option.active {
+    border-color: var(--border-color);
+    background-color: #f4bbe3;
+}
+.variant-option:hover {
     border-color: var(--primary-color);
-    background-color: #2a2a2a;
+    background-color: #ffdff5;
 }
 
 .variant-option img {
@@ -159,7 +163,7 @@
 }
 
 .variant-option .variant-info span:last-child {
-    color: #e53935;
+    color: #000000;
     font-size: 0.9rem;
 }
 
@@ -192,10 +196,10 @@
 }
 
 .size-option:disabled {
-    background-color: #2a2a2a;
+    background-color: #797777;
     color: var(--text-muted-color);
     cursor: not-allowed;
-    text-decoration: line-through;
+    /* text-decoration: line-through; */
 }
 
 .quantity-selector {
@@ -259,11 +263,11 @@
 
 .buy-now-btn {
     background-color: var(--primary-color);
-    color: #121212;
+    color: #000000;
 }
 
 .add-to-cart-btn {
-    background-color: #333;
+    background-color: #ec84cd;
     color: var(--text-color);
 }
 

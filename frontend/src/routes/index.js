@@ -37,11 +37,12 @@ import Login from "../pages/customer/Login";
 import Registration from "../pages/customer/Registration";
 import ProfilePage from "../pages/customer/ProfilePage";
 import ShippingInfo from "../pages/customer/ShippingInfo";
-
+import CheckDeal from "../pages/customer/CheckDeal";
 import CheckShip from "../pages/customer/CheckShip";
 import CartPage from "../pages/customer/Cart";
 import OrderHistoryPage from "../pages/customer/OrderHistory";
 import ProductDetailPage from "../pages/customer/ProductDetail";
+import PurchasePage from "../pages/customer/Purchase";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = ProductPage
 const FranchisePage = FranchisePolicy;
@@ -138,10 +139,12 @@ const publicRoutes = [
       />
     )
   },
-  { path: "/ProfilePage", component: ProfilePage, layout: DefaultLayout},
+  { path: "/profile-page", component: ProfilePage, layout: DefaultLayout},
   { path: "/return", component: ReturnPolicyPage, layout: DefaultLayout },
   { path: "/warranty", component: WarrantyPolicyPage, layout: DefaultLayout },
   { path: "/how-to-buy", component: HowToBuyPage, layout: DefaultLayout },
+  { path: "/purchase", component: PurchasePage, layout: DefaultLayout},
+
   { path: "/payment", component: PaymentPage, layout: DefaultLayout },
   { path: "/return-refund", 
     component: ReturnRefundForm, 
@@ -162,10 +165,11 @@ const publicRoutes = [
   { path: "/login", component: Login},
   { path: "/registration", component: Registration},
   { path: "/registration-shipping-info", component: ShippingInfo, layout: DefaultLayout},
-  {path: "/cart", component:CartPage, layout: HeaderFooterLayout},
+  {path: "/cart", component: CartPage, layout: HeaderFooterLayout},
   {path: "/order-history", component: OrderHistoryPage, layout:HeaderFooterLayout},
   {path: "/order-tracking", component: CheckShip, layout: DefaultLayout},
-  {path: "/products/:slug",component: ProductDetailPage,layout:DefaultLayout},
+  {path: "/products/:slug",component: ProductDetailPage, layout: DefaultLayout},
+  {path: "/check-deal",component: CheckDeal, layout: DefaultLayout},
 
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)

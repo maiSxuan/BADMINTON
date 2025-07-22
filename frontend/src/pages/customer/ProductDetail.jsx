@@ -55,6 +55,15 @@ const ProductDetailPage = () => {
         setQuantity(prev => Math.max(1, prev + amount));
     };
 
+    const getVariantPrice = (variant) => {
+        if (variant?.price) return variant.price;
+        return variant?.options?.[0]?.price || 0;
+    };
+
+    const getVariantListPrice = (variant) => {
+        return variant?.list_price || getVariantPrice(variant);
+    };
+
     if (loading) return <p className="status-message">Đang tải sản phẩm...</p>;
     if (error) return <p className="status-message error">Lỗi: {error}</p>;
     if (!product || !selectedVariant) return <p className="status-message">Không tìm thấy sản phẩm.</p>;
@@ -64,6 +73,7 @@ const ProductDetailPage = () => {
     return (
         <div className="page-container">
             <div className="product-detail-container">
+                {/* --- Gallery --- */}
                 <div className="product-gallery-section">
                     <div className="main-image-container">
                         <img src={mainImage} alt={`${product.name} - ${selectedVariant.name}`} className="main-image" />
@@ -77,49 +87,71 @@ const ProductDetailPage = () => {
                     </div>
                 </div>
 
+                {/* --- Info --- */}
                 <div className="product-info-section">
                     <div className="product-meta">
                         <span>Mã: {product.slug}</span>
-                        <span>Thương hiệu: {product.brand.name}</span>
+                        <span>Thương hiệu: {product.brand?.name || 'N/A'}</span>
                         <span style={{ color: isOutOfStock ? 'red' : 'green' }}>
                             Tình trạng: {isOutOfStock ? 'Tạm hết hàng' : 'Còn hàng'}
                         </span>
                     </div>
                     <h1 className="product-name">{product.name}</h1>
                     <div className="price-container">
-                        <span className="current-price">{selectedVariant.price.toLocaleString('vi-VN')}₫</span>
-                        <span className="list-price">{selectedVariant.list_price.toLocaleString('vi-VN')}₫</span>
+                        <span className="current-price">
+                            {getVariantPrice(selectedVariant).toLocaleString('vi-VN')}₫
+                        </span>
+                        {selectedVariant.list_price && (
+                            <span className="list-price">
+                                {getVariantListPrice(selectedVariant).toLocaleString('vi-VN')}₫
+                            </span>
+                        )}
                     </div>
 
-                    <p className="selector-label">Chọn [Màu sắc]:</p>
+                    {/* --- Màu sắc --- */}
+                    <p className="selector-label">Màu sắc</p>
                     <div className="variant-options">
                         {product.variants.map((variant) => (
-                            <button key={variant.variant_id?.$oid || variant.variant_id} className={`variant-option ${variant.variant_id?.$oid === selectedVariant.variant_id?.$oid ? 'active' : ''}`} onClick={() => handleVariantSelect(variant)}>
-                                <img src={variant.thumbnail_url} alt={variant.name} />
+                            <button
+                                key={variant.variant_id?.$oid || variant.variant_id}
+                                className={`variant-option ${variant.variant_id?.$oid === selectedVariant.variant_id?.$oid ? 'active' : ''}`}
+                                onClick={() => handleVariantSelect(variant)}
+                            >
+                                <img src={variant.thumbnail_url || variant.images[0]} alt={variant.name} className="variant-thumbnail"/>
                                 <div className="variant-info">
                                     <span>{variant.name}</span>
-                                    <span>{variant.price.toLocaleString('vi-VN')}₫</span>
                                 </div>
                             </button>
                         ))}
                     </div>
 
-                    <p className="selector-label">Chọn [Size]:</p>
+                    {/* --- Size --- */}
+                    <p className="selector-label">Size</p>
                     <div className="size-options">
-                        {selectedVariant.options.map((option) => (
-                            <button key={option.sku_code} className={`size-option ${option.size === selectedSize ? 'active' : ''}`} disabled={option.stock_quantity === 0} onClick={() => setSelectedSize(option.size)}>
-                                {option.size}
-                            </button>
-                        ))}
+                        {selectedVariant.options.map((option) => {
+                            const sizeValue = option.size || option.value; // Nếu size không có thì dùng value
+                            return (
+                                <button
+                                    key={option.sku_code}
+                                    className={`size-option ${sizeValue === selectedSize ? 'active' : ''}`}
+                                    disabled={option.stock_quantity === 0}
+                                    onClick={() => setSelectedSize(sizeValue)}
+                                >
+                                    {sizeValue}
+                                </button>
+                            );
+                        })}
                     </div>
 
-                    <p className="selector-label">Số lượng:</p>
+                    {/* --- Quantity --- */}
+                    <p className="selector-label">Số lượng</p>
                     <div className="quantity-selector">
                         <button className="quantity-btn" onClick={() => handleQuantityChange(-1)}>-</button>
                         <input type="number" className="quantity-input" value={quantity} readOnly />
                         <button className="quantity-btn" onClick={() => handleQuantityChange(1)}>+</button>
                     </div>
 
+                    {/* --- Buttons --- */}
                     <div className="action-buttons">
                         <button className="action-btn buy-now-btn">Mua ngay</button>
                         <button className="action-btn add-to-cart-btn">Thêm vào giỏ hàng</button>
@@ -127,6 +159,7 @@ const ProductDetailPage = () => {
                 </div>
             </div>
             
+            {/* --- Description --- */}
             {product.description && (
                 <div className="product-description-section">
                     <h2 className="description-title">Mô tả sản phẩm</h2>

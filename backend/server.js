@@ -11,7 +11,6 @@ const bcrypt = require('bcryptjs');
 
 const app = express();
 const port = process.env.PORT || 4000;
-
 // ====== BƯỚC 2: THIẾT LẬP MIDDLEWARE ======
 // Middleware để parse JSON body
 app.use(express.json());
@@ -28,6 +27,10 @@ app.use(function(req, res, next) {
 });
 
 // ====== BƯỚC 3: KẾT NỐI DATABASE ======
+if (!process.env.MONGO_DB) {
+    console.error("Missing MONGO_DB in .env file");
+    process.exit(1);
+}
 mongoose.connect(process.env.MONGO_DB)
     .then(() => {
         console.log("Connect to MongoDB success!");
@@ -38,7 +41,7 @@ mongoose.connect(process.env.MONGO_DB)
 
 // ====== BƯỚC 4: API ROUTES ======
 // Import các router
-const productsRouter = require('./routes/productsRouter');
+const productsRouter = require('./routes/productsRoutes');
 const userRouter = require('./routes/usersRouter');
 const promotionRouter = require('./routes/promotionRouter');
 const authRoutes = require('./routes/authRoutes');

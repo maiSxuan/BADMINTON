@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const slugify = require ('slugify')
 
-const cloudinary = require("../../config/cloudinary");
+const cloudinary = require("../config/cloudinary");
 const { getProductBySlug } = require('../controllers/productController');
 router.get('/:slug', getProductBySlug);
 // //getting all
@@ -227,5 +227,5 @@ router.get('/:slug', getProductBySlug);
 //   }
 // });
 // router.get('/:id', productController.getProductDetailsById);
-module.exports = router
+module.exports = router;
 
