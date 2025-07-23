@@ -11,6 +11,7 @@ const bcrypt = require('bcryptjs');
 
 const app = express();
 const port = process.env.PORT || 4000;
+
 // ====== BƯỚC 2: THIẾT LẬP MIDDLEWARE ======
 // Middleware để parse JSON body
 app.use(express.json());

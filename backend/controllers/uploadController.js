@@ -1,4 +1,4 @@
-const cloudinary = require('../../config/cloudinary');
+const cloudinary = require('../config/cloudinary');
 const fs = require('fs'); // Thêm thư viện 'fs' của Node.js
 
 
