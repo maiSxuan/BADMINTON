@@ -55,4 +55,53 @@ const createOrder = async (req, res) => {
     res.status(500).json({ success: false, message: 'Lỗi server khi tạo đơn hàng' })
   }
 }
-module.exports = { createOrder }
+
+const getAllOrders = async (req, res) => {
+  try {
+    // console.log('getAllOrders được gọi');
+    const orders = await Order.find();
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng:', error);
+    res.status(500).json({ success: false, message: 'Lỗi server khi lấy danh sách đơn hàng' });
+  }
+};
+
+
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    const validStatuses = [
+      'Chờ xác nhận', 'Chờ thanh toán', 'Chờ lấy', 'Đang vận chuyển',
+      'Đang giao', 'Đã giao', 'Hoàn thành', 'Đã hủy', 'Trả hàng/hoàn tiền'
+    ];
+
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ success: false, message: 'Trạng thái không hợp lệ' });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      orderId,
+      { status },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng' });
+    }
+
+    res.status(200).json({ success: true, message: 'Cập nhật trạng thái thành công', order });
+  } catch (error) {
+    console.error('Lỗi khi cập nhật trạng thái đơn hàng:', error);
+    res.status(500).json({ success: false, message: 'Lỗi server khi cập nhật trạng thái' });
+  }
+};
+
+module.exports = {
+  createOrder,
+  getAllOrders,
+  updateOrderStatus
+};
+

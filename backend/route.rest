@@ -172,5 +172,11 @@ Content-Type: application/json
 ###
 
 ### 4. Lấy danh sách đánh giá theo sản phẩm (thay PRODUCT_ID)
-GET http://localhost:4000/ratings/product/687a03e644854d60e021c936
+GET http://localhost:4000/api/order
+###
+PUT http://localhost:4000/api/order/687fb5fc76100d4774b7eb3e/status
+Content-Type: application/json
 
+{
+  "status": "Đang giao"
+}

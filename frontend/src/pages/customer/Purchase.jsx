@@ -121,29 +121,27 @@ useEffect(() => {
   setIsLoading(true)
 
   try {
-    const user = JSON.parse(localStorage.getItem("user"))
     const userId = user?.id
-
-const orderData = {
-  userId: userId,
-  items: cartItems.map(item => ({
-    product: item.product_id,
-    variant_name: item.variant || "Mặc định",
-    sku_code: item.sku_code,
-    size: item.size || "",
-    quantity: item.quantity,
-    price: item.price,
-    list_price: item.price,
-    thumbnail_url: item.thumbnail_url || item.image || ""
-  })),
-  totalAmount: totalAmount,
-  shippingInfo: {
-    phone: shippingInfo.phone,
-    address: shippingInfo.address
-  },
-  orderNote: orderNote,
-  deliveryMethod: deliveryMethod
-}
+    const orderData = {
+      userId: userId,
+      items: cartItems.map(item => ({
+        product: item.product_id,
+        variant_name: item.variant || "Mặc định",
+        sku_code: item.sku_code,
+        size: item.size || "",
+        quantity: item.quantity,
+        price: item.price,
+        list_price: item.price,
+        thumbnail_url: item.thumbnail_url || item.image || ""
+      })),
+      totalAmount: totalAmount,
+      shippingInfo: {
+        phone: shippingInfo.phone,
+        address: shippingInfo.address
+      },
+      orderNote: orderNote,
+      deliveryMethod: deliveryMethod
+  }
 
 
     alert(userId)
