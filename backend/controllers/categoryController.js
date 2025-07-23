@@ -3,7 +3,7 @@ const slugify = require('slugify');
 
 exports.getAllCategories = async (req, res) => {
     try {
-        const categories = await Category.find({}).sort({ name: 1 }); 
+        const categories = await Category.find({}).sort({ name: 1 });
         res.status(200).json(categories);
     } catch (error) {
         res.status(500).json({ message: "Lỗi server", error: error.message });
@@ -11,7 +11,7 @@ exports.getAllCategories = async (req, res) => {
 };
 
 exports.createCategory = async (req, res) => {
-    const { name, parent_id } = req.body;
+    const { name } = req.body;
 
     if (!name) {
         return res.status(400).json({ message: 'Tên ngành hàng là bắt buộc' });

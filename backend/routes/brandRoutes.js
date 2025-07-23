@@ -1,8 +1,9 @@
+// routes/brandRoutes.js
 const express = require('express');
 const router = express.Router();
-const categoryController = require('../controllers/brandController');
+const brandController = require('../controllers/brandController');
 
-router.get('/', categoryController.getAllBrands);
-router.post('/', categoryController.createBrand);
+router.get('/', brandController.getAllBrands);
+router.post('/', brandController.createBrand);
 
 module.exports = router;
