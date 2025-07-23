@@ -27,8 +27,7 @@ exports.createCategory = async (req, res) => {
 
         const newCategory = new Category({
             name,
-            slug,
-            parent_id: parent_id || null
+            slug
         });
 
         const savedCategory = await newCategory.save();
@@ -36,5 +35,14 @@ exports.createCategory = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ message: "Lỗi server", error: error.message });
+    }
+};
+exports.searchBrands = async (req, res) => {
+    try {
+        const query = req.query.q || '';
+        const brands = await Brand.find({ name: { $regex: query, $options: 'i' } }).limit(10);
+        res.status(200).json(brands);
+    } catch (error) {
+        res.status(500).json({ message: "Lỗi server khi tìm kiếm thương hiệu", error: error.message });
     }
 };
