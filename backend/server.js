@@ -28,7 +28,7 @@ app.use(function(req, res, next) {
 });
 
 // ====== BƯỚC 3: KẾT NỐI DATABASE ======
-mongoose.connect(process.env.MONGO_DB)
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
         console.log("Connect to MongoDB success!");
     })

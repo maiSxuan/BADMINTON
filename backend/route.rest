@@ -172,5 +172,25 @@ Content-Type: application/json
 ###
 
 ### 4. Lấy danh sách đánh giá theo sản phẩm (thay PRODUCT_ID)
-GET http://localhost:4000/ratings/product/687a03e644854d60e021c936
+GET http://localhost:4000/ratings/product/68770001fec6c80234568001
+
+### Login to get access token
+POST http://localhost:4000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@gmail.com",
+  "password": "123456789"  
+}
+
+### Add item to cart
+POST http://localhost:4000/api/cart
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4N2ZiOGI0YmI5ZDEzYjg1YzlhYjZmNiIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzUzMjU5MjAzLCJleHAiOjE3NTM0MzIwMDN9.6FOwijauhPFhcbpsX71Xo8hsR-QPy2qDnTYdhRg9eeA
+Content-Type: application/json
+
+{
+  "product_item": "68770001fec6c80234568002",
+  "quantity": 2
+}
+
 
