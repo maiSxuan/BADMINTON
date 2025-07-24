@@ -28,7 +28,11 @@ app.use(function(req, res, next) {
 });
 
 // ====== BƯỚC 3: KẾT NỐI DATABASE ======
-mongoose.connect(process.env.MONGODB_URI)
+if (!process.env.MONGO_DB) {
+    console.error("Missing MONGO_DB in .env file");
+    process.exit(1);
+}
+mongoose.connect(process.env.MONGO_DB)
     .then(() => {
         console.log("Connect to MongoDB success!");
     })
@@ -38,7 +42,7 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // ====== BƯỚC 4: API ROUTES ======
 // Import các router
-const productsRouter = require('./routes/productsRouter');
+const productsRouter = require('./routes/productsRoutes');
 const userRouter = require('./routes/usersRouter');
 const promotionRouter = require('./routes/promotionRouter');
 const authRoutes = require('./routes/authRoutes');
@@ -46,6 +50,7 @@ const categoryRouter = require('./routes/categoryRoutes');
 const brandRouter = require('./routes/brandRoutes');
 const uploadRouter = require('./routes/uploadRoutes');
 const cartRoutes = require('./routes/cartRoutes');
+const orderRouter = require('./routes/orderRoutes')
 // Sử dụng các routes
 app.use('/api/products', productsRouter);
 app.use('/api/users', userRouter);
@@ -55,6 +60,8 @@ app.use('/api/categories', categoryRouter);
 app.use('/api/brands', brandRouter);
 app.use('/api/upload', uploadRouter); 
 app.use('/api/cart', cartRoutes);
+app.use('/api/order', orderRouter); 
+
 // Route mặc định
 app.get("/", (req, res) => {
     res.send("Express App is running successfully!");

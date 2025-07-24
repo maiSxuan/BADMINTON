@@ -172,25 +172,78 @@ Content-Type: application/json
 ###
 
 ### 4. Lấy danh sách đánh giá theo sản phẩm (thay PRODUCT_ID)
-GET http://localhost:4000/ratings/product/68770001fec6c80234568001
+GET http://localhost:4000/ratings/product/687a03e644854d60e021c936
 
-### Login to get access token
+{
+  "status": "Đang giao"
+}
+
+###
 POST http://localhost:4000/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "testuser@gmail.com",
-  "password": "123456789"  
+  "email": "testuser2@gmail.com",
+  "password": "123456789"
 }
 
-### Add item to cart
-POST http://localhost:4000/api/cart
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4N2ZiOGI0YmI5ZDEzYjg1YzlhYjZmNiIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzUzMjU5MjAzLCJleHAiOjE3NTM0MzIwMDN9.6FOwijauhPFhcbpsX71Xo8hsR-QPy2qDnTYdhRg9eeA
+### GET cart
+GET http://localhost:4000/api/cart
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzMzODkzMSwiZXhwIjoxNzUzNTExNzMxfQ.1S88Ily06kRSBCmnRNgPdAwYnJ9S54XbVs9uVSQQlto
+
+### ADD ITEM 1
+POST http://localhost:4000/api/cart/add
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzMzODkzMSwiZXhwIjoxNzUzNTExNzMxfQ.1S88Ily06kRSBCmnRNgPdAwYnJ9S54XbVs9uVSQQlto
 
 {
-  "product_item": "68770001fec6c80234568002",
-  "quantity": 2
+  "product": "687fe226a5fd9fd9efa23ade",
+  "variant_id": "687fe226a5fd9fd9efa23ae0",
+  "sku_code": "Starbucks-HỒNG-4U",
+  "quantity": 10,
+  "priceAtTime": 1499999
 }
+
+### ADD ITEM 2
+POST http://localhost:4000/api/cart/add
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzMzODkzMSwiZXhwIjoxNzUzNTExNzMxfQ.1S88Ily06kRSBCmnRNgPdAwYnJ9S54XbVs9uVSQQlto
+
+{
+  "product": "687fe226a5fd9fd9efa23ade",
+  "variant_id": "687fe226a5fd9fd9efa23ae2",
+  "sku_code": "Starbucks-XANH-4U",
+  "quantity": 5,
+  "priceAtTime": 1499999
+}
+
+### REMOVE ITEM
+DELETE http://localhost:4000/api/cart/remove
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzMzODkzMSwiZXhwIjoxNzUzNTExNzMxfQ.1S88Ily06kRSBCmnRNgPdAwYnJ9S54XbVs9uVSQQlto
+
+{
+  "product": "687fe226a5fd9fd9efa23ade",
+  "variant_id": "687fe226a5fd9fd9efa23ae2",
+  "sku_code": "Starbucks-XANH-4U"
+}
+
+
+### UPDATE ITEM
+PUT http://localhost:4000/api/cart/update
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzMzODkzMSwiZXhwIjoxNzUzNTExNzMxfQ.1S88Ily06kRSBCmnRNgPdAwYnJ9S54XbVs9uVSQQlto
+
+{
+  "product": "687fe226a5fd9fd9efa23ade",
+  "variant_id": "687fe226a5fd9fd9efa23ae0",
+  "sku_code": "Starbucks-HỒNG-4U",
+  "quantity": 2,
+  "priceAtTime": 1499999
+}
+
+### CLEAR CART
+DELETE http://localhost:4000/api/cart/clear
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzMzODkzMSwiZXhwIjoxNzUzNTExNzMxfQ.1S88Ily06kRSBCmnRNgPdAwYnJ9S54XbVs9uVSQQlto
 
 
