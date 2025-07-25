@@ -14,23 +14,23 @@ exports.getCart = async (req, res) => {
 
         const transformedItems = cart.items.map((item) => {
             const product = item.product;
-            const variant = product.variants.find(v => v.variant_id.toString() === item.variant_id.toString());
-            const option = variant?.options.find(o => o.sku_code === item.sku_code);
+            const variant = product.variants?.find(v => v.variant_id.toString() === item.variant_id.toString());
+            const option = variant?.options?.find(o => o.sku_code === item.sku_code);
 
             return {
                 _id: item._id,
                 productId: product._id,
+                variantId: item.variant_id,
                 name: product.name,
-                thumbnail_url: product.thumbnail_url,
-                variantName: variant?.name || 'Không xác định',
-                optionValue: option?.value || 'Không xác định',
-                sku_code: item.sku_code,
-                price: item.priceAtTime,
-                quantity: item.quantity,
-                total: item.priceAtTime * item.quantity,
                 image: variant?.images?.[0] || product.thumbnail_url || '/placeholder.svg',
-                selected: true
-            }
+                quantity: item.quantity,
+                price: item.priceAtTime,
+                sku_code: item.sku_code,
+                option: {
+                    color: variant?.name || 'Không xác định',
+                    size: option?.value || 'Không xác định',
+                },
+            };
         });
 
         await cart.save();
@@ -91,6 +91,7 @@ exports.addToCart = async (req, res) => {
             cart.items.push({
                 product: productId,
                 variant_id: variantId,
+                name: product.name,
                 sku_code: optionSku,
                 quantity,
                 priceAtTime: option.price
@@ -143,13 +144,13 @@ exports.removeCartItem = async (req, res) => {
 exports.updateCartItem = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { product: productId, variant_id: variantId, sku_code: optionSku, quantity } = req.body;
+        const { product: productId, variant_id: variantId, sku_code: optionSku, delta, priceAtTime } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(productId) || !mongoose.Types.ObjectId.isValid(variantId)) 
             return res.status(400).json({ message: 'Invalid productId or variantId' });
 
-        if (quantity <= 0)
-            return res.status(400).json({ message: 'Quantity must be greater than zero' });
+        if (delta !== 1 && delta !== -1)
+            return res.status(400).json({ message: 'Delta must be either 1 or -1' });
 
         const product = await Product.findById(productId);
         if (!product)
@@ -163,13 +164,9 @@ exports.updateCartItem = async (req, res) => {
         if (!option)
             return res.status(404).json({ message: 'Option not found' });
 
-        if (option.stock_quantity < quantity) 
-            return res.status(400).json({ message: 'Not enough stock available' });
-
         const cart = await Cart.findOne({ user: userId });
-        if (!cart) {
+        if (!cart) 
             return res.status(404).json({ message: 'Cart not found' });
-        }
 
         const item = cart.items.find(item => 
             item.product.equals(productId) &&
@@ -180,7 +177,20 @@ exports.updateCartItem = async (req, res) => {
         if (!item) 
             return res.status(404).json({ message: 'Item not found in cart' });
 
-        item.quantity = quantity;
+        const newQuantity = item.quantity + delta;
+
+        if (newQuantity <= 0)
+            return res.status(400).json({ message: 'Quantity must be greater than 0' });
+
+        if (newQuantity > option.stock_quantity)
+            return res.status(400).json({ message: 'Not enough stock available' });
+
+        item.quantity = newQuantity;
+
+        if (priceAtTime !== undefined) {
+            item.priceAtTime = priceAtTime;
+        }
+
         cart.recalculateTotals();
         await cart.save();
 

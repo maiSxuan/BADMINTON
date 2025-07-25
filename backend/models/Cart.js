@@ -10,6 +10,11 @@ const cartItemSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true,
     },
+    name: { 
+        type: String, 
+        required: true, 
+        trim: true 
+    },
     sku_code: {
         type: String,
         required: true,

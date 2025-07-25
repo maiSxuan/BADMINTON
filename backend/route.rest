@@ -183,44 +183,58 @@ POST http://localhost:4000/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "testuser2@gmail.com",
+  "email": "testuser@gmail.com",
   "password": "123456789"
 }
 
 ### GET cart
 GET http://localhost:4000/api/cart
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzMzODkzMSwiZXhwIjoxNzUzNTExNzMxfQ.1S88Ily06kRSBCmnRNgPdAwYnJ9S54XbVs9uVSQQlto
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxOTc2NCwiZXhwIjoxNzUzNTkyNTY0fQ.fyBIfOaSxYRJrlXeKbp0Q78VX4giPrBwi9iA7HnXrlU
 
 ### ADD ITEM 1
 POST http://localhost:4000/api/cart/add
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzMzODkzMSwiZXhwIjoxNzUzNTExNzMxfQ.1S88Ily06kRSBCmnRNgPdAwYnJ9S54XbVs9uVSQQlto
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxOTc2NCwiZXhwIjoxNzUzNTkyNTY0fQ.fyBIfOaSxYRJrlXeKbp0Q78VX4giPrBwi9iA7HnXrlU
 
 {
   "product": "687fe226a5fd9fd9efa23ade",
   "variant_id": "687fe226a5fd9fd9efa23ae0",
+  "name": "Vợt cầu lông Yonex Nanoflare Starbucks",
   "sku_code": "Starbucks-HỒNG-4U",
-  "quantity": 10,
+  "quantity": 2,
   "priceAtTime": 1499999
 }
 
 ### ADD ITEM 2
 POST http://localhost:4000/api/cart/add
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzMzODkzMSwiZXhwIjoxNzUzNTExNzMxfQ.1S88Ily06kRSBCmnRNgPdAwYnJ9S54XbVs9uVSQQlto
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxOTc2NCwiZXhwIjoxNzUzNTkyNTY0fQ.fyBIfOaSxYRJrlXeKbp0Q78VX4giPrBwi9iA7HnXrlU
 
 {
   "product": "687fe226a5fd9fd9efa23ade",
   "variant_id": "687fe226a5fd9fd9efa23ae2",
   "sku_code": "Starbucks-XANH-4U",
-  "quantity": 5,
+  "quantity": 1,
   "priceAtTime": 1499999
+}
+
+### ADD ITEM 3
+POST http://localhost:4000/api/cart/add
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxOTc2NCwiZXhwIjoxNzUzNTkyNTY0fQ.fyBIfOaSxYRJrlXeKbp0Q78VX4giPrBwi9iA7HnXrlU
+
+{
+  "product": "68769383ec6c802345648de6",
+  "variant_id": "68770001fec6c80234568001",
+  "sku_code": "TR024-1-WHT-36",
+  "quantity": 2,
+  "priceAtTime": 499000
 }
 
 ### REMOVE ITEM
 DELETE http://localhost:4000/api/cart/remove
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzMzODkzMSwiZXhwIjoxNzUzNTExNzMxfQ.1S88Ily06kRSBCmnRNgPdAwYnJ9S54XbVs9uVSQQlto
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxOTc2NCwiZXhwIjoxNzUzNTkyNTY0fQ.fyBIfOaSxYRJrlXeKbp0Q78VX4giPrBwi9iA7HnXrlU
 
 {
   "product": "687fe226a5fd9fd9efa23ade",
@@ -232,18 +246,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZ
 ### UPDATE ITEM
 PUT http://localhost:4000/api/cart/update
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzMzODkzMSwiZXhwIjoxNzUzNTExNzMxfQ.1S88Ily06kRSBCmnRNgPdAwYnJ9S54XbVs9uVSQQlto
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxOTc2NCwiZXhwIjoxNzUzNTkyNTY0fQ.fyBIfOaSxYRJrlXeKbp0Q78VX4giPrBwi9iA7HnXrlU
 
 {
   "product": "687fe226a5fd9fd9efa23ade",
   "variant_id": "687fe226a5fd9fd9efa23ae0",
   "sku_code": "Starbucks-HỒNG-4U",
-  "quantity": 2,
-  "priceAtTime": 1499999
+  "delta": -1,
+  "priceAtTime": 1299999
 }
 
 ### CLEAR CART
 DELETE http://localhost:4000/api/cart/clear
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzMzODkzMSwiZXhwIjoxNzUzNTExNzMxfQ.1S88Ily06kRSBCmnRNgPdAwYnJ9S54XbVs9uVSQQlto
-
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxODI4MCwiZXhwIjoxNzUzNTkxMDgwfQ.wL_FKLD7dfh_HxlcEKJDwvUoJ4cwj1aw-bXNzmcsZhQ
