@@ -30,14 +30,16 @@ const authenticate = async (req, res, next) => {
     if (!token || token === "null") {
       return res.status(401).json({ message: "No token provided" });
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.userID;
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
+    const userId = decoded.payload.userID;       // lấy từ payload
+    const role = decoded.payload.role;      
 
-    const user = await User.findOne({ userID: userId, user_type: decoded.user_type}).select("-password");
+    const user = await User.findOne({ userID: userId}).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
     if (user.status === 0) return res.status(403).json({ message: "Account locked" });
 
     req.user = user;
+    req.user.role = role;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid token", error: err.message });
@@ -46,7 +48,7 @@ const authenticate = async (req, res, next) => {
 
 const isAdmin = (req, res, next) => {
   try {
-    if (!req.user || req.user.user_type !== "ADMIN") {
+    if (!req.user || req.user.role !== "ADMIN") {
       return res.status(403).json({ message: "Access denied: Admin only" });
     }
     next();

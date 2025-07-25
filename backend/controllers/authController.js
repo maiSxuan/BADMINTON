@@ -4,7 +4,11 @@ const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
 
 const createToken = (user) => {
-  return jwt.sign({ userID: user.userID, user_type: user.user_type}, process.env.JWT_SECRET, {
+  const payload = { 
+    userID: user.userID, 
+    role: user.user_type, 
+  };
+  return jwt.sign({ payload }, process.env.ACCESS_TOKEN, {
     expiresIn: "2d",
   });
 };
