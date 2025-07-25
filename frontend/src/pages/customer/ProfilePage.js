@@ -1,24 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import "./ProfilePage.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Pencil } from "lucide-react"; 
 
 const ProfilePage = () => {
   const navigate = useNavigate();
 
   // State lưu giá trị form
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
     email: "",
     phone: "",
     gender: "",
-    birthdate: "",
+    date_of_birth: "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
-  });
+});
 
   // State lưu lỗi
   const [errors, setErrors] = useState({});
+  const [editField, setEditField] = useState(null); 
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:4000/api/users/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setFormData((prev) => ({
+          ...prev,
+          name: res.data.name || "",
+          email: res.data.email || "",
+          phone: res.data.phone || "",
+          gender: res.data.gender || "",
+          date_of_birth: res.data.date_of_birth
+            ? res.data.date_of_birth.split("T")[0]
+            : "",
+        }));
+      } catch (err) {
+        console.error("Lỗi khi tải thông tin người dùng:", err);
+      }
+    };
+    fetchUserProfile();
+  }, []);
 
   // Xử lý thay đổi input
   const handleChange = (e) => {
@@ -36,24 +63,53 @@ const ProfilePage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     const newErrors = {};
-    for (const field in formData) {
-      if (!formData[field].trim()) {
-        newErrors[field] = "Ô đang trống";
-      }
+
+    if (formData.newPassword && formData.newPassword !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Mật khẩu nhập lại không khớp";
+    }
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email không hợp lệ";
     }
 
     setErrors(newErrors);
 
     // Nếu không có lỗi thì lưu và chuyển trang
     if (Object.keys(newErrors).length === 0) {
-      console.log("Form submitted!", formData);
+    try {
+      const token = localStorage.getItem("token");
+      // Tạo object mới chỉ chứa các field cần thiết
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        gender: formData.gender,
+        date_of_birth: formData.date_of_birth ? new Date(formData.date_of_birth).toISOString() : null,
+        currentPassword: formData.currentPassword || undefined,
+        newPassword: formData.newPassword || undefined,
+      };
+
+      await axios.put("http://localhost:4000/api/users/profile", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert("Cập nhật thông tin thành công!");
       navigate("/");
+    } catch (err) {
+      console.error("Update error:", err.response?.data);
+      alert(err.response?.data?.message || "Lỗi khi cập nhật thông tin");
     }
-  };
+  }
+};
+
+  const fields = [
+    { label: "Tên đăng nhập", name: "name", type: "text" },
+    { label: "Email", name: "email", type: "email" },
+    { label: "Số điện thoại", name: "phone", type: "text" },
+    { label: "Giới tính", name: "gender", type: "text" },
+    { label: "Ngày sinh", name: "date_of_birth", type: "date" },
+  ];
 
   return (
     <div className="profile-page">
@@ -64,65 +120,29 @@ const ProfilePage = () => {
         </p>
 
         <form className="profile-form" onSubmit={handleSubmit}>
-          <div className="form-row">
-            <label>Tên đăng nhập</label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              placeholder={errors.username || ""} // dùng lỗi làm placeholder nếu có
-              className={errors.username ? "input-error" : ""}
-            />
-          </div>
-
-          <div className="form-row">
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder={errors.email || ""} // dùng lỗi làm placeholder nếu có
-              className={errors.email ? "input-error" : ""}
-            />
-          </div>
-
-          <div className="form-row">
-            <label>Số điện thoại</label>
-            <input
-              type="text"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder={errors.phone || ""} // dùng lỗi làm placeholder nếu có
-              className={errors.phone ? "input-error" : ""}
-            />
-          </div>
-
-          <div className="form-row">
-            <label>Giới tính</label>
-            <input
-              type="text"
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              placeholder={errors.gender || ""} // dùng lỗi làm placeholder nếu có
-              className={errors.gender ? "input-error" : ""}
-            />
-          </div>
-
-          <div className="form-row">
-            <label>Ngày sinh</label>
-            <input
-              type="date"
-              name="birthdate"
-              value={formData.birthdate}
-              onChange={handleChange}
-              placeholder={errors.birthdate || ""} // dùng lỗi làm placeholder nếu có
-              className={errors.birthdate ? "input-error" : ""}
-            />
-          </div>
+          {fields.map((f) => (
+            <div className="form-row" key={f.name}>
+              <label>{f.label}</label>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <input
+                  type={f.type}
+                  name={f.name}
+                  value={formData[f.name]}
+                  onChange={handleChange}
+                  readOnly={editField !== f.name} // chỉ cho sửa khi bấm bút
+                  placeholder="Chưa có thông tin"
+                  className={errors[f.name] ? "input-error" : ""}
+                />
+                <button
+                  type="button"
+                  onClick={() => setEditField(f.name)}
+                  style={{ marginLeft: "5px" }}
+                >
+                  <Pencil size={16} />
+                </button>
+              </div>
+            </div>
+          ))}
 
           <h3 className="password-title">Đổi mật khẩu:</h3>
 
@@ -133,8 +153,7 @@ const ProfilePage = () => {
               name="currentPassword"
               value={formData.currentPassword}
               onChange={handleChange}
-              placeholder={errors.currentPassword || ""} // dùng lỗi làm placeholder nếu có
-              className={errors.currentPassword ? "input-error" : ""}
+              placeholder="Để trống nếu không đổi"
             />
           </div>
 
@@ -145,8 +164,6 @@ const ProfilePage = () => {
               name="newPassword"
               value={formData.newPassword}
               onChange={handleChange}
-              placeholder={errors.newPassword || ""} // dùng lỗi làm placeholder nếu có
-              className={errors.newPassword ? "input-error" : ""}
             />
           </div>
 
@@ -157,9 +174,11 @@ const ProfilePage = () => {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              placeholder={errors.confirmPassword || ""} // dùng lỗi làm placeholder nếu có
               className={errors.confirmPassword ? "input-error" : ""}
             />
+            {errors.confirmPassword && (
+              <span className="error-text">{errors.confirmPassword}</span>
+            )}
           </div>
 
           <div className="btn-container">

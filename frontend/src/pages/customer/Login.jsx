@@ -132,6 +132,7 @@ export default function Login() {
 
       const { token, user } = response.data;
       localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", token);
 
       if (rememberPassword) {
         localStorage.setItem("token", token);
