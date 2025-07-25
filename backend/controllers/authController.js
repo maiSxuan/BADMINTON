@@ -4,10 +4,20 @@ const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
 
 const createToken = (user) => {
-  return jwt.sign({ id: user._id, role: user.user_type }, process.env.JWT_SECRET, {
+  const payload = { 
+    userID: user.userID, 
+    role: user.user_type, 
+  };
+  return jwt.sign({ payload }, process.env.ACCESS_TOKEN, {
     expiresIn: "2d",
   });
 };
+
+// const createToken = (user) => {
+//   return jwt.sign({ id: user._id, role: user.user_type }, process.env.JWT_SECRET, {
+//     expiresIn: "2d",
+//   });
+// };
 
 // Đăng ký
 exports.register = async (req, res) => {
@@ -91,7 +101,7 @@ exports.login = async (req, res) => {
     res.json({
       token,
       user: {
-        id: user._id,
+        userID: user.userID,
         email: user.email,
         phone: user.phone,
         role: user.role,
