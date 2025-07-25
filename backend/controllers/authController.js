@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
 
 const createToken = (user) => {
-  return jwt.sign({ id: user._id, role: user.user_type }, process.env.JWT_SECRET, {
+  return jwt.sign({ userID: user.userID, user_type: user.user_type}, process.env.JWT_SECRET, {
     expiresIn: "2d",
   });
 };
@@ -12,7 +12,7 @@ const createToken = (user) => {
 // Đăng ký
 exports.register = async (req, res) => {
   try {
-    const { fullName, phone, address, email, password } = req.body;
+    const { name, phone, address, email, password } = req.body;
 
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
@@ -30,24 +30,27 @@ exports.register = async (req, res) => {
 
     const hashed = await bcrypt.hash(password, 10);
 
-    const role = email.endsWith("@admin.com") ? "admin" : "user";
+    const role = email.endsWith("@admin.com") ? "ADMIN" : "USER";
     const newUser = await User.create({
       userID: uuidv4(),
-      name: fullName,
+      name,
       phone,
       address,
       email,
       password: hashed,
-      user_type: role.toUpperCase(),
+      user_type: role,
     });
 
     const token = createToken(newUser);
     res.status(201).json({
       token,
       user: {
+        id: newUser._id,
+        userID: newUser.userID,
         email: newUser.email,
-        fullName: newUser.fullName,
-        role: newUser.user_type,
+        phone: newUser.phone,
+        fullName: newUser.name,
+        user_type: newUser.user_type,
       },
     });
   } catch (err) {
@@ -87,15 +90,15 @@ exports.login = async (req, res) => {
     }
 
     const token = createToken(user);
-
     res.json({
       token,
       user: {
         id: user._id,
+        userID: user.userID,
         email: user.email,
         phone: user.phone,
-        role: user.role,
-        fullName: user.fullName,
+        name: user.name,
+        user_type: user.user_type,
       },
     });
   } catch (err) {

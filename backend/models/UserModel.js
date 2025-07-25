@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ['male', 'female', 'other'], // hoặc để tự do nếu bạn muốn
+    enum: ['nam', 'nữ', 'khác'], // hoặc để tự do nếu bạn muốn
     lowercase: true,
   },
   date_of_birth: {

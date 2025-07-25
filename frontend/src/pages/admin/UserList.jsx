@@ -3,46 +3,72 @@
   import  Pagination  from '../../components/common/Pagination';
   import { Trash, SquarePen,Lock,LockOpen } from 'lucide-react';
   import axios from "axios";
+  import { useNavigate } from "react-router-dom";
 
   const UserListPage = () => {
+    const navigate = useNavigate();
     //lấy data
     const [users, setUsers] = useState([]);
     //set up page
     const [currentPage, setCurrentPage] = useState(1);
     let usersPerPage = 10;
-    useEffect(() => {
-      const getUserData = async () => {
-        try {
-          const response = await axios.get("http://localhost:4000/api/users/user-list"); 
-          setUsers(response.data);
-        } catch (err) {
-          console.error("Lỗi khi lấy dữ liệu người dùng:", err);
-        }
-      };
 
-    getUserData(); 
-  }, []);
+    useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    // Chưa đăng nhập hoặc không phải admin -> redirect
+    if (!token || !user || user.user_type !== "ADMIN") {
+      alert("Bạn không có quyền truy cập trang này.");
+      navigate("/login");
+      return;
+    }
+
+    const getUserData = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/api/users/user-list", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setUsers(response.data);
+      } catch (err) {
+        console.error("Lỗi khi lấy dữ liệu người dùng:", err);
+        alert("Không thể tải danh sách người dùng.");
+        navigate("/");
+      }
+    };
+
+    getUserData();
+  }, [navigate]);
     //get current posts
     const indexOfLastUser =currentPage * usersPerPage;
     const indexOfFirstUSer = indexOfLastUser - usersPerPage;
     const currentUsers = users.slice(indexOfFirstUSer,indexOfLastUser)
     const paginate = (pageNumbers) => setCurrentPage(pageNumbers)
+
     const handleDeleteUser = async (id) => {
       const confirm = window.confirm("Bạn có chắc chắn muốn xóa người dùng này?");
       if (!confirm) return;
 
       try {
-        await axios.delete(`http://localhost:4000/api/users/${id}`);
+        const token = localStorage.getItem("token"); 
+        await axios.delete(`http://localhost:4000/api/users/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         setUsers(prev => prev.filter(user => user._id !== id));
         alert("Xóa người dùng thành công");
       } catch (err) {
         alert("Lỗi khi xóa người dùng: " + err.message);
       }
     };
+
   const handleLockUser = async (id) => {
     if (!window.confirm("Bạn có chắc chắn muốn thay đổi trạng thái người dùng này?")) return;
     try {
-      const res = await axios.patch(`http://localhost:4000/api/users/status/${id}`);
+      const token = localStorage.getItem("token"); 
+      const res = await axios.patch(`http://localhost:4000/api/users/status/${id}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setUsers(prev =>
         prev.map(user =>
           user._id === id ? { ...user, status: res.data.status } : user
