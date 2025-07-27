@@ -1,397 +1,256 @@
+// src/components/HomeProduct.js (Hoặc đường dẫn tương ứng của bạn)
+
 import { NavLink } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
-import {delivery, quality, paying, exchange, saleVot, saleGiay, saleAo} from '../../assets/images/Homepage';
-import chevronLeft from '../../assets/icons/ChevronLeft.svg';
-import chevronRight from '../../assets/icons/ChevronRight.svg';
+import { useState, useRef, useEffect, useCallback } from "react";
+import { delivery, quality, paying, exchange, saleVot, saleGiay, saleAo } from '../../assets/images/Homepage';
 import "./HomeProduct.css";
 
-const Product = () => {
-  const [activeTab, setActiveTab] = useState("TẤT CẢ")
+// Dữ liệu cho các tab lọc, có slug để gọi API
+const categoryTabsData = [
+    { name: "TẤT CẢ", slug: "" },
+    { name: "VỢT CẦU LÔNG", slug: "vot-cau-long" },
+    { name: "GIÀY CẦU LÔNG", slug: "giay-cau-long" },
+    { name: "ÁO CẦU LÔNG", slug: "ao-cau-long" },
+    { name: "QUẦN CẦU LÔNG", slug: "quan-cau-long" },
+    { name: "BALO CẦU LÔNG", slug: "balo-cau-long" },
+    { name: "TÚI VỢT CẦU LÔNG", slug: "tui-vot-cau-long" },
+    { name: "PHỤ KIỆN CẦU LÔNG", slug: "phu-kien-cau-long" },
+];
 
-  const categories = [
-    "TẤT CẢ",
-    "VỢT CẦU LÔNG",
-    "GIÀY CẦU LÔNG",
-    "ÁO CẦU LÔNG",
-    "QUẦN CẦU LÔNG",
-    "BALO CẦU LÔNG",
-    "TÚI VỢT CẦU LÔNG",
-    "PHỤ KIỆN CẦU LÔNG",
-  ]
+// Dữ liệu cho lưới danh mục ở cuối trang, có slug để điều hướng
+const productCategoriesGrid = [
+    { title: "VỢT CẦU LÔNG", icon: "🏸", slug: "vot-cau-long" },
+    { title: "GIÀY CẦU LÔNG", icon: "👟", slug: "giay-cau-long" },
+    { title: "ÁO CẦU LÔNG", icon: "👕", slug: "ao-cau-long" },
+    { title: "QUẦN CẦU LÔNG", icon: "🩳", slug: "quan-cau-long" },
+    { title: "VÁY CẦU LÔNG", icon: "👗", slug: "vay-cau-long" },
+    { title: "BALO CẦU LÔNG", icon: "🎒", slug: "balo-cau-long" },
+    { title: "TÚI VỢT CẦU LÔNG", icon: "👜", slug: "tui-vot-cau-long" },
+    { title: "PHỤ KIỆN CẦU LÔNG", icon: "⚙️", slug: "phu-kien-cau-long" },
+];
 
-  const products = [
-    {
-      id: 1,
-      name: "Vợt Cầu Lông Kumpoo JingZhou Chính Hãng",
-      price: "930.000 ₫",
-      image: "https://cdn.shopvnb.com/uploads/gallery/vot-cau-long-kumpoo-jingzhou-chinh-hang_1742841785.webp",
-      category: "VỢT CẦU LÔNG",
-    },
-    {
-      id: 2,
-      name: "Vợt cầu lông Lining Axforce Cannon",
-      price: "980.000 ₫",
-      image: "https://cdn.shopvnb.com/uploads/gallery/vot-cau-long-lining-axforce-cannon-black-chinh-hang.webp",
-      category: "VỢT CẦU LÔNG",
-    },
-    {
-      id: 3,
-      name: "Giày cầu lông Yonex SHB 65Z4 2025",
-      price: "2.849.000 ₫",
-      image: "https://cdn.shopvnb.com/uploads/gallery/giay-cau-long-yonex-shb-65z4-slim-trang-2025-chinh-hang_1736970583.webp",
-      category: "GIÀY CẦU LÔNG",
-    },
-    {
-      id: 4,
-      name: "Áo cầu lông Lining A533 nam - Trắng xanh",
-      price: "130.000 ₫",
-      image: "https://cdn.shopvnb.com/uploads/gallery/ao-cau-long-lining-a533-nam-trang-xanh_1750363202.webp",
-      category: "ÁO CẦU LÔNG",
-    },
-    {
-      id: 5,
-      name: "Quần cầu lông Mizuno 7050 - Đen",
-      price: "130.000 ₫",
-      image: "https://cdn.shopvnb.com/uploads/gallery/quan-cau-long-mizuno-7050-den_1751244307.webp",
-      category: "QUẦN CẦU LÔNG",
-    },
-    {
-      id: 6,
-      name: "Balo cầu lông Victor BR 7009",
-      price: "750.000 ₫",
-      image: "https://cdn.shopvnb.com/uploads/gallery/balo-cau-long-victor-br-7009-trang-xanh-gc_1747880691.webp",
-      category: "BALO CẦU LÔNG",
-    },
-    {
-      id: 7,
-      name: "Túi cầu lông Yonex BA31PAEX",
-      price: "839.000 ₫",
-      image: "https://cdn.shopvnb.com/uploads/gallery/tui-cau-long-yonex-ba31paex-den-xanh-gc_1747879387.webp",
-      category: "TÚI VỢT CẦU LÔNG",
-    },
-    {
-      id: 8,
-      name: "Dây cước căng vợt GOSEN Ryzonic 58 Pochaneco",
-      price: "165.000 ₫",
-      image: "https://cdn.shopvnb.com/uploads/gallery/day-cuoc-cang-vot-gosen-ryzonic-58-pochaneco_1751075038.webp",
-      category: "PHỤ KIỆN CẦU LÔNG",
-    },
-    {
-      id: 9,
-      name: "Băng chặn mồ hôi Victor SP507 DBZ O chính hãng",
-      price: "100.000 ₫",
-      image: "https://cdn.shopvnb.com/uploads/gallery/bang-chan-mo-hoi-victor-sp507-dbz-o-chinh-hang-1_1749083181.webp",
-      category: "PHỤ KIỆN CẦU LÔNG",
-    },
-  ];
+const HomeProduct = () => {
+    // State để quản lý dữ liệu sản phẩm từ API
+    const [products, setProducts] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [activeTab, setActiveTab] = useState({ name: "TẤT CẢ", slug: "" });
 
-  const filterProducts = activeTab === "TẤT CẢ" 
-    ? products 
-    : products.filter((product) => product.category === activeTab);
-
-  const productCategories = [
-    { title: "VỢT CẦU LÔNG", icon: "🏸" },
-    { title: "GIÀY CẦU LÔNG", icon: "👟" },
-    { title: "ÁO CẦU LÔNG", icon: "👕" },
-    { title: "QUẦN CẦU LÔNG", icon: "🩳" },
-    { title: "VÂY CẦU LÔNG", icon: "👗" },
-    { title: "BALO CẦU LÔNG", icon: "🎒" },
-    { title: "TÚI VỢT CẦU LÔNG", icon: "👜" },
-    { title: "PHỤ KIỆN CẦU LÔNG", icon: "⚙️" },
-  ]
-
-  const handleProductClick = (productId) => {
-    console.log("Clicked product:", productId)
-  }
-
-  const handleCategoryClick = (category) => {
-    console.log("Clicked category:", category)
-  }
-
-  const handleTabClick = (category, e) => {
-    setActiveTab(category);
-    e.target.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest"
-    });
-  };
-
-  const categoryRef = useRef(null);
-
-  useEffect(() => {
-    const slider = categoryRef.current;
-    if (!slider) return;
-
-    let isDragging = false;
-    let startY = 0;
-    let scrollStart = 0;
-
-    const handleMouseDown = (e) => {
-      isDragging = true;
-      startY = e.pageY;
-      scrollStart = slider.scrollTop;
-      slider.style.userSelect = 'none';
-      slider.style.cursor = 'grabbing';
-    };
-
-    const handleMouseMove = (e) => {
-      if (!isDragging) return;
-      const deltaY = e.pageY - startY;
-      slider.scrollTop = scrollStart - deltaY;
-    };
-
-    const handleMouseUp = () => {
-      isDragging = false;
-      slider.style.userSelect = '';
-      slider.style.cursor = 'grab';
-    };
-
-    // const handleWheel = (e) => {
-    //   if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-    //     e.preventDefault();
-    //     slider.scrollBy({ top: e.deltaY, behavior: 'smooth' });
-    //   }
-    // };
-
-    slider.addEventListener('mousedown', handleMouseDown);
-    slider.addEventListener('mousemove', handleMouseMove);
-    slider.addEventListener('mouseup', handleMouseUp);
-    slider.addEventListener('mouseleave', handleMouseUp);
-    // slider.addEventListener('wheel', handleWheel, { passive: false });
-    slider.style.cursor = 'grab';
-
-    return () => {
-      slider.removeEventListener('mousedown', handleMouseDown);
-      slider.removeEventListener('mousemove', handleMouseMove);
-      slider.removeEventListener('mouseup', handleMouseUp);
-      slider.removeEventListener('mouseleave', handleMouseUp);
-      // slider.removeEventListener('wheel', handleWheel);
-      slider.style.userSelect = '';
-      slider.style.cursor = '';
-    };
-  }, []);
-
-  const productGridRef = useRef(null);
-
-  useEffect(() => {
-    const slider = productGridRef.current;
-    if (!slider)
-        return;
-
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-    let rafId = null;
-
-    const handleMouseDown = (e) => {
-      isDown = true;
-      startX = e.pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-      slider.style.userSelect = 'none';
-      slider.style.cursor = 'grabbing';
-    };
-
-    const handleMouseUp = () => {
-      isDown = false;
-      slider.style.userSelect = '';
-      slider.style.cursor = 'grab';
-    };
-
-    const handleMouseMove = (e) => {
-      if (!isDown)
-        return;
-
-      e.preventDefault();
-      if (rafId)
-        cancelAnimationFrame(rafId);
-
-      rafId = requestAnimationFrame(() => {
-        const x = e.pageX - slider.offsetLeft;
-        const walk = (x - startX) * 1.2;
-        slider.scrollLeft = scrollLeft - walk;
-      });
-    };
-
-    const handleWheel = (e) => {
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        slider.scrollBy({
-          left: e.deltaY,
-          behavior: 'smooth',
+    // Hàm gọi API để lấy 8 sản phẩm mới nhất, có thể lọc theo danh mục
+    const fetchNewestProducts = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
+        
+        const params = new URLSearchParams({
+            sort: 'newest',
+            limit: 8,
         });
-      }
-    };
 
-    slider.addEventListener("mousedown", handleMouseDown);
-    slider.addEventListener("mouseup", handleMouseUp);
-    slider.addEventListener("mouseleave", handleMouseUp);
-    slider.addEventListener("mousemove", handleMouseMove, { passive: false });
-    slider.addEventListener("wheel", handleWheel, { passive: false });
-    slider.style.cursor = 'grab';
+        if (activeTab.slug) {
+            params.append('categories', activeTab.slug);
+        }
 
-    return () => {
-      if (rafId)
-        cancelAnimationFrame(rafId)
+        try {
+            const response = await fetch(`/api/products?${params.toString()}`);
+            if (!response.ok) throw new Error('Không thể tải sản phẩm.');
+            const result = await response.json();
+            setProducts(result.data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [activeTab]);
 
-      slider.removeEventListener("mousedown", handleMouseDown);
-      slider.removeEventListener("mouseup", handleMouseUp);
-      slider.removeEventListener("mouseleave", handleMouseUp);
-      slider.removeEventListener("mousemove", handleMouseMove);
-      slider.removeEventListener("wheel", handleWheel);
-    };
-  }, []);
+    useEffect(() => {
+        fetchNewestProducts();
+    }, [fetchNewestProducts]);
 
-  const scrollAmountRef = useRef(300);
+    // Logic kéo thả cho thanh tab (giữ nguyên từ code gốc của bạn)
+    const scrollRef = useRef(null);
+    useEffect(() => {
+        const slider = scrollRef.current;
+        if (!slider) return;
 
-  useEffect(() => {
-    if (productGridRef.current) {
-      const firstCard = productGridRef.current.querySelector(".home-product-card");
-      if (firstCard) {
-        scrollAmountRef.current = firstCard.offsetWidth + 24;
-      }
-    }
-  }, [filterProducts]);
-  
-  const scrollProductLeft = () => {
-    productGridRef.current.scrollBy({ left: -scrollAmountRef.current, behavior: 'smooth' });
-  };
+        let isDown = false;
+        let startX;
+        let scrollLeft;
 
-  const scrollProductRight = () => {
-    productGridRef.current.scrollBy({ left: scrollAmountRef.current, behavior: 'smooth' });
-  };
+        const handleMouseDown = (e) => {
+            isDown = true;
+            slider.classList.add('active');
+            startX = e.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+        }
 
-  return (
-    <div className="home-product-section">
+        const handleMouseLeave = () => {
+            isDown = false;
+            slider.classList.remove('active');
+        }
 
-      <section className="home-product-features">
-        <div className="home-product-container">
-          <div className="home-product-features-grid">
-            <div className="home-product-features-item">
-              <img src={delivery} alt="Vận chuyển" className="home-product-features-icon" />
-              <div>
-                <div className="home-product-features-title">Vận chuyển</div>
-                <div className="home-product-features-title">TOÀN QUỐC</div>
-              </div>
-            </div>
-            <div className="home-product-features-item">
-              <img src={quality} alt="Chất lượng" className="home-product-features-icon" />
-              <div>
-                <div className="home-product-features-title">Bảo đảm sản phẩm</div>
-                <div className="home-product-features-title">CHẤT LƯỢNG</div>
-              </div>
-            </div>
-            <div className="home-product-features-item">
-              <img src={paying} alt="Thanh toán" className="home-product-features-icon" />
-              <div>
-                <div className="home-product-features-title">Thanh toán</div>
-                <div className="home-product-features-title">ĐA DẠNG</div>
-              </div>
-            </div>
-            <div className="home-product-features-item">
-              <img src={exchange} alt="Đổi trả" className="home-product-features-icon" />
-              <div>
-                <div className="home-product-features-title">Đổi sản phẩm mới</div>
-                <div className="home-product-features-title">Nếu sản phẩm LỖI</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        const handleMouseUp = () => {
+            isDown = false;
+            slider.classList.remove('active');
+        }
 
-      <section className="home-products">
-        <div className="home-product-container">
-          <div className="hp-section-title-wrapper">
-            <h2 className="hp-section-title">Sản phẩm mới</h2>
-            <div className="hp-section-underline underline-left"></div>
-          </div>
-          
-          <div className="home-product-flex-container">
-            <div className="hp-category-tabs-wrapper" ref={categoryRef}>
-              <div className="hp-category-tabs">
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    className={`home-product-tab-button ${activeTab === category ? "active" : ""}`}
-                    onClick={(e) => handleTabClick(category, e)}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            </div>
-          
-            <div className="home-product-grid-wrapper">
-              <button className="scroll-product-button left" onClick={scrollProductLeft}>
-                <img src={chevronLeft} alt="left" />
-              </button>
+        const handleMouseMove = (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 1.2;
+            slider.scrollLeft = scrollLeft - walk;
+        }
 
-              <div className="home-product-grid" ref={productGridRef}>
-                { filterProducts.map((product) => (
-                  <div key={product.id} className="home-product-card" onClick={() => handleProductClick(product.id)}>
-                    <div className="product-image-container">
-                      <img src={product.image || "/placeholder.svg"} alt={product.name} className="product-image" />
+        slider.addEventListener('mousedown', handleMouseDown);
+        slider.addEventListener('mouseleave', handleMouseLeave);
+        slider.addEventListener('mouseup', handleMouseUp);
+        slider.addEventListener('mousemove', handleMouseMove);
+
+        return () => {
+            slider.removeEventListener('mousedown', handleMouseDown);
+            slider.removeEventListener('mouseleave', handleMouseLeave);
+            slider.removeEventListener('mouseup', handleMouseUp);
+            slider.removeEventListener('mousemove', handleMouseMove);
+        };
+    }, []);
+
+    return (
+        <div className="product-section">
+            {/* Features Section (Nội dung gốc) */}
+            <section className="features">
+                <div className="container">
+                    <div className="features-grid">
+                        <div className="feature-item">
+                            <img src={delivery} alt="Vận chuyển" className="feature-icon" />
+                            <div>
+                                <div className="feature-title">Vận chuyển</div>
+                                <div className="feature-subtitle">TOÀN QUỐC</div>
+                            </div>
+                        </div>
+                        <div className="feature-item">
+                            <img src={quality} alt="Chất lượng" className="feature-icon" />
+                            <div>
+                                <div className="feature-title">Bảo đảm sản phẩm</div>
+                                <div className="feature-subtitle">CHẤT LƯỢNG</div>
+                            </div>
+                        </div>
+                        <div className="feature-item">
+                            <img src={paying} alt="Thanh toán" className="feature-icon" />
+                            <div>
+                                <div className="feature-title">Thanh toán</div>
+                                <div className="feature-subtitle">ĐA DẠNG</div>
+                            </div>
+                        </div>
+                        <div className="feature-item">
+                            <img src={exchange} alt="Đổi trả" className="feature-icon" />
+                            <div>
+                                <div className="feature-title">Đổi sản phẩm mới</div>
+                                <div className="feature-subtitle">Nếu sản phẩm LỖI</div>
+                            </div>
+                        </div>
                     </div>
-                    <div className="product-grid-info">
-                      <p className="product-grid-name">{product.name}</p>
-                      <p className="product-grid-price">{product.price}</p>
+                </div>
+            </section>
+
+            {/* Products Section (Nội dung được cập nhật với dữ liệu thật) */}
+            <section className="products">
+                <div className="container">
+                    <div className="section-title-wrapper">
+                        <h2 className="section-title">Sản phẩm mới</h2>
+                        <div className="section-underline underline-left"></div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                    
+                    <div className="category-tabs-wrapper">
+                        <div className="category-tabs" ref={scrollRef}>
+                            {categoryTabsData.map((category) => (
+                                <button
+                                    key={category.name}
+                                    className={`tab-button ${activeTab.name === category.name ? "active" : ""}`}
+                                    onClick={() => setActiveTab(category)}
+                                >
+                                    {category.name}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    
+                    <div className="homepage-product-grid">
+                        {isLoading ? (
+                            <p className="homepage-grid-message">Đang tải sản phẩm...</p>
+                        ) : error ? (
+                            <p className="homepage-grid-message">{error}</p>
+                        ) : (
+                            products.length > 0 ? (
+                                products.map((product) => (
+                                    <NavLink to={`/products/${product.slug}`} key={product.id} className="homepage-product-card">
+                                        <div className="homepage-product-image-wrapper">
+                                            <img 
+                                                src={product.imageUrl || 'https://via.placeholder.com/250?text=No+Image'} 
+                                                alt={product.name} 
+                                                className="homepage-product-image"
+                                            />
+                                        </div>
+                                        <div className="homepage-product-info">
+                                            <h4 className="homepage-product-name">{product.name}</h4>
+                                            <p className="homepage-product-price">{product.price.toLocaleString('vi-VN')} ₫</p>
+                                        </div>
+                                    </NavLink>
+                                ))
+                            ) : (
+                                <p className="homepage-grid-message">Không có sản phẩm nào trong danh mục này.</p>
+                            )
+                        )}
+                    </div>
+                </div>
+            </section>
 
-              <button className="scroll-product-button right" onClick={scrollProductRight}>
-                <img src={chevronRight} alt="right" />
-              </button>
-            </div>
-          </div>
+            {/* Sale Off Section (Nội dung gốc) */}
+            <section className="sale-off">
+                <div className="container">
+                    <div className="section-title-wrapper">
+                        <h2 className="section-title">Sale off</h2>
+                        <div className="section-underline underline-center"></div>
+                    </div>
+                    
+                    <div className="sale-grid">
+                        <NavLink to="/sale-vot" className="sale-card image-card" style={{ backgroundImage: `url(${saleVot})` }}>
+                            <h3 className="sale-title">VỢT CẦU LÔNG</h3>
+                            <p className="sale-subtitle">20% OFF</p>
+                        </NavLink>
+
+                        <NavLink to="/sale-giay" className="sale-card image-card" style={{ backgroundImage: `url(${saleGiay})` }}>
+                            <h3 className="sale-title">GIẢM GIÁ</h3>
+                            <p className="sale-subtitle">Giá ưu đãi</p>
+                        </NavLink>
+
+                        <NavLink to="/sale-ao" className="sale-card image-card" style={{ backgroundImage: `url(${saleAo})` }}>
+                            <h3 className="sale-title">SALE OFF</h3>
+                            <p className="sale-subtitle">ÁO CẦU LÔNG</p>
+                        </NavLink>
+                    </div>
+                </div>
+            </section>
+
+            {/* Product Categories Grid (Nội dung gốc) */}
+            <section className="category-section">
+                <div className="container">
+                    <div className="section-title-wrapper">
+                        <h2 className="section-title">Sản phẩm cầu lông</h2>
+                        <div className="section-underline underline-right"></div>
+                    </div>
+                    
+                    <div className="category-grid">
+                        {productCategoriesGrid.map((category) => (
+                          <NavLink to={`/products?categories=${category.slug}`} key={category.slug} className="category-card">
+                              <div className="category-icon">{category.icon}</div>
+                              <h3 className="category-title">{category.title}</h3>
+                          </NavLink>
+                        ))}
+                    </div>
+                </div>
+            </section>
         </div>
-      </section>
-
-      <section className="home-product-sale-off">
-        <div className="home-product-container">
-          <div className="hp-section-title-wrapper">
-            <h2 className="hp-section-title">Sale off</h2>
-            <div className="hp-section-underline underline-center"></div>
-          </div>
-          
-          <div className="home-product-sale-grid">
-            <NavLink to="/sale-vot" className="home-product-sale-card image-card" style={{ backgroundImage: `url(${saleVot})` }}>
-              <h3 className="home-product-sale-title">VỢT CẦU LÔNG</h3>
-              <p className="home-product-sale-title">20% OFF</p>
-            </NavLink>
-
-            <NavLink to="/sale-giay" className="home-product-sale-card image-card" style={{ backgroundImage: `url(${saleGiay})` }}>
-              <h3 className="home-product-sale-title">GIẢM GIÁ</h3>
-              <p className="home-product-sale-title">Giá ưu đãi</p>
-            </NavLink>
-
-            <NavLink to="/sale-ao" className="home-product-sale-card image-card" style={{ backgroundImage: `url(${saleAo})` }}>
-              <h3 className="home-product-sale-title">SALE OFF</h3>
-              <p className="home-product-sale-title">ÁO CẦU LÔNG</p>
-            </NavLink>
-          </div>
-        </div>
-      </section>
-
-      <section className="home-product-category-section">
-        <div className="home-product-container">
-          <div className="hp-section-title-wrapper">
-            <h2 className="hp-section-title">Sản phẩm cầu lông</h2>
-            <div className="hp-section-underline underline-right"></div>
-          </div>
-          
-          <div className="home-product-category-grid">
-            {productCategories.map((category, index) => (
-              <div key={index} className="home-product-category-card" onClick={() => handleCategoryClick(category.title)}>
-                <div className="home-product-category-icon">{category.icon}</div>
-                <h3 className="home-product-category-title">{category.title}</h3>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </div>
-  )
+    )
 }
 
-export default Product
+export default HomeProduct;
