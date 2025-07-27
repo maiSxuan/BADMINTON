@@ -2,14 +2,15 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const OptionSchema = new Schema({
+    // option_id: { type: Schema.Types.ObjectId, default: () => new mongoose.Types.ObjectId() },
     sku_code: { type: String, required: true },
     value: { type: String, required: true },
     price: { type: Number, required: true, default: 0 },
     stock_quantity: { type: Number, required: true, default: 0 }
-}, { _id: false });
+});
 
 const VariantSchema = new Schema({
-    variant_id: { type: Schema.Types.ObjectId, default: () => new mongoose.Types.ObjectId() },
+    // variant_id: { type: Schema.Types.ObjectId, default: () => new mongoose.Types.ObjectId() },
     name: { type: String, required: true },
     images: [{ type: String }],
     options: [OptionSchema]

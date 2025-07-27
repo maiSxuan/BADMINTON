@@ -6,14 +6,13 @@ module.exports = router;
 
 const {
     getProductBySlug,
-    createProduct
+    createProduct, 
+    updateStockByIds,
+    getStockByIds
 } = require('../controllers/productController');
 
-
 router.post('/', createProduct);
-
-
-router.get('/:slug', getProductBySlug);
-
-
+router.patch('/update-stock', updateStockByIds);
+router.get('/get-stock', getStockByIds);
+router.get('/:slug', getProductBySlug); // để GET này cuối
 module.exports = router;

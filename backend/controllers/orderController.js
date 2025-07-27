@@ -1,5 +1,6 @@
 const Order = require('../models/Order')
-
+const Product = require('../models/ProductModel')
+const mongoose = require('mongoose')
 const createOrder = async (req, res) => {
   try {
     const {
@@ -9,22 +10,50 @@ const createOrder = async (req, res) => {
       orderNote,
       deliveryMethod,
       shippingInfo
-    } = req.body
+    } = req.body;
 
     if (!userId) {
-      return res.status(400).json({ message: "Thiếu userId" })
+      return res.status(400).json({ message: "Thiếu userId" });
     }
 
     const shippingProviderMap = {
       'nhanh': 'Giao hàng tiết kiệm',
       'sieu-toc': 'J&T Express',
       'tai-cua-hang': 'Tự đến lấy'
-    }
+    };
 
+    // Kiểm tra tồn kho cho từng item
+    for (const item of items) {
+      const product = await Product.findById(item.product_id);
+      if (!product) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm' });
+      }
+
+      const variant = product.variants.id(item.variant_id);
+      if (!variant) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy biến thể sản phẩm' });
+      }
+
+      const option = variant.options.id(item.option_id);
+      if (!option) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy tuỳ chọn sản phẩm' });
+      }
+
+      if (option.stock_quantity < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Sản phẩm ${item.name} - ${item.variant_name} - size ${item.size} chỉ còn ${option.stock_quantity} sản phẩm`
+        });
+      }
+    }
+    // Tạo đơn hàng
     const newOrder = new Order({
       user_id: userId,
       items: items.map(item => ({
-        product: item.product,
+        product_id: item.product_id,
+        variant_id: item.variant_id,
+        option_id: item.option_id,
+        name: item.name,
         variant_name: item.variant_name,
         sku_code: item.sku_code,
         size: item.size,
@@ -41,20 +70,31 @@ const createOrder = async (req, res) => {
       payment_method: 'COD',
       status: 'Chờ xác nhận',
       created_at: new Date()
-    })
+    });
 
-    await newOrder.save()
+    await newOrder.save();
+
+    // Cập nhật tồn kho sau khi đơn được tạo thành công
+    for (const item of items) {
+      const product = await Product.findById(item.product_id);
+      const variant = product.variants.id(item.variant_id);
+      const option = variant.options.id(item.option_id);
+
+      option.stock_quantity -= item.quantity;
+      await product.save();
+    }
 
     res.status(201).json({
       success: true,
       message: 'Tạo đơn hàng thành công',
       orderId: newOrder._id
-    })
+    });
+
   } catch (error) {
-    console.error('Lỗi khi tạo đơn hàng:', error)
-    res.status(500).json({ success: false, message: 'Lỗi server khi tạo đơn hàng' })
+    console.error('Lỗi khi tạo đơn hàng:', error);
+    res.status(500).json({ success: false, message: 'Lỗi server khi tạo đơn hàng' });
   }
-}
+};
 
 const getAllOrders = async (req, res) => {
   try {
@@ -82,20 +122,37 @@ const updateOrderStatus = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Trạng thái không hợp lệ' });
     }
 
-    const order = await Order.findByIdAndUpdate(
-      orderId,
-      { status },
-      { new: true }
-    );
-
+    // Lấy đơn hàng hiện tại
+    const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng' });
     }
 
-    res.status(200).json({ success: true, message: 'Cập nhật trạng thái thành công', order });
+    // Nếu trạng thái mới là "Đã hủy" và đơn trước đó chưa hủy → hoàn lại stock
+    if (status === 'Đã hủy' && order.status !== 'Đã hủy') {
+      for (const item of order.items) {
+        const product = await Product.findById(item.product_id);
+        if (!product) continue;
+
+        const variant = product.variants.id(item.variant_id);
+        if (!variant) continue;
+
+        const option = variant.options.id(item.option_id);
+        if (!option) continue;
+
+        option.stock_quantity += item.quantity; // Tăng lại số lượng
+        await product.save();
+      }
+    }
+
+    // Cập nhật trạng thái mới
+    order.status = status;
+    await order.save();
+
+    return res.status(200).json({ success: true, message: 'Cập nhật trạng thái thành công', order });
   } catch (error) {
     console.error('Lỗi khi cập nhật trạng thái đơn hàng:', error);
-    res.status(500).json({ success: false, message: 'Lỗi server khi cập nhật trạng thái' });
+    return res.status(500).json({ success: false, message: 'Lỗi server khi cập nhật trạng thái' });
   }
 };
 

@@ -3,11 +3,20 @@ const { Schema } = mongoose;
 
 // Item trong đơn hàng
 const OrderItemSchema = new Schema({
-  product: {
+  product_id: {
     type: Schema.Types.ObjectId,
     ref: 'Product',
     required: true
   },
+  variant_id: {
+    type: Schema.Types.ObjectId,
+    required: true
+  },
+  option_id: {
+    type: Schema.Types.ObjectId,
+    required: true
+  },
+  name: {type: String, required: true}, //product name
   variant_name: { type: String, required: true },         // ví dụ: "Xanh dương"
   sku_code: { type: String, required: true },             // ví dụ: "YONEX700-XL"
   size: { type: String, required: true },                 // option size: M, L, XL,...

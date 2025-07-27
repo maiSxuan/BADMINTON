@@ -259,3 +259,82 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZ
 ### CLEAR CART
 DELETE http://localhost:4000/api/cart/clear
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxODI4MCwiZXhwIjoxNzUzNTkxMDgwfQ.wL_FKLD7dfh_HxlcEKJDwvUoJ4cwj1aw-bXNzmcsZhQ
+
+### Tạo sản phẩm Giày Cầu Lông Taro TR024-1
+POST http://localhost:4000/api/products
+Content-Type: application/json
+
+{
+  "name": "Giày Cầu Lông Taro TR024-1",
+  "slug": "giay-cau-long-taro-tr024-1",
+  "thumbnail_url": "https://res.cloudinary.com/dwex11tdu/image/upload/v1751561471/aet4dssdrjamjhks8lhj.webp",
+  "description": "Giới thiệu chi tiết Giày cầu lông Taro TR024-1\n\nBạn đang muốn tìm kiếm một đôi giày cầu lông giá rẻ, chất lượng, dành cho người mới chơi nhưng chưa biết đâu là sản phẩm tốt nhất trên vô vàn các mặt hàng trên thị trường hiện nay? Thì sản phẩm Giày cầu lông Taro TR024-1 được phát hành và cho ra mắt bởi TARO - Thương hiệu cầu lông mới ở thị trường Việt Nam luôn hướng đến những điều cần thiết nhất cho các lông thủ.\n\nGiày Taro TR024-1 có chất liệu da bóng mép ngoài giúp tăng độ bền khi cọ sát. Mép trong và mũi trên của giày bằng chất liệu da đã qua xử lí che lấp làm giảm độ mài mòn khi tiếp xúc sàn trong quá trình di chuyển sai bước. Cổ giày ôm khít tạo cảm giác an toàn khi di chuyển. Đế giày có độ êm khi tạo độ đàn hồi trong quá trình bật nhảy, di chuyển.\n\nMặt trên của đôi giày được thiết kế nhiều lưới thoáng khí giúp thoát mồ hôi nhanh chóng giúp bạn dễ chịu để tập trung cho những trận cầu hoặc các hoạt động mạnh khác. Giày cầu lông Taro TR024-1 gồm có 3 phiên bản: màu trắng xanh, màu đen vàng và màu xanh ngọc.\n\nThông số kỹ thuật:\n- Size: 37-44\n- Thân giày: Da PU, lưới thoáng khí nhiều lớp\n- Đế giữa: EVA đàn hồi cao, chống xoắn TPU\n- Đế ngoài: Carbon ổn định, cao su chống mài mòn\n- Bên trong: Lưới thoáng khí nhiều lớp",
+  "brand": "687906d5a4dca8462ffc7a34",
+  "category_ids": ["687691edec6c802345648de3"],
+  "is_published": true,
+  "price": 599000,
+  "classification_config": [
+    { "name": "Màu sắc" },
+    { "name": "Size" }
+  ],
+  "variants": [
+    {
+      "name": "Trắng xanh",
+      "images": [
+        "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559915/maxdhq9vdqrg1ogvm30v.webp",
+        "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559915/t1soerkhf1qge1x4m2uy.webp",
+        "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559914/fvsofzy2fq70knitld6p.webp",
+        "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559914/tmhqzyb4slug5axqnifo.webp"
+      ],
+      "options": [
+        { "sku_code": "TR024-1-WHT-36", "value": "36", "price": 499000, "stock_quantity": 10 },
+        { "sku_code": "TR024-1-WHT-37", "value": "37", "price": 499000, "stock_quantity": 5 },
+        { "sku_code": "TR024-1-WHT-38", "value": "38", "price": 499000, "stock_quantity": 8 },
+        { "sku_code": "TR024-1-WHT-39", "value": "39", "price": 499000, "stock_quantity": 0 },
+        { "sku_code": "TR024-1-WHT-40", "value": "40", "price": 499000, "stock_quantity": 12 }
+      ]
+    },
+    {
+      "name": "Đen vàng",
+      "images": [
+        "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559913/cmgcs2bfmh04uqdv47yf.webp",
+        "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559913/lvtrxioblu80nliyff40.webp",
+        "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559914/lyp9jw0wxhkpzqhvl8fx.webp",
+        "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559914/sx3fxuoxndobppfi04wb.webp"
+      ],
+      "options": [
+        { "sku_code": "TR024-1-BLK-39", "value": "39", "price": 499000, "stock_quantity": 9 },
+        { "sku_code": "TR024-1-BLK-40", "value": "40", "price": 499000, "stock_quantity": 15 },
+        { "sku_code": "TR024-1-BLK-41", "value": "41", "price": 499000, "stock_quantity": 11 },
+        { "sku_code": "TR024-1-BLK-42", "value": "42", "price": 499000, "stock_quantity": 0 }
+      ]
+    },
+    {
+      "name": "Xanh ngọc",
+      "images": [
+        "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559915/khnnta7z7df7bueh7ift.webp",
+        "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559915/if3lmuhby4gb5rj61d1p.webp",
+        "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559914/jrksmfhfycmfwggpsym4.webp",
+        "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559914/mxdmhc4ptqkt4nmphhuu.webp"
+      ],
+      "options": [
+        { "sku_code": "TR024-1-TEA-38", "value": "38", "price": 499000, "stock_quantity": 20 },
+        { "sku_code": "TR024-1-TEA-39", "value": "39", "price": 499000, "stock_quantity": 10 },
+        { "sku_code": "TR024-1-TEA-40", "value": "40", "price": 499000, "stock_quantity": 15 },
+        { "sku_code": "TR024-1-TEA-41", "value": "41", "price": 499000, "stock_quantity": 21 }
+      ]
+    }
+  ]
+}
+### Update stock
+PATCH http://localhost:4000/api/products/update-stock
+Content-Type: application/json
+
+{
+  "product_id": "6886062b8af40557b4acaeb0",
+  "variant_id": "6886062b8af40557b4acaeb6",
+  "option_id": "6886062b8af40557b4acaeb1",
+  "quantity_change": -2
+}
+###
+GET http://localhost:4000/api/products/get-stock?product_id=6886062b8af40557b4acaeb0&variant_id=6886062b8af40557b4acaeb6&option_id=6886062b8af40557b4acaeb1
