@@ -123,12 +123,12 @@ useEffect(() => {
   setIsLoading(true)
 
   try {
-    const userId = user?.id
+    // const userId = user?.id
 
-    if (!userId) {
-      showToastMessage("Bạn cần đăng nhập để đặt hàng")
-      return
-    }
+    // if (!userId) {
+    //   showToastMessage("Bạn cần đăng nhập để đặt hàng")
+    //   return
+    // }
 
     // Kiểm tra dữ liệu bắt buộc
     if (!shippingInfo.phone || !shippingInfo.address) {
@@ -137,7 +137,6 @@ useEffect(() => {
     }
 
     const orderData = {
-      userId: userId,
       items: cartItems.map(item => ({
         product_id: item.product_id,             // Bắt buộc
         variant_id: item.variant_id,             // Bắt buộc

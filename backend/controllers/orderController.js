@@ -3,8 +3,8 @@ const Product = require('../models/ProductModel')
 const mongoose = require('mongoose')
 const createOrder = async (req, res) => {
   try {
+    const userId = req.user.id;
     const {
-      userId,
       items,
       totalAmount,
       orderNote,
@@ -12,9 +12,9 @@ const createOrder = async (req, res) => {
       shippingInfo
     } = req.body;
 
-    if (!userId) {
-      return res.status(400).json({ message: "Thiếu userId" });
-    }
+    // if (!userId) {
+    //   return res.status(400).json({ message: "Thiếu userId" });
+    // }
 
     const shippingProviderMap = {
       'nhanh': 'Giao hàng tiết kiệm',
