@@ -23,7 +23,7 @@ const ProductSchema = new Schema({
     description: { type: String },
     brand: { type: Schema.Types.ObjectId, ref: 'Brand', required: true },
     category_ids: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
-    is_published: { type: Boolean, default: true },
+    is_published: { type: Boolean, default: false },
     price: { type: Number, required: true, default: 0 },
     classification_config: [{ _id: false, name: { type: String, required: true } }],
     variants: [VariantSchema]
