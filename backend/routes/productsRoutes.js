@@ -8,17 +8,16 @@ const {
     createProduct,
     getAllProducts,
     getProductBySlug,
-    createProduct, 
-    updateStockByIds,
-    getStockByIds,
+    //updateStockByIds,
+    //getStockByIds,
     updateProductBySlug,
     togglePublishStatusBySlug,
     deleteProductBySlug
 } = require('../controllers/productController');
 
 router.post('/', createProduct);
-router.patch('/update-stock', updateStockByIds);
-router.get('/get-stock', getStockByIds);
+//router.patch('/update-stock', updateStockByIds);
+//router.get('/get-stock', getStockByIds);
 router.get('/:slug', getProductBySlug); // để GET này cuối
     
 
