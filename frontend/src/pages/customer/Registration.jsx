@@ -6,7 +6,7 @@ import Logo from "../../components/common/logo";
 
 const Registration = () => {
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
     phone: "",
     address: "",
     email: "",
@@ -38,8 +38,8 @@ const Registration = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^(0|\+84)[0-9]{9}$/;
 
-    if (!formData.fullName.trim())
-      newErrors.fullName = "Tên đăng nhập không được để trống";
+    if (!formData.name.trim())
+      newErrors.name = "Tên đăng nhập không được để trống";
     if (!formData.phone.trim())
       newErrors.phone = "Số điện thoại không được để trống";
     else if (!phoneRegex.test(formData.phone))
@@ -71,7 +71,7 @@ const Registration = () => {
         const response = await axios.post(
           "http://localhost:4000/api/auth/register",
           {
-            fullName: formData.fullName,
+            name: formData.name,
             phone: formData.phone,
             address: formData.address,
             email: formData.email,
@@ -112,20 +112,20 @@ const Registration = () => {
               <div className="registration-form-group">
                 <div
                   className={`registration-input-wrapper ${
-                    errors.fullName ? "registration-input-error" : ""
+                    errors.name ? "registration-input-error" : ""
                   }`}
                 >
                   <input
                     type="text"
                     placeholder="Tên đăng nhập"
-                    value={formData.fullName}
+                    value={formData.name}
                     onChange={(e) =>
-                      handleInputChange("fullName", e.target.value)
+                      handleInputChange("name", e.target.value)
                     }
                     className="registration-form-input"
                   />
-                  {errors.fullName && (
-                    <span className="input-error-text">{errors.fullName}</span>
+                  {errors.name && (
+                    <span className="input-error-text">{errors.name}</span>
                   )}
                 </div>
               </div>
