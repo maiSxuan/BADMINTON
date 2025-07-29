@@ -3,7 +3,7 @@ const Brand = require('../models/brandModel');
 const Category = require('../models/CategoryModel'); 
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const cloudinary = require('../../config/cloudinary'); 
+const cloudinary = require('../config/cloudinary'); 
 
 const PRICE_RANGES = { 'range1': { min: 0, max: 500000 }, 'range2': { min: 500000, max: 1000000 }, 'range3': { min: 1000000, max: 2000000 }, 'range4': { min: 2000000, max: 3000000 }, 'range5': { min: 3000000, max: Infinity } };
 const DEFAULT_PAGE_LIMIT = 9;
@@ -71,7 +71,7 @@ exports.getAllProducts = async (req, res) => {
         console.error("Lỗi trong getAllProducts:", error);
         res.status(500).json({ message: "Lỗi server.", error: error.message });
     }
-}
+};
 
 exports.getProductBySlug = async (req, res) => {
     try {
