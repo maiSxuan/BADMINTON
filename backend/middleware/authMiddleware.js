@@ -46,20 +46,27 @@ const authenticate = async (req, res, next) => {
   }
 };
 
-const isAdmin = (req, res, next) => {
-  try {
-    if (!req.user || req.user.role !== "ADMIN") {
-      return res.status(403).json({ message: "Access denied: Admin only" });
+const authorizeRole = (requireRole) =>{
+  return (req, res, next) => {
+    try{
+      if(!req.user){
+        return res.status(401).json({message: 'unauthorized'});
+      }
+
+      if(req.user.role != requireRole){
+        return res.status(403).json({message: 'Access denied :${requireRole} only'});
+      }
+
+      next();
+    } catch(err){
+      return res.status(500).json({message: "server error", error: err.message});
     }
-    next();
-  } catch (err) {
-    return res.status(500).json({ message: "Server error", error: err.message });
-  }
+  };
 };
 
 module.exports = {
   genneralAccessToken,
   genneralRefreshToken,
   authenticate,
-  isAdmin
+  authorizeRole
 }

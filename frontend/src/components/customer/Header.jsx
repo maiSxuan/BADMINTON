@@ -104,7 +104,8 @@
 
 // export default Header;
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import "./Header.css";
 import DropdownMenu from "../customer/DropdownMenu";
 import DropdownHeader from "./DropdownHeader";
@@ -117,22 +118,37 @@ import searchIcon from "../../assets/icons/Info.svg";
 import search from "../../assets/icons/Search.svg";
 
 const Header = () => {
-  const isLoggedIn = !!localStorage.getItem("token");
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkLogin = () => {
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+      setIsLoggedIn(!!token);
+    };
+
+    checkLogin();
+    window.addEventListener("loginStatusChanged", checkLogin);
+    return () => window.removeEventListener("loginStatusChanged", checkLogin);
+  }, []);
+  
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.dispatchEvent(new Event("loginStatusChanged"));
+    setIsLoggedIn(false); // Cập nhật lại trạng thái ngay
+    navigate("/");        // Chuyển về trang chủ
+  };
 
   const accountMenu = isLoggedIn
     ? [
         { label: "Tài khoản của tôi", to: "/account/profile" },
-        { label: "Đăng xuất", to: "/Login" },
+        { label: "Đăng xuất", action: handleLogout },
       ]
     : [
         { label: "Đăng nhập", to: "/login" },
         { label: "Đăng ký", to: "/registration" },
       ];
-
-  const orderTrackingMenu = [
-    { label: "Theo dõi đơn hàng", to: "/order-tracking" },
-    { label: "Lịch sử mua hàng", to: "/order-history" },
-  ];
 
   return (
     <header className="site-header">
@@ -169,11 +185,10 @@ const Header = () => {
             <img src={searchIcon} alt="Tra cứu đơn hàng" />
             <span>TRA CỨU</span>
           </NavLink> */}
-          <DropdownHeader 
-            icon={searchIcon}
-            label="TRA CỨU"
-            menuItems={orderTrackingMenu}
-          />
+          <NavLink to="/order-history" className="action-item">
+            <img src={searchIcon} alt="Tra cứu đơn hàng" />
+            <span>TRA CỨU</span>
+          </NavLink>
 
           {/* <NavLink to="/account" className="action-item">
             <img src={userIcon} alt="Tài khoản" />

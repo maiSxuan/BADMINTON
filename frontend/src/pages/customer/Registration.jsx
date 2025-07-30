@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Registration.css";
 import Logo from "../../components/common/logo";
+import { NavigationOff } from "lucide-react";
 
 const Registration = () => {
   const [formData, setFormData] = useState({
@@ -80,17 +81,21 @@ const Registration = () => {
         );
 
         localStorage.setItem("token", response.data.token);
-        alert("Đăng ký thành công!");
-        navigate("/login");
+        const user = response.data.user;
+        localStorage.setItem("user", JSON.stringify(user));
+
+        if(user.user_type === 'ADMIN'){
+          navigate("/admin");
+        } else{
+          navigate("/");
+        }
       } catch (error) {
         const field = error.response?.data?.field;
         const message = error.response?.data?.message || "Đăng ký thất bại";
 
-        // Nếu có field cụ thể từ server, gán lỗi vào đúng trường
         if (field) {
           setErrors((prev) => ({ ...prev, [field]: message }));
         } else {
-          // Trường hợp lỗi không rõ, gán lỗi toàn cục (ví dụ server hỏng)
           alert(message);
         }
       }

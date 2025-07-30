@@ -2,7 +2,7 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import "./DropdownHeader.css";
 
-const DropdownHeader = ({ icon, label, menuItems }) => {
+const DropdownHeader = ({ icon, label, menuItems = [] }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
@@ -18,11 +18,26 @@ const DropdownHeader = ({ icon, label, menuItems }) => {
 
             {isHovered && (
                 <div className="dropdown-hover-menu">
-                    {menuItems.map((item, idx) => (
-                        <NavLink key={idx} to={item.to} className="dropdown-header-item">
+                    {menuItems.map((item, idx) =>
+                        item.action ? (
+                        <div
+                            key={idx}
+                            className="dropdown-header-item"
+                            onClick={item.action}
+                            style={{ cursor: "pointer" }}
+                        >
+                            {item.label}
+                        </div>
+                        ) : (
+                        <NavLink
+                            key={idx}
+                            to={item.to}
+                            className="dropdown-header-item"
+                        >
                             {item.label}
                         </NavLink>
-                    ))}
+                        )
+                    )}
                 </div>
             )}
         </div>

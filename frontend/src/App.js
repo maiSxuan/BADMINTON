@@ -1,12 +1,16 @@
 // src/App.jsx
 
-import React, { Fragment } from 'react'; // Import Fragment
-import { Routes, Route } from 'react-router-dom';
-import { publicRoutes } from './routes/index';
+import React, { useEffect, Fragment } from 'react'; // Import Fragment
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { publicRoutes, privateRoutes } from './routes/index';
 // Không cần import layout ở đây nữa vì đã có trong file routes
 import './App.css';
+//import { route } from '../../backend/routes/usersRouter';
 
 function App() {
+
+
+  const user = JSON.parse(localStorage.getItem("user"));
   return (
     <div className="App">
       <Routes>
@@ -32,10 +36,37 @@ function App() {
             />
           );
         })}
+
+
+        {privateRoutes.map((route) =>{
+          const Page = route.component;
+          const Layout = route.layout;
+          const allowedRoles = route.allowedRoles || [];
+          const isAuthorized = user && route.allowedRoles && route.allowedRoles.includes(user.user_type);
+
+          return(
+            <Route
+              key = {route.path}
+              path = {route.path}
+              element={
+                isAuthorized ? (
+                  <Layout>
+                    <Page />
+                  </Layout>
+                ) : user ? (
+                  <Navigate to="/" replace /> //đăng nhập r nhưng sai role
+                ) : (
+                  <Navigate to="/" replace /> //chưa đăng nhập
+                )
+              }
+            />
+          )
+        })}
       </Routes>
     </div>
   );
 }
+
 
 export default App;
 

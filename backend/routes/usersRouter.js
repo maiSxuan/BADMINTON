@@ -3,12 +3,12 @@ const router = express.Router();
 const userController = require("../controllers/userController");
 const authMiddleware = require("../middleware/authMiddleware");
 
-router.post("/create", authMiddleware.authenticate, authMiddleware.isAdmin, userController.createUser);
-router.get("/user-list",  authMiddleware.authenticate, authMiddleware.isAdmin, userController.getAllUsers);
-router.patch("/status/:id", authMiddleware.authenticate, authMiddleware.isAdmin, userController.toggleUserStatus);
-router.delete("/:id", authMiddleware.authenticate, authMiddleware.isAdmin, userController.deleteUser);
+router.post("/create", authMiddleware.authenticate, authMiddleware.authorizeRole("ADMIN"), userController.createUser);
+router.get("/user-list",  authMiddleware.authenticate, authMiddleware.authorizeRole("ADMIN"), userController.getAllUsers);
+router.patch("/status/:id", authMiddleware.authenticate, authMiddleware.authorizeRole("ADMIN"), userController.toggleUserStatus);
+router.delete("/:id", authMiddleware.authenticate, authMiddleware.authorizeRole("ADMIN"), userController.deleteUser);
 
-router.get("/profile", authMiddleware.authenticate, userController.getUserProfile);
-router.put("/profile", authMiddleware.authenticate, userController.updateUserProfile);
+router.get("/profile", authMiddleware.authenticate, authMiddleware.authorizeRole("USER"), userController.getUserProfile);
+router.put("/profile", authMiddleware.authenticate, authMiddleware.authorizeRole("USER"), userController.updateUserProfile);
 
 module.exports = router;

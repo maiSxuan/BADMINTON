@@ -132,23 +132,22 @@ export default function Login() {
 
       const { token, user } = response.data;
       localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("token", token);
-
+      localStorage.setItem("token", token); // luôn lưu localStorage
       if (rememberPassword) {
-        localStorage.setItem("token", token);
+        sessionStorage.removeItem("token"); // nếu nhớ mật khẩu thì không cần session
       } else {
         sessionStorage.setItem("token", token);
-      }
-
+      } 
+      
       // Redirect to homepage or admin page
-      if (user.email.endsWith("@admin.com")) {
+      if (user.user_type === "ADMIN") {
         navigate("/admin");
       } else {
         navigate("/");
       }
 
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.message) {
+      if (err.response?.data?.message) {
         setError(err.response.data.message);
       } else {
         setError("Đăng nhập thất bại. Vui lòng thử lại.");
