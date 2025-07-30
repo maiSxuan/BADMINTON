@@ -1,11 +1,11 @@
 // src/routes/index.js
 
 // Layout mặc định cho người dùng, có Header và Footer, Sidebar, Breadcrumb
-import DefaultLayout from "../components/layouts/DefaultLayout";
+import DefaultLayout from "../layouts/DefaultLayout";
 // Layot cho cart, đơn hàng,... 
-import HeaderFooterLayout from "../components/layouts/HeaderFooterLayout";
+import HeaderFooterLayout from "../layouts/HeaderFooterLayout";
 // Layout cho trang quản trị, có AdminHeader và AdminSidebar
-import AdminLayout from "../components/layouts/AdminLayout";
+import AdminLayout from "../layouts/AdminLayout";
 
 // Thêm các trang vào đây
 import AdminHome from "../pages/admin/AdminHome";
@@ -18,7 +18,7 @@ import AddProducts from "../pages/admin/AddProducts";
 //import RacketPage from "../pages/customer/Product/Racket";
 //import ShoePage from "../pages/customer/Product/Shoe";
 import ProductPage from "../pages/customer/ProductPage";
-import TestUploadPage from "../pages/testupload";
+// import TestUploadPage from "../pages/testupload";
 //import BaloPage from "../pages/customer/Product/Balo";
 import UserListPage from "../pages/admin/UserList";
 import AddPromotionPage from "../pages/admin/AddPromotion";
@@ -277,7 +277,7 @@ const publicRoutes = [
   { path: "/admin/manage-promotion", component: PromotionListPage, layout: AdminLayout },
   
 
-  {path: "/test", component: TestUploadPage},
+  // {path: "/test", component: TestUploadPage},
   //  404 Not Found
   // { path: '*', component: NotFoundPage, layout: DefaultLayout }
 ];

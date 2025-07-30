@@ -20,10 +20,10 @@
 // }
 // export default DefaultLayout
 import React from "react";
-import Header from "../customer/Header";
-import Footer from "../customer/Footer";
-import { Sidebar } from "../customer/Sidebar";
-import Breadcrumb from "../common/breadcrumb";
+import Header from "../components/customer/Header";
+import Footer from "../components/customer/Footer";
+import { Sidebar } from "../components/customer/Sidebar";
+import Breadcrumb from "../components/common/breadcrumb";
 import "./DefaultLayout.css";
 
 const DefaultLayout = ({ children, showSidebar = false, breadcrumbItems = [] }) => {

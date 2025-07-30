@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const Promotion = require('../models/PromotionModel')
+const Promotion = require('../models/Promotion')
 router.get('/',async (req,res)=>{
     try{
         const promotion = await Promotion.find()

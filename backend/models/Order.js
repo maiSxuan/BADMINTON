@@ -19,11 +19,11 @@ const OrderItemSchema = new Schema({
   name: {type: String, required: true}, //product name
   variant_name: { type: String, required: true },         // ví dụ: "Xanh dương"
   sku_code: { type: String, required: true },             // ví dụ: "YONEX700-XL"
-  size: { type: String, required: true },                 // option size: M, L, XL,...
+  size: { type: String, required: true },     // bỏ            // option size: M, L, XL,...
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },                // giá tại thời điểm mua
   list_price: { type: Number },                           // giá gốc nếu có
-  thumbnail_url: { type: String }
+  thumbnail_url: { type: String } //truy xuất từ Variant
 }, { _id: false });
 
 // Schema chính của đơn hàng

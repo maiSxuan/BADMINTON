@@ -1,11 +1,11 @@
-import AdminHeader from '../admin/AdminHeader';
-import AdminSidebar from '../admin/AdminSidebar';
+import AdminHeader from '../components/admin/AdminHeader';
+import AdminSidebar from '../components/admin/AdminSidebar';
 import { Outlet } from 'react-router-dom'; 
 import './AdminLayout.css'; 
 // import { useNavigate } from 'react-router-dom';
 // import { useEffect } from 'react';
 
-import Breadcrumb from '../common/breadcrumb';
+import Breadcrumb from '../components/common/breadcrumb';
 const AdminLayout = ({ children, breadcrumbItems = [] }) => {
   // const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
