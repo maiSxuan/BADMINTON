@@ -119,36 +119,40 @@ import search from "../../assets/icons/Search.svg";
 
 const Header = () => {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null); 
+  //const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => {
+ useEffect(() => {
     const checkLogin = () => {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-      setIsLoggedIn(!!token);
+      const storedUser = localStorage.getItem("user");
+      setUser(token && storedUser ? JSON.parse(storedUser) : null);
     };
 
     checkLogin();
     window.addEventListener("loginStatusChanged", checkLogin);
     return () => window.removeEventListener("loginStatusChanged", checkLogin);
   }, []);
+
   
   const handleLogout = () => {
     localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     localStorage.removeItem("user");
+    setUser(null);
     window.dispatchEvent(new Event("loginStatusChanged"));
-    setIsLoggedIn(false); // Cập nhật lại trạng thái ngay
-    navigate("/");        // Chuyển về trang chủ
+    navigate("/");
   };
 
-  const accountMenu = isLoggedIn
-    ? [
-        { label: "Tài khoản của tôi", to: "/account/profile" },
-        { label: "Đăng xuất", action: handleLogout },
-      ]
-    : [
-        { label: "Đăng nhập", to: "/login" },
-        { label: "Đăng ký", to: "/registration" },
-      ];
+  const accountMenu = !user
+  ? [
+      { label: "Đăng nhập", to: "/login" },
+      { label: "Đăng ký", to: "/registration" },
+    ]
+  : [
+      { label: "Tài khoản của tôi", to: "/account/profile" },
+      { label: "Đăng xuất", action: handleLogout },
+    ];
 
   return (
     <header className="site-header">

@@ -83,6 +83,7 @@ const Registration = () => {
         localStorage.setItem("token", response.data.token);
         const user = response.data.user;
         localStorage.setItem("user", JSON.stringify(user));
+        //window.dispatchEvent(new Event("loginStatusChanged"));
 
         if(user.user_type === 'ADMIN'){
           navigate("/admin");

@@ -132,13 +132,14 @@ export default function Login() {
 
       const { token, user } = response.data;
       localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("token", token); // luôn lưu localStorage
+      //localStorage.setItem("token", token);
+
       if (rememberPassword) {
-        sessionStorage.removeItem("token"); // nếu nhớ mật khẩu thì không cần session
+        localStorage.setItem("token", token);
       } else {
         sessionStorage.setItem("token", token);
-      } 
-      
+      }
+      window.dispatchEvent(new Event("loginStatusChanged"));
       // Redirect to homepage or admin page
       if (user.user_type === "ADMIN") {
         navigate("/admin");
@@ -146,6 +147,7 @@ export default function Login() {
         navigate("/");
       }
 
+      
     } catch (err) {
       if (err.response?.data?.message) {
         setError(err.response.data.message);

@@ -10,5 +10,6 @@ router.delete("/:id", authMiddleware.authenticate, authMiddleware.authorizeRole(
 
 router.get("/profile", authMiddleware.authenticate, authMiddleware.authorizeRole("USER"), userController.getUserProfile);
 router.put("/profile", authMiddleware.authenticate, authMiddleware.authorizeRole("USER"), userController.updateUserProfile);
+router.get("/admin-profile", authMiddleware.authenticate, authMiddleware.authorizeRole("ADMIN"), userController.getUserProfile);
 
 module.exports = router;
