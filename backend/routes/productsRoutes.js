@@ -8,7 +8,6 @@ const {
     createProduct,
     getAllProducts,
     getProductBySlug,
-    createProduct, 
     updateStockByIds,
     getStockByIds,
     updateProductBySlug,
@@ -16,10 +15,8 @@ const {
     deleteProductBySlug
 } = require('../controllers/productController');
 
-router.post('/', createProduct);
 router.patch('/update-stock', updateStockByIds);
 router.get('/get-stock', getStockByIds);
-router.get('/:slug', getProductBySlug); // để GET này cuối
     
 
 // --- SẮP XẾP LẠI CHO ĐÚNG THỨ TỰ ---
@@ -41,4 +38,3 @@ router.patch('/:slug/toggle-publish', togglePublishStatusBySlug);
 router.delete('/:slug', deleteProductBySlug);
 
 module.exports = router;
-

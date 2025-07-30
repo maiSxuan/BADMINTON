@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import './ProductDetail.css'; // File CSS của bạn
-
-const API_URL = 'http://localhost:4000/api';
+import { getProductBySlug } from '../../services';
 
 const ProductDetailPage = () => {
     const { slug } = useParams();
@@ -23,11 +22,7 @@ const ProductDetailPage = () => {
             }
             try {
                 setLoading(true);
-                const response = await fetch(`${API_URL}/products/${slug}`);
-                if (!response.ok) {
-                    throw new Error(`Sản phẩm không tồn tại hoặc có lỗi xảy ra.`);
-                }
-                const data = await response.json();
+                const data = await getProductBySlug(slug);
                 setProduct(data);
 
                 if (data?.variants?.length > 0) {
@@ -121,7 +116,7 @@ const ProductDetailPage = () => {
                     <div className="price-container">
                         <span className="current-price">{displayPrice.toLocaleString('vi-VN')}₫</span>
                         {listPrice > displayPrice && (
-                             <span className="list-price">{listPrice.toLocaleString('vi-VN')}₫</span>
+                            <span className="list-price">{listPrice.toLocaleString('vi-VN')}₫</span>
                         )}
                     </div>
 

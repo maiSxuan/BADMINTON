@@ -3,7 +3,7 @@ const Brand = require('../models/brandModel');
 const Category = require('../models/CategoryModel'); 
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const cloudinary = require('../../config/cloudinary'); 
+const cloudinary = require('../config/cloudinary'); 
 
 const PRICE_RANGES = { 'range1': { min: 0, max: 500000 }, 'range2': { min: 500000, max: 1000000 }, 'range3': { min: 1000000, max: 2000000 }, 'range4': { min: 2000000, max: 3000000 }, 'range5': { min: 3000000, max: Infinity } };
 const DEFAULT_PAGE_LIMIT = 9;
@@ -154,5 +154,171 @@ exports.deleteProductBySlug = async (req, res) => {
         res.status(200).json({ message: 'Xóa sản phẩm vĩnh viễn thành công.' });
     } catch (error) {
         res.status(500).json({ message: "Lỗi server khi xóa.", error: error.message });
+    }
+};
+exports.updateStockByIds = async (req, res) => {
+    try {
+        const { product_id, variant_id, option_id, quantity_change } = req.body;
+
+        // Kiểm tra tính hợp lệ của ObjectId
+        if (![product_id, variant_id, option_id].every(mongoose.Types.ObjectId.isValid)) {
+            return res.status(400).json({ message: 'ID không hợp lệ.' });
+        }
+
+        const result = await Product.updateOne(
+            {
+                _id: product_id,
+                "variants.variant_id": variant_id,
+                "variants.options.option_id": option_id
+            },
+            {
+                $inc: {
+                    "variants.$[variant].options.$[opt].stock_quantity": quantity_change
+                }
+            },
+            {
+                arrayFilters: [
+                    { "variant.variant_id": new mongoose.Types.ObjectId(variant_id) },
+                    { "opt.option_id": new mongoose.Types.ObjectId(option_id) }
+                ]
+            }
+        );
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).json({ message: 'Không tìm thấy variant/option tương ứng trong sản phẩm.' });
+        }
+
+        res.status(200).json({ message: 'Cập nhật tồn kho thành công.' });
+
+    } catch (error) {
+        console.error("Lỗi khi cập nhật stock_quantity:", error);
+        res.status(500).json({ message: 'Lỗi server khi cập nhật tồn kho', error: error.message });
+    }
+};
+ 
+// GET stock
+exports.getStockByIds = async (req, res) => {
+    try {
+        const { product_id, variant_id, option_id } = req.query;
+
+        // Kiểm tra hợp lệ
+        if (![product_id, variant_id, option_id].every(mongoose.Types.ObjectId.isValid)) {
+            return res.status(400).json({ message: 'ID không hợp lệ.' });
+        }
+
+        // Lấy sản phẩm với chỉ trường cần thiết
+        const product = await Product.findOne(
+            {
+                _id: product_id,
+                "variants.variant_id": variant_id,
+                "variants.options.option_id": option_id
+            },
+            {
+                "variants.$": 1 // chỉ lấy variant khớp
+            }
+        );
+
+        if (!product || !product.variants || product.variants.length === 0) {
+            return res.status(404).json({ message: 'Không tìm thấy sản phẩm hoặc biến thể.' });
+        }
+
+        // Tìm đúng option
+        const variant = product.variants[0];
+        const option = variant.options.find(opt => opt.option_id.toString() === option_id);
+
+        if (!option) {
+            return res.status(404).json({ message: 'Không tìm thấy option.' });
+        }
+
+        res.status(200).json({
+            stock_quantity: option.stock_quantity
+        });
+
+    } catch (error) {
+        console.error("Lỗi khi lấy stock_quantity:", error);
+        res.status(500).json({ message: 'Lỗi server khi lấy tồn kho', error: error.message });
+    }
+};
+exports.updateStockByIds = async (req, res) => {
+    try {
+        const { product_id, variant_id, option_id, quantity_change } = req.body;
+
+        // Kiểm tra tính hợp lệ của ObjectId
+        if (![product_id, variant_id, option_id].every(mongoose.Types.ObjectId.isValid)) {
+            return res.status(400).json({ message: 'ID không hợp lệ.' });
+        }
+
+        const result = await Product.updateOne(
+            {
+                _id: product_id,
+                "variants.variant_id": variant_id,
+                "variants.options.option_id": option_id
+            },
+            {
+                $inc: {
+                    "variants.$[variant].options.$[opt].stock_quantity": quantity_change
+                }
+            },
+            {
+                arrayFilters: [
+                    { "variant.variant_id": new mongoose.Types.ObjectId(variant_id) },
+                    { "opt.option_id": new mongoose.Types.ObjectId(option_id) }
+                ]
+            }
+        );
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).json({ message: 'Không tìm thấy variant/option tương ứng trong sản phẩm.' });
+        }
+
+        res.status(200).json({ message: 'Cập nhật tồn kho thành công.' });
+
+    } catch (error) {
+        console.error("Lỗi khi cập nhật stock_quantity:", error);
+        res.status(500).json({ message: 'Lỗi server khi cập nhật tồn kho', error: error.message });
+    }
+};
+ 
+// GET stock
+exports.getStockByIds = async (req, res) => {
+    try {
+        const { product_id, variant_id, option_id } = req.query;
+
+        // Kiểm tra hợp lệ
+        if (![product_id, variant_id, option_id].every(mongoose.Types.ObjectId.isValid)) {
+            return res.status(400).json({ message: 'ID không hợp lệ.' });
+        }
+
+        // Lấy sản phẩm với chỉ trường cần thiết
+        const product = await Product.findOne(
+            {
+                _id: product_id,
+                "variants.variant_id": variant_id,
+                "variants.options.option_id": option_id
+            },
+            {
+                "variants.$": 1 // chỉ lấy variant khớp
+            }
+        );
+
+        if (!product || !product.variants || product.variants.length === 0) {
+            return res.status(404).json({ message: 'Không tìm thấy sản phẩm hoặc biến thể.' });
+        }
+
+        // Tìm đúng option
+        const variant = product.variants[0];
+        const option = variant.options.find(opt => opt.option_id.toString() === option_id);
+
+        if (!option) {
+            return res.status(404).json({ message: 'Không tìm thấy option.' });
+        }
+
+        res.status(200).json({
+            stock_quantity: option.stock_quantity
+        });
+
+    } catch (error) {
+        console.error("Lỗi khi lấy stock_quantity:", error);
+        res.status(500).json({ message: 'Lỗi server khi lấy tồn kho', error: error.message });
     }
 };
