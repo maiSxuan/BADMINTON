@@ -10,10 +10,19 @@ import { useNavigate } from "react-router-dom";
 import Logo from "../common/logo";
 
 const AdminHeader = ({user}) => {
-  const userName = user?.fullName || "Đang tải...";
+  const userName = user?.name || "Đang tải...";
   const navigate = useNavigate(); 
   const gobackHome = () => {
     navigate("/admin");
+  };
+
+  const handleLogout = () => {
+    if (window.confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
+      navigate("/login");
+    }
   };
   return (
     <header className="admin-header">
@@ -35,12 +44,23 @@ const AdminHeader = ({user}) => {
 
         <div className="user-profile">
           <div className="avatar">
-            <img
-              src={user?.avatarUrl || userAvatarDefault}
-              alt="User Avatar"
-            />
+            <img src={user?.avatarUrl || userAvatarDefault} alt="User Avatar" />
           </div>
           <span className="user-name">{userName}</span>
+          <button
+            className="logout-button"
+            onClick={handleLogout}
+            style={{
+              marginLeft: "10px",
+              background: "transparent",
+              border: "1px solid #ccc",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Đăng xuất
+          </button>
         </div>
       </div>
     </header>
