@@ -71,7 +71,7 @@ exports.getAllProducts = async (req, res) => {
         console.error("Lỗi trong getAllProducts:", error);
         res.status(500).json({ message: "Lỗi server.", error: error.message });
     }
-}
+};
 
 exports.getProductBySlug = async (req, res) => {
     try {
