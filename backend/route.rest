@@ -194,52 +194,48 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZ
 ### ADD ITEM 1
 POST http://localhost:4000/api/cart/add
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1Mzc2Mzg5NSwiZXhwIjoxNzUzOTM2Njk1fQ.YZA9QkCtbL-dF0FdoVoUKdnxWobaZqT9iw-32Uh2n_A
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjE0MDM3MTlmLTFiMzgtNDg1OS1iMTQxLTEyOTUyNjhmMmQ3MSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM4OTE2NTIsImV4cCI6MTc1NDA2NDQ1Mn0.2qNhB8nfPN4iT6pIMvcD536rage1K7Et15qwnoKZliU
 
 {
-  "product": "687fe226a5fd9fd9efa23ade",
-  "variant_id": "687fe226a5fd9fd9efa23ae0",
-  "name": "Vợt cầu lông Yonex Nanoflare Starbucks",
-  "sku_code": "Starbucks-HỒNG-4U",
-  "quantity": 2,
-  "priceAtTime": 1499999
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d4593f",
+  "quantity": 2
 }
 
 ### ADD ITEM 2
 POST http://localhost:4000/api/cart/add
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxOTc2NCwiZXhwIjoxNzUzNTkyNTY0fQ.fyBIfOaSxYRJrlXeKbp0Q78VX4giPrBwi9iA7HnXrlU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjE0MDM3MTlmLTFiMzgtNDg1OS1iMTQxLTEyOTUyNjhmMmQ3MSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM4OTE2NTIsImV4cCI6MTc1NDA2NDQ1Mn0.2qNhB8nfPN4iT6pIMvcD536rage1K7Et15qwnoKZliU
 
 {
-  "product": "687fe226a5fd9fd9efa23ade",
-  "variant_id": "687fe226a5fd9fd9efa23ae2",
-  "sku_code": "Starbucks-XANH-4U",
-  "quantity": 1,
-  "priceAtTime": 1499999
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d45943",
+  "quantity": 1
 }
 
 ### ADD ITEM 3
 POST http://localhost:4000/api/cart/add
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxOTc2NCwiZXhwIjoxNzUzNTkyNTY0fQ.fyBIfOaSxYRJrlXeKbp0Q78VX4giPrBwi9iA7HnXrlU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1Mzc2Mzg5NSwiZXhwIjoxNzUzOTM2Njk1fQ.YZA9QkCtbL-dF0FdoVoUKdnxWobaZqT9iw-32Uh2n_A
 
 {
-  "product": "68769383ec6c802345648de6",
-  "variant_id": "68770001fec6c80234568001",
-  "sku_code": "TR024-1-WHT-36",
-  "quantity": 2,
-  "priceAtTime": 499000
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d45942",
+  "quantity": 1
 }
 
 ### REMOVE ITEM
 DELETE http://localhost:4000/api/cart/remove
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxOTc2NCwiZXhwIjoxNzUzNTkyNTY0fQ.fyBIfOaSxYRJrlXeKbp0Q78VX4giPrBwi9iA7HnXrlU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1Mzc2Mzg5NSwiZXhwIjoxNzUzOTM2Njk1fQ.YZA9QkCtbL-dF0FdoVoUKdnxWobaZqT9iw-32Uh2n_A
 
 {
-  "product": "687fe226a5fd9fd9efa23ade",
-  "variant_id": "687fe226a5fd9fd9efa23ae2",
-  "sku_code": "Starbucks-XANH-4U"
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d45943"
 }
 
 
@@ -249,9 +245,9 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxOTc2NCwiZXhwIjoxNzUzNTkyNTY0fQ.fyBIfOaSxYRJrlXeKbp0Q78VX4giPrBwi9iA7HnXrlU
 
 {
-  "product": "687fe226a5fd9fd9efa23ade",
-  "variant_id": "687fe226a5fd9fd9efa23ae0",
-  "sku_code": "Starbucks-HỒNG-4U",
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d45943",
   "delta": -1,
   "priceAtTime": 1299999
 }

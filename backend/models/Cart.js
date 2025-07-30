@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const cartItemSchema = new mongoose.Schema({
+const itemSchema = new mongoose.Schema({
     product: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product',
@@ -10,10 +10,9 @@ const cartItemSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true,
     },
-    name: { 
-        type: String, 
-        required: true, 
-        trim: true 
+    option_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
     },
     sku_code: {
         type: String,
@@ -38,7 +37,7 @@ const cartSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    items: [cartItemSchema],
+    items: [itemSchema],
     totalQuantity: {
         type: Number,
         default: 0,
@@ -56,4 +55,8 @@ cartSchema.methods.recalculateTotals = function () {
     this.totalPrice = this.items.reduce((sum, item) => sum + item.quantity * item.priceAtTime, 0);
 };
 
-module.exports = mongoose.model('Cart', cartSchema);
+const Cart = mongoose.model('Cart', cartSchema)
+module.exports = {
+  Cart,
+  itemSchema
+}

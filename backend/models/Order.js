@@ -1,35 +1,11 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
-// Item trong đơn hàng
-const OrderItemSchema = new Schema({
-  product_id: {
-    type: Schema.Types.ObjectId,
-    ref: 'Product',
-    required: true
-  },
-  variant_id: {
-    type: Schema.Types.ObjectId,
-    required: true
-  },
-  option_id: {
-    type: Schema.Types.ObjectId,
-    required: true
-  },
-  name: {type: String, required: true}, //product name
-  variant_name: { type: String, required: true },         // ví dụ: "Xanh dương"
-  sku_code: { type: String, required: true },             // ví dụ: "YONEX700-XL"
-  size: { type: String, required: true },     // bỏ            // option size: M, L, XL,...
-  quantity: { type: Number, required: true },
-  price: { type: Number, required: true },                // giá tại thời điểm mua
-  list_price: { type: Number },                           // giá gốc nếu có
-  thumbnail_url: { type: String } //truy xuất từ Variant
-}, { _id: false });
+const {itemSchema} = require('./Cart'); // 👈 import schema con
 
 // Schema chính của đơn hàng
 const OrderSchema = new Schema({
   user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  items: [OrderItemSchema],
+  items: [itemSchema],
   total_amount: { type: Number, required: true },
   created_at: { type: Date, default: Date.now },
   picked_up_at: { type: String },                         // địa chỉ khách nhận

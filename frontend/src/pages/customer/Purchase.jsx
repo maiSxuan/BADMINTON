@@ -6,6 +6,7 @@ import "./Purchase.css"
 import { createOrder } from "../../services/orderService"
 const PurchasePage = () => {
   const location = useLocation()
+  const selectedItems = location.state?.selectedItems || [];
   const navigate = useNavigate()
 
   // Lấy danh sách sản phẩm từ Cart
@@ -63,18 +64,12 @@ useEffect(() => {
 //   } else {
     const testItem = {
       product_id: "6886334c4400bc0b50d4593d",
-      variant_id: "6886334c4400bc0b50d45949",
-      option_id:  "6886334c4400bc0b50d4594d",
-      name: "Giày Cầu Lông Taro TR024-1",
-      sku_code: "TR024-1-WHT-36",
-      variant: "Trắng xanh",
-      size: "36",
-      quantity: 25,
+      variant_id: "6886334c4400bc0b50d4593e",
+      option_id: "6886334c4400bc0b50d45943",
+      quantity: 1,
       price: 499000,
-      thumbnail_url: "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559915/maxdhq9vdqrg1ogvm30v.webp"
     }
-    setCartItems([testItem])
-    // navigate("/cart") 
+     setCartItems(selectedItems)
 //   }
 }, [location.state])
 
@@ -137,19 +132,13 @@ useEffect(() => {
 
       const orderData = {
         userId: userId,
-        items: cartItems.map(item => ({
+        items: selectedItems.map(item => ({
           product_id: item.product_id,
           variant_id: item.variant_id,
           option_id: item.option_id,
-          name: item.name,
-          variant_name: item.variant || "Mặc định",
-          sku_code: item.sku_code,
-          size: item.size || "",
           quantity: item.quantity,
-          price: item.price,
-          list_price: item.list_price || item.price,
-          thumbnail_url: item.thumbnail_url || item.image || ""
-        })),
+          priceAtTime: item.price
+          })),
         totalAmount: totalAmount,
         shippingInfo: {
           phone: shippingInfo.phone,

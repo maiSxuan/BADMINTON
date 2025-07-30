@@ -1,7 +1,10 @@
 export const createOrder = async (orderData) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
   const response = await fetch('http://localhost:4000/api/order', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+     },
     body: JSON.stringify(orderData)
   });
 
