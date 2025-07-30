@@ -50,7 +50,9 @@ const categoryRouter = require('./routes/categoryRoutes');
 const brandRouter = require('./routes/brandRoutes');
 const uploadRouter = require('./routes/uploadRoutes');
 const cartRoutes = require('./routes/cartRoutes');
-const orderRouter = require('./routes/orderRoutes')
+const orderRouter = require('./routes/orderRoutes');
+const dashboardRouter = require('./routes/dashboardRoutes');
+const ratingRouter = require('./routes/ratingRoutes');
 // Sử dụng các routes
 app.use('/api/products', productsRouter);
 app.use('/api/users', userRouter);
@@ -61,6 +63,8 @@ app.use('/api/brands', brandRouter);
 app.use('/api/upload', uploadRouter); 
 app.use('/api/cart', cartRoutes);
 app.use('/api/order', orderRouter); 
+app.use('/api/dashboard', dashboardRouter);
+app.use('/api/ratings', ratingRouter);
 
 // Route mặc định
 app.get("/", (req, res) => {

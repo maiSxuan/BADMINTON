@@ -4,6 +4,22 @@ import './ProductDetail.css'; // File CSS của bạn
 
 const API_URL = 'http://localhost:4000/api';
 
+const ReviewItem = ({ review }) => (
+    <div className="review-item">
+        <div className="review-author">
+            <div className="author-info">
+                <span className="author-name">{review.user?.name || 'Người dùng ẩn danh'}</span>
+                <div className="review-rating">
+                    {'⭐'.repeat(review.rating)}
+                    {'☆'.repeat(5 - review.rating)}
+                </div>
+            </div>
+        </div>
+        <p className="review-comment">{review.comment}</p>
+        <span className="review-date">{new Date(review.createdAt).toLocaleDateString('vi-VN')}</span>
+    </div>
+);
+
 const ProductDetailPage = () => {
     const { slug } = useParams();
     const [product, setProduct] = useState(null);
@@ -13,6 +29,10 @@ const ProductDetailPage = () => {
     const [quantity, setQuantity] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [reviews, setReviews] = useState([]);
+    const [reviewsLoading, setReviewsLoading] = useState(true);
+    const [totalReviewCount, setTotalReviewCount] = useState(0);
+    const [loadingMoreReviews, setLoadingMoreReviews] = useState(false);
 
     useEffect(() => {
         const loadProductData = async () => {
@@ -22,22 +42,44 @@ const ProductDetailPage = () => {
                 return;
             }
             try {
+                // Đặt lại state khi slug thay đổi để tránh hiển thị dữ liệu cũ
                 setLoading(true);
+                setProduct(null);
+                setReviews([]);
+
                 const response = await fetch(`${API_URL}/products/${slug}`);
                 if (!response.ok) {
                     throw new Error(`Sản phẩm không tồn tại hoặc có lỗi xảy ra.`);
                 }
                 const data = await response.json();
-                setProduct(data);
+                setProduct(data); // Cập nhật state product
 
+                // *** SỬA LỖI 1: SỬ DỤNG BIẾN CỤC BỘ 'data' THAY VÌ STATE 'product' ***
+                // Chỉ gọi API reviews KHI VÀ CHỈ KHI 'data' (kết quả fetch) có _id
+                if (data && data._id) { 
+                    try {
+                        setReviewsLoading(true);
+                        // Dùng data._id để đảm bảo luôn có giá trị
+                        const reviewsResponse = await fetch(`${API_URL}/ratings/product/${data._id}?limit=3`);
+                        if (reviewsResponse.ok) {
+                            const reviewsData = await reviewsResponse.json();
+                            setReviews(reviewsData.reviews || []); 
+                            setTotalReviewCount(reviewsData.totalCount || 0);
+                        }
+                    } catch (reviewError) {
+                        console.error("Lỗi khi tải đánh giá:", reviewError);
+                    } finally {
+                        setReviewsLoading(false);
+                    }
+                } else {
+                    setReviewsLoading(false);
+                }
+                
+                // Các logic còn lại giữ nguyên và sử dụng biến 'data'
                 if (data?.variants?.length > 0) {
                     const initialVariant = data.variants[0];
                     setSelectedVariant(initialVariant);
-                    
-                    // Ưu tiên ảnh bìa chính, nếu không có thì lấy ảnh đầu tiên của variant
                     setMainImage(data.thumbnail_url || initialVariant?.images?.[0] || '');
-                    
-                    // Tự động chọn option đầu tiên còn hàng
                     const firstAvailableOption = initialVariant.options.find(opt => opt.stock_quantity > 0);
                     setSelectedOption(firstAvailableOption || initialVariant.options?.[0] || null);
                 }
@@ -49,7 +91,8 @@ const ProductDetailPage = () => {
             }
         };
         loadProductData();
-    }, [slug]);
+    // *** SỬA LỖI 2: MẢNG PHỤ THUỘC CHỈ NÊN LÀ 'slug' ***
+    }, [slug]);           
 
     const handleVariantSelect = (variantToSelect) => {
         setSelectedVariant(variantToSelect);
@@ -75,6 +118,23 @@ const ProductDetailPage = () => {
             if (newQuantity > maxQuantity) return maxQuantity;
             return newQuantity;
         });
+    };
+
+    const handleViewAllReviews = async () => {
+        if (!product?._id) return;
+        setLoadingMoreReviews(true);
+        try {
+            // Gọi lại API nhưng không có limit để lấy tất cả
+            const response = await fetch(`${API_URL}/ratings/product/${product._id}`);
+            if (response.ok) {
+                const data = await response.json();
+                setReviews(data.reviews); // Cập nhật lại danh sách với tất cả reviews
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải tất cả đánh giá:", error);
+        } finally {
+            setLoadingMoreReviews(false);
+        }
     };
     
     // Lấy giá bán và giá gốc (nếu có) từ option được chọn
@@ -175,6 +235,35 @@ const ProductDetailPage = () => {
                     </div>
                 </div>
             )}
+            <div id="reviews" className="reviews-wrapper">
+                    <h2 className="content-title">Đánh giá về sản phẩm</h2>
+                    {reviewsLoading ? (
+                        <p>Đang tải đánh giá...</p>
+                    ) : reviews.length > 0 ? (
+                        <>
+                            <div className="review-list">
+                                {reviews.map(review => (
+                                    <ReviewItem key={review._id} review={review} />
+                                ))}
+                            </div>
+
+                            {totalReviewCount > reviews.length && (
+                                <div className="view-all-container">
+                                    <button 
+                                        className="view-all-reviews-btn" 
+                                        onClick={handleViewAllReviews}
+                                        disabled={loadingMoreReviews}
+                                    >
+                                        {loadingMoreReviews ? 'Đang tải...' : `Xem tất cả ${totalReviewCount} đánh giá`}
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <p className="no-reviews-message">Chưa có đánh giá nào cho sản phẩm này.</p>
+                    )}
+                </div>
+            
         </div>
     );
 };
