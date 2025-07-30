@@ -3,8 +3,8 @@ const Product = require('../models/Product')
 const mongoose = require('mongoose')
 const createOrder = async (req, res) => {
   try {
-    const userId = req.user.id;
     const {
+      userId,
       items,
       totalAmount,
       orderNote,

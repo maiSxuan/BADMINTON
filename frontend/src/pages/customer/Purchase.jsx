@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import "./Purchase.css"
-
+import { createOrder } from "../../services/orderService"
 const PurchasePage = () => {
   const location = useLocation()
   const navigate = useNavigate()
@@ -120,71 +120,59 @@ useEffect(() => {
   }
 
   const handlePlaceOrder = async () => {
-  setIsLoading(true)
+    setIsLoading(true);
 
-  try {
-    // const userId = user?.id
+    try {
+      const userId = user?.id;
 
-    // if (!userId) {
-    //   showToastMessage("Bạn cần đăng nhập để đặt hàng")
-    //   return
-    // }
+      if (!userId) {
+        showToastMessage("Bạn cần đăng nhập để đặt hàng");
+        return;
+      }
 
-    // Kiểm tra dữ liệu bắt buộc
-    if (!shippingInfo.phone || !shippingInfo.address) {
-      showToastMessage("Vui lòng nhập đầy đủ thông tin giao hàng")
-      return
+      if (!shippingInfo.phone || !shippingInfo.address) {
+        showToastMessage("Vui lòng nhập đầy đủ thông tin giao hàng");
+        return;
+      }
+
+      const orderData = {
+        userId: userId,
+        items: cartItems.map(item => ({
+          product_id: item.product_id,
+          variant_id: item.variant_id,
+          option_id: item.option_id,
+          name: item.name,
+          variant_name: item.variant || "Mặc định",
+          sku_code: item.sku_code,
+          size: item.size || "",
+          quantity: item.quantity,
+          price: item.price,
+          list_price: item.list_price || item.price,
+          thumbnail_url: item.thumbnail_url || item.image || ""
+        })),
+        totalAmount: totalAmount,
+        shippingInfo: {
+          phone: shippingInfo.phone,
+          address: shippingInfo.address
+        },
+        orderNote: orderNote,
+        deliveryMethod: deliveryMethod
+      };
+
+      const data = await createOrder(orderData);
+
+      setOrderId(data.orderId);
+      setCurrentStep("tracking");
+      showToastMessage("Đặt hàng thành công");
+
+    } catch (error) {
+      console.error('Lỗi gửi đơn hàng:', error);
+      showToastMessage(error.message || "Có lỗi xảy ra, vui lòng thử lại");
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    const orderData = {
-      items: cartItems.map(item => ({
-        product_id: item.product_id,             // Bắt buộc
-        variant_id: item.variant_id,             // Bắt buộc
-        option_id: item.option_id,               // Bắt buộc
-
-        // Các trường hiển thị
-        name: item.name,
-        variant_name: item.variant || "Mặc định",
-        sku_code: item.sku_code,
-        size: item.size || "",
-        quantity: item.quantity,
-        price: item.price,
-        list_price: item.list_price || item.price,
-        thumbnail_url: item.thumbnail_url || item.image || ""
-      })),
-      totalAmount: totalAmount,
-      shippingInfo: {
-        phone: shippingInfo.phone,
-        address: shippingInfo.address
-      },
-      orderNote: orderNote,
-      deliveryMethod: deliveryMethod
-    }
-
-    const response = await fetch('http://localhost:4000/api/order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData)
-    })
-
-    const data = await response.json()
-
-    if (response.ok) {
-      setOrderId(data.orderId)
-      setCurrentStep("tracking")
-      showToastMessage("Đặt hàng thành công")
-    } else {
-      console.error("Lỗi từ backend:", data)
-      showToastMessage(data.message || "Có lỗi xảy ra khi đặt hàng")
-    }
-
-  } catch (error) {
-    console.error('Lỗi gửi đơn hàng:', error)
-    showToastMessage("Có lỗi xảy ra, vui lòng thử lại")
-  } finally {
-    setIsLoading(false)
-  }
-}
 
 
 
