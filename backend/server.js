@@ -44,7 +44,7 @@ mongoose.connect(process.env.MONGO_DB)
 // Import các router
 const productsRouter = require('./routes/productsRoutes');
 const userRouter = require('./routes/usersRouter');
-const promotionRouter = require('./routes/promotionRouter');
+const promotionRoutes = require('./routes/promotionRoutes');
 const authRoutes = require('./routes/authRoutes');
 const categoryRouter = require('./routes/categoryRoutes');
 const brandRouter = require('./routes/brandRoutes');
@@ -54,7 +54,7 @@ const orderRouter = require('./routes/orderRoutes')
 // Sử dụng các routes
 app.use('/api/products', productsRouter);
 app.use('/api/users', userRouter);
-app.use('/api/promotions', promotionRouter);
+app.use('/api/promotions', promotionRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRouter);
 app.use('/api/brands', brandRouter);
