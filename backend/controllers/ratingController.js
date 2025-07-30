@@ -54,11 +54,26 @@ exports.createRating = async (req, res) => {
 // GET /ratings/product/:productId - Lấy đánh giá theo sản phẩm
 exports.getRatingsByProduct = async (req, res) => {
   try {
-    const ratings = await Rating.find({ product_item: req.params.productId })
-      .populate('user', 'name')
-      .sort({ createdAt: -1 });
+    const productId = req.params.productId;
+    const limit = req.query.limit ? parseInt(req.query.limit) : null;
 
-    res.json(ratings);
+    // Chạy song song 2 query để tối ưu hiệu suất
+    const [ratings, totalCount] = await Promise.all([
+      // Query 1: Lấy danh sách reviews (có limit nếu được cung cấp)
+      Rating.find({ product_item: productId })
+        .populate('user', 'name')
+        .sort({ createdAt: -1 })
+        .limit(limit),
+      // Query 2: Đếm tổng số lượng reviews của sản phẩm này
+      Rating.countDocuments({ product_item: productId })
+    ]);
+
+    // Trả về một object chứa cả hai thông tin
+    res.json({
+      reviews: ratings,
+      totalCount: totalCount
+    });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Lỗi máy chủ' });
