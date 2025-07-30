@@ -8,11 +8,11 @@ const {
     createProduct,
     getAllProducts,
     getProductBySlug,
-
     updateProductBySlug,
     togglePublishStatusBySlug,
     deleteProductBySlug
 } = require('../controllers/productController');
+
 
 router.post('/', createProduct);
 
@@ -40,4 +40,3 @@ router.patch('/:slug/toggle-publish', togglePublishStatusBySlug);
 router.delete('/:slug', deleteProductBySlug);
 
 module.exports = router;
-
