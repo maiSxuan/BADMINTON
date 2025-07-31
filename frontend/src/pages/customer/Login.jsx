@@ -100,7 +100,7 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { loginUser } from "../../services/UsersService";
 import Logo from "../../components/common/logo";
 import "./Login.css";
 
@@ -122,15 +122,8 @@ export default function Login() {
       return;
     }
 
-    const loginType = isEmail ? "email" : "phone";
-
     try {
-      const response = await axios.post("http://localhost:4000/api/auth/login", {
-        [loginType]: emailOrPhone,
-        password: password
-      });
-
-      const { token, user } = response.data;
+      const { token, user } = await loginUser(emailOrPhone, password);
       localStorage.setItem("user", JSON.stringify(user));
       //localStorage.setItem("token", token);
 

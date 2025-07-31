@@ -1,8 +1,8 @@
 import React, { useState, useEffect} from "react";
 import "./ProfilePage.css";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Pencil } from "lucide-react"; 
+import { getProfile, updateProfile } from "../../services/UsersService";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -27,17 +27,15 @@ const ProfilePage = () => {
     const fetchUserProfile = async () => {
       try {
         const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-        const res = await axios.get("http://localhost:4000/api/users/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const data = await getProfile(token);
         setFormData((prev) => ({
           ...prev,
-          name: res.data.name || "",
-          email: res.data.email || "",
-          phone: res.data.phone || "",
-          gender: res.data.gender || "",
-          date_of_birth: res.data.date_of_birth
-            ? res.data.date_of_birth.split("T")[0]
+          name: data.name || "",
+          email: data.email || "",
+          phone: data.phone || "",
+          gender: data.gender || "",
+          date_of_birth: data.date_of_birth
+            ? data.date_of_birth.split("T")[0]
             : "",
         }));
       } catch (err) {
@@ -91,9 +89,7 @@ const ProfilePage = () => {
         newPassword: formData.newPassword || undefined,
       };
 
-      await axios.put("http://localhost:4000/api/users/profile", payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await updateProfile(token, payload);
       alert("Cập nhật thông tin thành công!");
       navigate("/");
     } catch (err) {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { registerUser } from "../../services/UsersService";
 import "./Registration.css";
 import Logo from "../../components/common/logo";
 
@@ -68,9 +68,7 @@ const Registration = () => {
 
     if (Object.keys(validateErrors).length === 0) {
       try {
-        await axios.post(
-          "http://localhost:4000/api/auth/register",
-          {
+        await registerUser ({
             name: formData.name,
             phone: formData.phone,
             address: formData.address,
@@ -89,6 +87,7 @@ const Registration = () => {
         // } else{
         //   navigate("/");
         // }
+        alert("Đăng ký thành công! Vui lòng đăng nhập.");
         navigate("/login")
       } catch (error) {
         const field = error.response?.data?.field;
