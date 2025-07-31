@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Registration.css";
 import Logo from "../../components/common/logo";
-import { NavigationOff } from "lucide-react";
 
 const Registration = () => {
   const [formData, setFormData] = useState({
@@ -69,7 +68,7 @@ const Registration = () => {
 
     if (Object.keys(validateErrors).length === 0) {
       try {
-        const response = await axios.post(
+        await axios.post(
           "http://localhost:4000/api/auth/register",
           {
             name: formData.name,
@@ -80,16 +79,17 @@ const Registration = () => {
           }
         );
 
-        localStorage.setItem("token", response.data.token);
-        const user = response.data.user;
-        localStorage.setItem("user", JSON.stringify(user));
+        //const user = response.data.user;
+        // localStorage.setItem("token", response.data.token);
+        // localStorage.setItem("user", JSON.stringify(user));
         //window.dispatchEvent(new Event("loginStatusChanged"));
 
-        if(user.user_type === 'ADMIN'){
-          navigate("/admin");
-        } else{
-          navigate("/");
-        }
+        // if(user.user_type === 'ADMIN'){
+        //   navigate("/admin");
+        // } else{
+        //   navigate("/");
+        // }
+        navigate("/login")
       } catch (error) {
         const field = error.response?.data?.field;
         const message = error.response?.data?.message || "Đăng ký thất bại";
