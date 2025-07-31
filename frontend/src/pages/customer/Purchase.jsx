@@ -21,9 +21,6 @@ const PurchasePage = () => {
     district: "",
     ward: "",
     houseNumber: "",
-    storeLocation: "",
-    note: "",
-    shippingMethod: "",
     saveInfo: false,
   })
   const user = JSON.parse(localStorage.getItem("user"))
@@ -62,13 +59,6 @@ useEffect(() => {
 //   if (location.state && location.state.selectedItems) {
 //     setCartItems(location.state.selectedItems)
 //   } else {
-    const testItem = {
-      product_id: "6886334c4400bc0b50d4593d",
-      variant_id: "6886334c4400bc0b50d4593e",
-      option_id: "6886334c4400bc0b50d45943",
-      quantity: 1,
-      price: 499000,
-    }
      setCartItems(selectedItems)
 //   }
 }, [location.state])
@@ -118,7 +108,7 @@ useEffect(() => {
     setIsLoading(true);
 
     try {
-      const userId = user?.id;
+      const userId = user?.userID;
 
       if (!userId) {
         showToastMessage("Bạn cần đăng nhập để đặt hàng");
@@ -132,6 +122,7 @@ useEffect(() => {
 
       const orderData = {
         userId: userId,
+        shippingInfo: shippingInfo,
         items: selectedItems.map(item => ({
           product_id: item.product_id,
           variant_id: item.variant_id,
@@ -140,10 +131,6 @@ useEffect(() => {
           priceAtTime: item.price
           })),
         totalAmount: totalAmount,
-        shippingInfo: {
-          phone: shippingInfo.phone,
-          address: shippingInfo.address
-        },
         orderNote: orderNote,
         deliveryMethod: deliveryMethod
       };

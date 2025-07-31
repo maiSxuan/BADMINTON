@@ -334,3 +334,6 @@ Content-Type: application/json
 }
 ###
 GET http://localhost:4000/api/products/get-stock?product_id=6886062b8af40557b4acaeb0&variant_id=6886062b8af40557b4acaeb6&option_id=6886062b8af40557b4acaeb1
+###
+GET http://localhost:4000/api/order
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjE0MDM3MTlmLTFiMzgtNDg1OS1iMTQxLTEyOTUyNjhmMmQ3MSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM4OTE2NTIsImV4cCI6MTc1NDA2NDQ1Mn0.2qNhB8nfPN4iT6pIMvcD536rage1K7Et15qwnoKZliU

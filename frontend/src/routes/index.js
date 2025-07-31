@@ -26,7 +26,8 @@ import RevenuePage from "../pages/admin/RevenuePage";
 import BalancePage from "../pages/admin/BalancePage";
 import PromotionListPage from "../pages/admin/PromotionList";
 import FranchisePolicy from "../pages/customer/FranchisePolicy";
-import OrderManagement from "../pages/admin/OrderManagement";
+import AllOrdersPage from "../pages/admin/AllOrdersPage";
+import ReturnReundOrdersPage from "../pages/admin/ReturnRefundOrdersPage";
 import CancelledOrders from "../pages/admin/CancelledOrdersPage";
 import AllProducts from "../pages/admin/AllProducts";
 import SaleOffPage from "../pages/customer/Saleoff";
@@ -186,7 +187,7 @@ const publicRoutes = [
   },
 
   // Quản lý đơn hàng
-  { path: "/admin/all-orders", component: OrderManagement, layout: (props) => (
+  { path: "/admin/all-orders", component: AllOrdersPage, layout: (props) => (
   <AdminLayout
     {...props}
     breadcrumbItems={[
@@ -207,6 +208,20 @@ const publicRoutes = [
       { label: "Trang chủ", path: "/admin" },
       { label: "Quản lý đơn hàng", path: "/admin" },
       { label: "Đơn hủy", path: "/admin/cancelled-orders" },
+    ]}
+  />
+  )
+  },
+    {
+    path: "/admin/return-orders",
+    component: ReturnReundOrdersPage,
+    layout: (props) => (
+  <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Quản lý đơn hàng", path: "/admin" },
+      { label: "Trả hàng/Hoàn tiền", path: "/admin/return-orders" },
     ]}
   />
   )
