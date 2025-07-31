@@ -173,7 +173,7 @@ const publicRoutes = [
   
   
 
-  {path: "/test", component: TestUploadPage},
+  //{path: "/test", component: TestUploadPage},
   //  404 Not Found
   // { path: '*', component: NotFoundPage, layout: DefaultLayout }
 ];
