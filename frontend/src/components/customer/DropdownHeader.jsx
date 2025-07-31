@@ -1,4 +1,6 @@
-import { useState } from "react";
+// src/components/layout/DropdownHeader.jsx
+
+import React, { useState } from "react"; // Thêm React vào import
 import { NavLink } from "react-router-dom";
 import "./DropdownHeader.css";
 
@@ -12,7 +14,7 @@ const DropdownHeader = ({ icon, label, menuItems = [] }) => {
             onMouseLeave={() => setIsHovered(false)}
         >
             <div className="action-item">
-                <img src={icon} alt={label} />
+                {icon} 
                 <span>{label}</span>
             </div>
 
@@ -43,4 +45,5 @@ const DropdownHeader = ({ icon, label, menuItems = [] }) => {
         </div>
     );
 };
+
 export default DropdownHeader;

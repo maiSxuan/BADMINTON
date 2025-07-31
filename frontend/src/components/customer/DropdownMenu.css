@@ -1,11 +1,14 @@
+/* ---- Cấu trúc chính của item cha ---- */
 .nav-item-dropdown {
   position: relative;
 }
 
+/* Hiển thị menu con khi hover */
 .nav-item-dropdown:hover .dropdown-menu {
   display: block;
 }
 
+/* Link chính "SẢN PHẨM" */
 .nav-link {
   color: white;
   text-decoration: none;
@@ -13,12 +16,16 @@
   font-size: 15px;
   display: block;
   transition: color 0.3s;
+  display: flex;        
+  align-items: center;  
+  gap: 6px;              
 }
 
 .nav-link:hover {
   color: #012c29;
 }
 
+/* --- Menu Dropdown Chính (GIỮ LẠI STYLE CŨ) --- */
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -27,25 +34,35 @@
   background-color: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   border-radius: 0 0 8px 8px;
-  min-width: 1250px;
-  max-height: 400px;
-  overflow-y: auto;
+  min-width: 1250px; /* Giữ lại kích thước cũ của bạn */
+  max-height: 400px; /* Giới hạn chiều cao để thanh trượt xuất hiện */
+  overflow-y: auto;  /* Đây là thuộc tính tạo thanh trượt dọc khi nội dung vượt quá max-height */
   display: none;
   z-index: 999;
+  padding-top: 15px; /* Giữ lại để menu không tắt ngay khi di chuột xuống */
 }
 
+/* --- SỬA ĐỔI CHÍNH: Cấu trúc Grid 4 Cột --- */
 .dropdown-content {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  column-gap: 0;
-  row-gap: 20px;
+  /* 
+    Định nghĩa một grid có chính xác 4 cột với chiều rộng bằng nhau (1fr).
+    Grid sẽ tự động xuống hàng khi điền hết 4 cột.
+  */
+  grid-template-columns: repeat(4, 1fr);
+  
+  row-gap: 20px; /* Khoảng cách giữa các hàng */
+  column-gap: 20px; /* Khoảng cách giữa các cột */
   padding: 20px;
+  padding-top: 0;
 }
 
+/* Một cột trong grid */
 .dropdown-column {
-  padding: 0 15px;
+  padding: 0 15px; /* Giữ lại padding cũ của bạn */
 }
 
+/* Giữ lại style cũ của bạn cho các mục bên trong */
 .dropdown-column a {
   margin-left: 0;
   padding-left: 0;
@@ -62,6 +79,7 @@
   padding-bottom: 3px;
   cursor: pointer;
   text-decoration: none;
+  white-space: nowrap; 
 }
 
 .dropdown-list {
@@ -83,6 +101,7 @@
   display: block;
   transition: color 0.3s, transform 0.3s;
   text-transform: none;
+  word-break: break-word;
 }
 
 .dropdown-list a:hover {
