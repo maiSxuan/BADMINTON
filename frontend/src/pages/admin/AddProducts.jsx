@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ProductClassification from "./ProductClassification";
 import './AddProducts.css';
-
-const API_URL = 'http://localhost:4000/api';
+import { getAllBrands, getAllCategories,createBrandByName,createCategoryByName,uploadImage,deleteImage,addProduct } from '../../services';
 
 const AddProducts = () => {
     const [activeTab, setActiveTab] = useState("basic");
@@ -33,12 +32,10 @@ const AddProducts = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [categoriesRes, brandsRes] = await Promise.all([
-                    fetch(`${API_URL}/categories`),
-                    fetch(`${API_URL}/brands`)
+                const [categoriesData, brandsData] = await Promise.all([
+                    getAllCategories(),
+                    getAllBrands()
                 ]);
-                const categoriesData = await categoriesRes.json();
-                const brandsData = await brandsRes.json();
                 setCategories(categoriesData);
                 setBrands(brandsData);
             } catch (err) {
@@ -81,12 +78,7 @@ const AddProducts = () => {
 
     const handleAddNewCategory = async (name) => {
         try {
-            const response = await fetch(`${API_URL}/categories`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name }),
-            });
-            const newCategory = await response.json();
+            const newCategory = await createCategoryByName(name)
             setCategories([...categories, newCategory]);
             handleSelectCategory(newCategory);
         } catch (err) {
@@ -102,12 +94,7 @@ const AddProducts = () => {
 
     const handleAddNewBrand = async (name) => {
         try {
-            const response = await fetch(`${API_URL}/brands`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name }),
-            });
-            const newBrand = await response.json();
+            const newBrand = await createBrandByName(name)
             setBrands([...brands, newBrand]);
             handleSelectBrand(newBrand);
         } catch (err) {
@@ -122,19 +109,21 @@ const AddProducts = () => {
     const handleCoverImageUpload = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
-        if (coverImage.public_id) await handleCoverImageRemove();
-        const formData = new FormData();
-        formData.append('image', file);
+        if (coverImage.public_id) {
+            try {
+                await deleteImage(coverImage.public_id);
+            } catch (error) {
+                console.error("Lỗi khi xóa ảnh bìa cũ:", error.message);
+            }
+        }
+        
         try {
-            const response = await fetch(`${API_URL}/upload/image`, { method: 'POST', body: formData });
-            if (!response.ok) throw new Error('Upload ảnh bìa thất bại');
-            const data = await response.json();
+            const data = await uploadImage(file);
             setCoverImage(data);
         } catch (error) {
             alert(error.message);
         }
     };
-
     const handleCoverImageRemove = async (e) => {
         if (e) e.stopPropagation();
         if (!coverImage.public_id) {
@@ -142,11 +131,7 @@ const AddProducts = () => {
             return;
         }
         try {
-            await fetch(`${API_URL}/upload/image`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ public_id: coverImage.public_id }),
-            });
+            await deleteImage(coverImage.public_id);
             setCoverImage({ url: null, public_id: null });
         } catch (error) {
             alert("Lỗi khi xóa ảnh: " + error.message);
@@ -159,7 +144,23 @@ const AddProducts = () => {
             alert("Vui lòng điền đầy đủ Tên sản phẩm, Thương hiệu và Ngành hàng.");
             return;
         }
+        if (!coverImage.url) {
+            alert('Bạn cần tải lên ảnh đại diện (thumbnail) cho sản phẩm.');
+            return;
+        }
+        if (!Array.isArray(classifications) || classifications.length === 0) {
+            alert('Bạn cần thêm ít nhất một phân loại sản phẩm.');
+            return;
+        }
 
+        const hasEmptyOptions = classifications.some(
+            (c) => !Array.isArray(c.options) || c.options.length === 0
+        );
+        if (hasEmptyOptions) {
+        alert('Mỗi phân loại phải có ít nhất một tuỳ chọn.');
+        return;
+        }
+    
         const filledConfig = classificationData.config.filter(c => c.name && c.name.trim() !== '');
         const filledVariants = classificationData.variants.filter(v => v.name && v.name.trim() !== '');
 
@@ -186,7 +187,11 @@ const AddProducts = () => {
                     stock_quantity: Number(secondaryOption.stock) || 0,
                 }))
             }));
-
+            if (formattedVariants.length === 0) {
+                alert('Bạn cần định nghĩa ít nhất một phân loại hợp lệ (có tên và tùy chọn).');
+                setIsSubmitting(false);
+            return;
+        }
             const productPayload = {
                 name: productName,
                 description,
@@ -197,13 +202,7 @@ const AddProducts = () => {
                 variants: formattedVariants,
             };
 
-            const response = await fetch(`${API_URL}/products`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(productPayload),
-            });
-
-            const newProduct = await response.json();
+            const newProduct = await addProduct(productPayload)
             alert(`Tạo sản phẩm thành công: ${newProduct.name}`);
         } catch (error) {
             alert(error.message || 'Có lỗi xảy ra.');

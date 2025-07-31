@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './ProductPage.css';
-import { getAllBrands,getAllCategories } from '../../services';
-
+// Import các hàm service của bạn
+import { getAllBrands, getAllCategories, getProductsOnQuery } from '../../services';
 
 // Dữ liệu tĩnh cho bộ lọc giá
 const priceRanges = {
@@ -38,7 +38,7 @@ function ProductPage() {
     });
     const [currentPage, setCurrentPage] = useState(1);
     
-    // Effect này sẽ đồng bộ state `filters` khi URL thay đổi (ví dụ: click từ menu, back/forward trình duyệt)
+    // Effect này sẽ đồng bộ state filters khi URL thay đổi
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const urlCategories = params.get('categories')?.split(',').filter(Boolean) || [];
@@ -55,6 +55,7 @@ function ProductPage() {
         const fetchFilterData = async () => {
             setIsFiltersLoading(true);
             try {
+                // Sử dụng các hàm service đã import
                 const [brandsData, categoriesData] = await Promise.all([
                     getAllBrands(),
                     getAllCategories()
@@ -75,19 +76,28 @@ function ProductPage() {
         setIsLoading(true);
         setError(null); 
         
-        const params = new URLSearchParams({ 
+        // --- BẮT ĐẦU CHỈNH SỬA ---
+        // 1. Tạo một object JavaScript thuần túy chứa các bộ lọc
+        const queryParams = { 
             page: currentPage, 
-            view: 'public' // Luôn đảm bảo chỉ lấy sản phẩm đã đăng bán
-        });
+        };
         
-        if (filters.price) params.append('price', filters.price);
-        if (filters.brands.length > 0) params.append('brands', filters.brands.join(','));
-        if (filters.categories.length > 0) params.append('categories', filters.categories.join(','));
+        // 2. Thêm các bộ lọc vào object nếu chúng tồn tại
+        if (filters.price) {
+            queryParams.price = filters.price;
+        }
+        if (filters.brands.length > 0) {
+            queryParams.brands = filters.brands.join(',');
+        }
+        if (filters.categories.length > 0) {
+            queryParams.categories = filters.categories.join(',');
+        }
         
         try {
-            const response = await fetch(`/api/products?${params.toString()}`);
-            if (!response.ok) throw new Error('Không thể tải sản phẩm.');
-            const result = await response.json();
+            // 3. Truyền object thuần túy đó vào hàm service getProductsOnQuery
+            // Service sẽ tự động thêm `view=public` và tạo chuỗi query string.
+            const result = await getProductsOnQuery(queryParams);
+
             setProducts(result.data);
             setPagination(result.pagination);
         } catch (err) { 
@@ -95,6 +105,7 @@ function ProductPage() {
         } finally { 
             setIsLoading(false); 
         }
+        // --- KẾT THÚC CHỈNH SỬA ---
     }, [currentPage, filters]);
 
     useEffect(() => { 
@@ -125,9 +136,7 @@ function ProductPage() {
             }
         }
 
-        // Luôn reset về trang 1 khi bộ lọc thay đổi
         params.delete('page');
-        // Cập nhật URL, việc này sẽ kích hoạt lại useEffect('location.search') để cập nhật state
         navigate({ search: params.toString() });
     };
 
