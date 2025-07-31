@@ -68,7 +68,7 @@ const Registration = () => {
 
     if (Object.keys(validateErrors).length === 0) {
       try {
-        const response = await axios.post(
+        await axios.post(
           "http://localhost:4000/api/auth/register",
           {
             name: formData.name,
@@ -79,18 +79,24 @@ const Registration = () => {
           }
         );
 
-        localStorage.setItem("token", response.data.token);
-        alert("Đăng ký thành công!");
-        navigate("/login");
+        //const user = response.data.user;
+        // localStorage.setItem("token", response.data.token);
+        // localStorage.setItem("user", JSON.stringify(user));
+        //window.dispatchEvent(new Event("loginStatusChanged"));
+
+        // if(user.user_type === 'ADMIN'){
+        //   navigate("/admin");
+        // } else{
+        //   navigate("/");
+        // }
+        navigate("/login")
       } catch (error) {
         const field = error.response?.data?.field;
         const message = error.response?.data?.message || "Đăng ký thất bại";
 
-        // Nếu có field cụ thể từ server, gán lỗi vào đúng trường
         if (field) {
           setErrors((prev) => ({ ...prev, [field]: message }));
         } else {
-          // Trường hợp lỗi không rõ, gán lỗi toàn cục (ví dụ server hỏng)
           alert(message);
         }
       }

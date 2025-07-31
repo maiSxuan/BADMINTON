@@ -14,8 +14,8 @@
     let usersPerPage = 10;
 
     useEffect(() => {
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
 
     // Chưa đăng nhập hoặc không phải admin -> redirect
     if (!token || !user || user.user_type !== "ADMIN") {
@@ -50,7 +50,7 @@
       if (!confirm) return;
 
       try {
-        const token = localStorage.getItem("token"); 
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
         await axios.delete(`http://localhost:4000/api/users/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -64,7 +64,7 @@
   const handleLockUser = async (id) => {
     if (!window.confirm("Bạn có chắc chắn muốn thay đổi trạng thái người dùng này?")) return;
     try {
-      const token = localStorage.getItem("token"); 
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
       const res = await axios.patch(`http://localhost:4000/api/users/status/${id}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }

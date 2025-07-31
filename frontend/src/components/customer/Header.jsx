@@ -104,7 +104,8 @@
 
 // export default Header;
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import "./Header.css";
 import DropdownMenu from "../customer/DropdownMenu";
 import DropdownHeader from "./DropdownHeader";
@@ -117,22 +118,41 @@ import searchIcon from "../../assets/icons/Info.svg";
 import search from "../../assets/icons/Search.svg";
 
 const Header = () => {
-  const isLoggedIn = !!localStorage.getItem("token");
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null); 
+  //const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const accountMenu = isLoggedIn
-    ? [
-        { label: "Tài khoản của tôi", to: "/account/profile" },
-        { label: "Đăng xuất", to: "/Login" },
-      ]
-    : [
-        { label: "Đăng nhập", to: "/login" },
-        { label: "Đăng ký", to: "/registration" },
-      ];
+ useEffect(() => {
+    const checkLogin = () => {
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+      const storedUser = localStorage.getItem("user");
+      setUser(token && storedUser ? JSON.parse(storedUser) : null);
+    };
 
-  const orderTrackingMenu = [
-    { label: "Theo dõi đơn hàng", to: "/order-tracking" },
-    { label: "Lịch sử mua hàng", to: "/order-history" },
-  ];
+    checkLogin();
+    window.addEventListener("loginStatusChanged", checkLogin);
+    return () => window.removeEventListener("loginStatusChanged", checkLogin);
+  }, []);
+
+  
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    window.dispatchEvent(new Event("loginStatusChanged"));
+    navigate("/");
+  };
+
+  const accountMenu = !user
+  ? [
+      { label: "Đăng nhập", to: "/login" },
+      { label: "Đăng ký", to: "/registration" },
+    ]
+  : [
+      { label: "Tài khoản của tôi", to: "/account/profile" },
+      { label: "Đăng xuất", action: handleLogout },
+    ];
 
   return (
     <header className="site-header">
@@ -169,11 +189,10 @@ const Header = () => {
             <img src={searchIcon} alt="Tra cứu đơn hàng" />
             <span>TRA CỨU</span>
           </NavLink> */}
-          <DropdownHeader 
-            icon={searchIcon}
-            label="TRA CỨU"
-            menuItems={orderTrackingMenu}
-          />
+          <NavLink to="/order-history" className="action-item">
+            <img src={searchIcon} alt="Tra cứu đơn hàng" />
+            <span>TRA CỨU</span>
+          </NavLink>
 
           {/* <NavLink to="/account" className="action-item">
             <img src={userIcon} alt="Tài khoản" />

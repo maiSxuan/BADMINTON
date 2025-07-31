@@ -26,7 +26,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
         const res = await axios.get("http://localhost:4000/api/users/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -79,7 +79,7 @@ const ProfilePage = () => {
     // Nếu không có lỗi thì lưu và chuyển trang
     if (Object.keys(newErrors).length === 0) {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
       // Tạo object mới chỉ chứa các field cần thiết
       const payload = {
         name: formData.name,

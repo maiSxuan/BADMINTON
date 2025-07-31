@@ -9,7 +9,7 @@ const createToken = (user) => {
     role: user.user_type, 
   };
   return jwt.sign({ payload }, process.env.ACCESS_TOKEN, {
-    expiresIn: "2d",
+    expiresIn: "1h",
   });
 };
 
@@ -42,14 +42,13 @@ exports.register = async (req, res) => {
       address,
       email,
       password: hashed,
-      user_type: role,
+      user_type: role
     });
 
     const token = createToken(newUser);
     res.status(201).json({
       token,
       user: {
-        id: newUser._id,
         userID: newUser.userID,
         email: newUser.email,
         phone: newUser.phone,
@@ -74,12 +73,6 @@ exports.login = async (req, res) => {
       user = await User.findOne({ email });
     } else if (phone) {
       user = await User.findOne({ phone });
-    } else if (emailOrPhone) {
-      if (emailOrPhone.includes("@")) {
-        user = await User.findOne({ email: emailOrPhone });
-      } else {
-        user = await User.findOne({ phone: emailOrPhone });
-      }
     } else {
       return res.status(400).json({ message: "Vui lòng nhập email hoặc số điện thoại" });
     }
@@ -97,7 +90,6 @@ exports.login = async (req, res) => {
     res.json({
       token,
       user: {
-        id: user._id,
         userID: user.userID,
         email: user.email,
         phone: user.phone,
