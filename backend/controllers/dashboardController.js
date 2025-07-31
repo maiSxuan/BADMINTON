@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
-const Product = require('../models/ProductModel'); // Giả sử model Product của bạn ở đây
+const Product = require('../models/Product'); // Giả sử model Product của bạn ở đây
 
 const getOrderStatistics = async (req, res) => {
   try {
