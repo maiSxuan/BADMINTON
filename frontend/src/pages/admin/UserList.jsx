@@ -2,7 +2,7 @@
   import "./UserList.css"
   import  Pagination  from '../../components/common/Pagination';
   import { Trash, SquarePen,Lock,LockOpen } from 'lucide-react';
-  import { getAllUsers, deleteUser, toggleUserStatus } from '../../services/UsersService';
+  import { getAllUsers, deleteUser, toggleUserStatus } from '../../services';
   import { useNavigate } from "react-router-dom";
 
   const UserListPage = () => {

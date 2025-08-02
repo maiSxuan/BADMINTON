@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { registerUser } from "../../services";
 import "./Registration.css";
 import Logo from "../../components/common/logo";
 
@@ -249,3 +250,4 @@ const Registration = () => {
   );
 };
 
+export default Registration;
