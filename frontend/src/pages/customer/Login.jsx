@@ -100,7 +100,7 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../../services/AuthenticationService";
+import { loginUser } from "../../services";
 import Logo from "../../components/common/logo";
 import "./Login.css";
 
