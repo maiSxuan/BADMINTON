@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AllProducts.css";
-
+import { getAllCategories,getProductsOnQuery,deleteProduct,togglePublishProduct } from "../../services";
 const AllProducts = () => {
     const navigate = useNavigate();
     const [allProducts, setAllProducts] = useState([]);
@@ -20,17 +20,14 @@ const AllProducts = () => {
             setIsLoading(true);
             setError(null);
             try {
-                const [productsRes, categoriesRes] = await Promise.all([
-                    fetch('/api/products?limit=1000&sort=newest&view=admin'),
-                    fetch('/api/categories')
+                const [productsData, categoriesData] = await Promise.all([
+                    getProductsOnQuery({ limit: 1000, view: 'admin' }),
+                    getAllCategories()
                 ]);
-                if (!productsRes.ok || !categoriesRes.ok) throw new Error('Không thể tải dữ liệu từ server.');
-                const productsData = await productsRes.json();
-                const categoriesData = await categoriesRes.json();
-                setAllProducts(productsData.data);
+                setAllProducts(productsData.data); // productsData có { data, count, ... }
                 setCategories(categoriesData);
             } catch (err) {
-                setError(err.message);
+                setError(err.message || 'Không thể tải dữ liệu từ server.');
             } finally {
                 setIsLoading(false);
             }
@@ -57,38 +54,30 @@ const AllProducts = () => {
 
     const handleAdd = () => navigate("/admin/add-product");
 
-    const handleDeleteProduct = async (productSlug, e) => {
-        e.stopPropagation();
-        if (window.confirm("Hành động này sẽ XÓA VĨNH VIỄN sản phẩm. Bạn chắc chắn?")) {
-            try {
-                const response = await fetch(`/api/products/${productSlug}`, { method: 'DELETE' });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Xóa thất bại.');
-                }
-                setAllProducts(prev => prev.filter(p => p.slug !== productSlug));
-                alert('Xóa sản phẩm vĩnh viễn thành công.');
-            } catch (err) {
-                alert(`Lỗi: ${err.message}`);
-            }
+   const handleDeleteProduct = async (slug, e) => {
+    e.stopPropagation();
+    if (window.confirm("Hành động này sẽ XÓA VĨNH VIỄN sản phẩm. Bạn chắc chắn?")) {
+        try {
+            await deleteProduct(slug);
+            setAllProducts(prev => prev.filter(p => p.slug !== slug));
+            alert('Xóa thành công.');
+        } catch (err) {
+            alert(err.message);
         }
-    };
+    }
+};
 
     const handleTogglePublish = async (product, e) => {
-        e.stopPropagation();
-        const action = product.is_published ? "Ẩn" : "Đăng bán";
-        try {
-            const response = await fetch(`/api/products/${product.slug}/toggle-publish`, { method: 'PATCH' });
-            if (!response.ok) throw new Error(`Không thể ${action} sản phẩm.`);
-            setAllProducts(prev => 
-                prev.map(p => 
-                    p.id === product.id ? { ...p, is_published: !p.is_published } : p
-                )
-            );
-        } catch (err) {
-            alert(`Lỗi: ${err.message}`);
-        }
-    };
+    e.stopPropagation();
+    try {
+        await togglePublishProduct(product.slug);
+        setAllProducts(prev =>
+            prev.map(p => p.id === product.id ? { ...p, is_published: !p.is_published } : p)
+        );
+    } catch (err) {
+        alert(err.message);
+    }
+};
 
     return (
         <div className="product-management">

@@ -100,7 +100,7 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { loginUser } from "../../services/UsersService";
 import Logo from "../../components/common/logo";
 import "./Login.css";
 
@@ -122,33 +122,27 @@ export default function Login() {
       return;
     }
 
-    const loginType = isEmail ? "email" : "phone";
-
     try {
-      const response = await axios.post("http://localhost:4000/api/auth/login", {
-        [loginType]: emailOrPhone,
-        password: password
-      });
-
-      const { token, user } = response.data;
+      const { token, user } = await loginUser(emailOrPhone, password);
       localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("token", token);
+      //localStorage.setItem("token", token);
 
       if (rememberPassword) {
         localStorage.setItem("token", token);
       } else {
         sessionStorage.setItem("token", token);
       }
-
+      window.dispatchEvent(new Event("loginStatusChanged"));
       // Redirect to homepage or admin page
-      if (user.email.endsWith("@admin.com")) {
+      if (user.user_type === "ADMIN") {
         navigate("/admin");
       } else {
         navigate("/");
       }
 
+      
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.message) {
+      if (err.response?.data?.message) {
         setError(err.response.data.message);
       } else {
         setError("Đăng nhập thất bại. Vui lòng thử lại.");
