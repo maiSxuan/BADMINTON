@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom";
-import { requestPasswordReset } from "../../services/AuthenticationService";
+import { requestPasswordReset } from "../../services";
 import "./ForgotPassword.css"
 
 export default function ForgotPasswordStep1() {

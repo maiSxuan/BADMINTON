@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom";
-import { resetPassword } from "../../services/AuthenticationService";
+import { resetPassword } from "../../services";
 import "./ForgotPassword.css"
 
 export default function ForgotPasswordStep2() {

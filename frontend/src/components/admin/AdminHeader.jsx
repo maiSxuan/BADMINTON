@@ -7,14 +7,22 @@ import "./AdminHeader.css";
 import { UserIcon,Bell } from 'lucide-react';
 import Logo from "../common/logo";
 
-const AdminHeader = ({ user }) => {
-  const userName = user?.fullName || "Đang tải...";
-  const navigate = useNavigate();
-  
+const AdminHeader = ({user}) => {
+  const userName = user?.name || "Đang tải...";
+  const navigate = useNavigate(); 
   const gobackHome = () => {
     navigate("/admin");
   };
 
+   const handleLogout = () => {
+    if (window.confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
+      navigate("/login");
+    }
+  };
+  
   return (
     <header className="admin-header">
       <div className="header-left">
@@ -44,7 +52,22 @@ const AdminHeader = ({ user }) => {
               <UserIcon color="#6c757d" size={30} /> 
             )}
           </div>
+
           <span className="user-name">{userName}</span>
+          <button
+            className="logout-button"
+            onClick={handleLogout}
+            style={{
+              marginLeft: "10px",
+              background: "transparent",
+              border: "1px solid #ccc",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Đăng xuất
+          </button>
         </div>
       </div>
     </header>
