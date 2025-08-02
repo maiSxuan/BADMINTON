@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../../services";
+import { registerUser } from "../../services/AuthenticationService";
 import "./Registration.css";
 import Logo from "../../components/common/logo";
 

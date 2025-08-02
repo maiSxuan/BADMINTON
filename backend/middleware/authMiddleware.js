@@ -54,7 +54,7 @@ const authorizeRole = (requireRole) =>{
       }
 
       if(req.user.role != requireRole){
-        return res.status(403).json({message: 'Access denied :${requireRole} only'});
+        return res.status(403).json({message: `Access denied :${requireRole} only`});
       }
 
       next();
