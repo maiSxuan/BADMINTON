@@ -3,7 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/userController");
 const authMiddleware = require("../middleware/authMiddleware");
 
-router.post("/create", authMiddleware.authenticate, authMiddleware.authorizeRole("ADMIN"), userController.createUser);
+//router.post("/create", authMiddleware.authenticate, authMiddleware.authorizeRole("ADMIN"), userController.createUser); //sửa thành / r vô service FE sửa thành /
 router.get("/user-list",  authMiddleware.authenticate, authMiddleware.authorizeRole("ADMIN"), userController.getAllUsers);
 router.patch("/status/:id", authMiddleware.authenticate, authMiddleware.authorizeRole("ADMIN"), userController.toggleUserStatus);
 router.delete("/:id", authMiddleware.authenticate, authMiddleware.authorizeRole("ADMIN"), userController.deleteUser);

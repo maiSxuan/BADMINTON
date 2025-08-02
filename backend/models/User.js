@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const {v4 : uuidv4} = require("uuid");
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
   userID: {
@@ -12,6 +13,7 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    unique: true,
     lowercase: true,
     trim: true,
   },
@@ -51,6 +53,21 @@ const userSchema = new mongoose.Schema({
     enum: ['ADMIN', 'USER', 'GUEST'],
     default: 'USER',
   },
+
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
 }, { timestamps: { createdAt: 'create_at', updatedAt: 'update_at' } });
+
+userSchema.methods.createResetPasswordToken = function() {
+  const resetToken = Math.floor(100000 + Math.random() * 900000).toString();
+
+  this.resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+  this.resetPasswordExpires = Date.now() + 60 * 1000;
+
+  return resetToken;
+}
 
 module.exports = mongoose.model('User', userSchema);
