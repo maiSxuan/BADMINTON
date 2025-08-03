@@ -227,6 +227,15 @@ const publicRoutes = [
   />
   )
   },
+  {path: "/admin/edit-product/:slug", component: AddProducts, layout:   (props) => (
+  <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Quản lý sản phẩm ", path: "/admin" },
+      { label: "Sửa đơn hàng", path: "/admin/edit-product/:slug" },
+    ]}
+  />)},
   { path: "/admin/add-product", component: AddProducts, layout: (props) => (
   <AdminLayout
     {...props}

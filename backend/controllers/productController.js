@@ -78,14 +78,14 @@ exports.getProductBySlug = async (req, res) => {
         const { view = 'public' } = req.query;
         const filter = { slug: req.params.slug };
         
-        // Luôn luôn chỉ tìm các sản phẩm chưa bị xóa mềm (nếu bạn có trường is_deleted)
-        // filter.is_deleted = false;
-
         if (view === 'public') {
             filter.is_published = true;
         }
 
-        const product = await Product.findOne(filter).populate('brand').populate('category_ids');
+        // Populate related data for use on the client
+        const product = await Product.findOne(filter)
+            .populate('brand', 'name slug _id')
+            .populate('category_ids', 'name slug _id');
         
         if (!product) {
             return res.status(404).json({ message: 'Không tìm thấy sản phẩm hoặc sản phẩm đã bị ẩn.' });
@@ -101,19 +101,34 @@ exports.updateProductBySlug = async (req, res) => {
     try {
         const { slug } = req.params;
         const productData = req.body;
+
         const productToUpdate = await Product.findOne({ slug });
-        if (!productToUpdate) return res.status(404).json({ message: 'Không tìm thấy sản phẩm.' });
+        if (!productToUpdate) {
+            return res.status(404).json({ message: 'Không tìm thấy sản phẩm.' });
+        }
+        
         if (productData.name && productData.name !== productToUpdate.name) {
             productData.slug = slugify(productData.name, { lower: true, strict: true, locale: 'vi' });
             const existing = await Product.findOne({ slug: productData.slug, _id: { $ne: productToUpdate._id } });
-            if (existing) return res.status(409).json({ message: `Tên "${productData.name}" đã tồn tại.` });
+            if (existing) {
+                return res.status(409).json({ message: `Tên sản phẩm "${productData.name}" đã tồn tại.` });
+            }
         }
+        
         let lowestPrice = Infinity;
-        (productData.variants || []).forEach(v => (v.options || []).forEach(o => { if (o.price < lowestPrice) lowestPrice = o.price; }));
+        (productData.variants || []).forEach(v => (v.options || []).forEach(o => { 
+            const price = Number(o.price);
+            if (!isNaN(price) && price < lowestPrice) {
+                lowestPrice = price;
+            }
+        }));
         productData.price = lowestPrice === Infinity ? (productToUpdate.price || 0) : lowestPrice;
+        
         const updatedProduct = await Product.findByIdAndUpdate(productToUpdate._id, productData, { new: true });
+        
         res.status(200).json(updatedProduct);
     } catch (error) {
+        console.error("Lỗi server khi cập nhật:", error);
         res.status(500).json({ message: "Lỗi server khi cập nhật.", error: error.message });
     }
 };

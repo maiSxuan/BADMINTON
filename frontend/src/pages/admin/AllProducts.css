@@ -1,3 +1,5 @@
+/* src/pages/admin/products/AllProducts.css */
+
 .product-management {
   padding: 24px;
   background-color: #f8f9fa;
@@ -26,7 +28,8 @@
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  /* ✅ SỬA LỖI 1: Thay đổi từ 4 cột thành 5 cột */
+  grid-template-columns: repeat(5, 1fr); 
   gap: 24px;
   margin-bottom: 32px;
 }
@@ -233,8 +236,6 @@
 }
 
 .action-btn {
-  background: none;
-  border: none;
   cursor: pointer;
   padding: 6px 12px;
   border-radius: 6px;
@@ -242,6 +243,7 @@
   font-weight: 500;
   border: 1px solid transparent;
 }
+
 
 .publish-btn {
     background-color: #dbeafe;
@@ -261,6 +263,10 @@
   background-color: #fee2e2;
   color: #b91c1c;
   border-color: #fecaca;
+}
+.edit-btn {
+  color: BLACK;
+  border-color: black;
 }
 .delete-btn:hover { background-color: #fecaca; }
 
@@ -408,6 +414,10 @@
 }
 
 /* Responsive */
+@media (max-width: 1200px) { /* Thay đổi breakpoint để chứa 5 thẻ */
+  .stats-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
 @media (max-width: 768px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .controls { flex-direction: column; align-items: stretch; }
