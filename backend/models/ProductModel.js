@@ -26,7 +26,20 @@ const ProductSchema = new Schema({
     is_published: { type: Boolean, default: false },
     price: { type: Number, required: true, default: 0 },
     classification_config: [{ _id: false, name: { type: String, required: true } }],
-    variants: [VariantSchema]
+    variants: [VariantSchema],
+
+    // xử lí giảm giá sản phẩm 
+    sale: { type: Boolean, default: false },
+    sale_price: { type: Number, default: 0 },
+    promotion: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Promotion',
+        default: null,
+    },
+    appliedCode: {
+        type: String,
+        default: null
+    }
 }, { timestamps: true });
 
 // Thêm tên collection

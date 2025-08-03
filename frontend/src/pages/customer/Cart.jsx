@@ -219,7 +219,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import "./Cart.css"
-import axios from "axios";
+import { fetchCart, updateCartItemQuantity, removeItemFromCart } from "../../services/index"
 
 const CartPage = () => {
   const navigate = useNavigate()
@@ -234,8 +234,6 @@ const CartPage = () => {
     const total = selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
     setTotalPrice(total)
     setSelectedCount(selectedItems.length)
-
-    // Cập nhật trạng thái "Chọn tất cả"
     setSelectAll(cartItems.length > 0 && selectedItems.length === cartItems.length)
   }, [cartItems])
 
@@ -245,101 +243,116 @@ const CartPage = () => {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (!token) return;
 
-        const response = await axios.get('http://localhost:4000/api/cart', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        // const response = await fetch('http://localhost:4000/api/cart', {
+        //   method: 'GET',
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //     'Content-Type': 'application/json'
+        //   }
+        // });
 
-        const cartWithSelected = response.data.items.map(item => ({
+        // if (!response.ok)
+        //   throw new Error(`HTTP Error! status: ${response.status}`)
+
+        // const data = await response.json();
+        const data = await fetchCart(token);
+
+        const cartWithSelected = data.items.map(item => ({
           _id: item._id,
-          name: item.name,
+          name: item.productName || 'Không rõ tên',
           productId: item.productId, 
           variantId: item.variantId,
-          sku_code: item.sku_code,
+          optionId: item.optionId,
           quantity: item.quantity,
           price: item.price,
           selected: false,
-          option: { 
-            color: item.option?.color || "N/A", 
-            size: item.option?.size || "N/A" 
-          },
+          color: item.color || "Không xác định", 
+          size: item.size || "Không xác định",
           image: item.image || "/placeholder.svg"
         }));
 
         setCartItems(cartWithSelected);
       } catch (err) {
-        console.error('Failed to fetch cart:', err);
+        console.error('Failed to fetch cart:', err)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     };
     fetchCartData();
   }, []);
 
   const handleQuantityChange = async (item, amount) => {
-    if (amount !== 1 && amount !== -1) return;
-
-    console.log({
-      product: item.productId,
-      variant_id: item.variantId,
-      sku_code: item.sku_code,
-    });
+    if (![1, -1].includes(amount)) return
 
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (!token) return;
 
     try {
-      await axios.put('http://localhost:4000/api/cart/update', {
-        product: item.productId,     
-        variant_id: item.variantId,    
-        sku_code: item.sku_code,
-        delta: amount, 
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      // await fetch(`http://localhost:4000/api/cart/${item.variantId}`, {
+      //   method: 'PUT',
+      //   headers: {
+      //     Authorization: 'Bearer ${token}',
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify({
+      //     product: item.productId,
+      //     variant_id: item.variantId,
+      //     option_id: item.optionId,
+      //     delta: amount
+      //   })
+      // });
+      await updateCartItemQuantity(token, item.variantId, {
+        product: item.productId,
+        variant_id: item.variantId,
+        option_id: item.optionId,
+        delta: amount
       });
 
       setCartItems(prev =>
         prev.map(newItem =>
-          String(newItem.productId) === String(item.productId) &&
-          String(newItem.variantId) === String(item.variantId) &&
-          newItem.sku_code === item.sku_code
+          newItem.productId === item.productId &&
+          newItem.variantId === item.variantId &&
+          newItem.optionId === item.optionId
             ? { ...newItem, quantity: newItem.quantity + amount }
             : newItem
         )
       );
     } catch (err) {
-      console.error('Error updating quantity:', err?.response?.data || err.message || err);
+      console.error('Error updating quantity:', err);
     } 
   };
 
   const handleRemoveItem = async (item) => {
     if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?")) return;
+
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (!token) return;
 
     try {
-      await axios.delete('http://localhost:4000/api/cart/remove', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {
-          product: item.productId, 
-          variant_id: item.variantId,
-          sku_code: item.sku_code
-        }
+      // await fetch(`http://localhost:4000/api/cart/${item.variantId}`, {
+      //   method: 'DELETE',
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify({
+      //     product: item.productId, 
+      //     variant_id: item.variantId,
+      //     option_id: item.optionId
+      //   })
+      // });
+
+      await removeItemFromCart(token, item.variantId, {
+        product: item.productId,
+        variant_id: item.variantId,
+        option_id: item.optionId
       });
 
       setCartItems((prevItems) =>
-        prevItems.filter(
-          (pi) =>
-            !(
-              String(pi.productId) === String(item.productId) &&
-              String(pi.variantId) === String(item.variantId) &&
-              pi.sku_code === item.sku_code
-            )
+        prevItems.filter(i =>
+            !(i.productId === item.productId &&
+              i.variantId === item.variantId &&
+              i.optionId === item.optionId)
         )
       );
     } catch (err) {
@@ -367,13 +380,12 @@ const CartPage = () => {
       return
     }
 
-    const mappedItems = selectedItems.map((item) => ({
-      id: item._id,                    
-      name: item.name,                 
-      variant: `${item.option.color || 'N/A'} - ${item.option.size || 'N/A'}`,            
-      quantity: item.quantity,         
-      price: item.price,               
-      image: item.image,               
+    const mappedItems = selectedItems.map(item => ({
+      product_id: item.productId,
+      variant_id: item.variantId,
+      option_id: item.optionId,
+      quantity: item.quantity,
+      price: item.price
     }));
 
     navigate("/purchase", {

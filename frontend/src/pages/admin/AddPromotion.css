@@ -77,3 +77,19 @@
 .submit-btn:hover {
   background-color: #c4001e;
 }
+
+.promo-form-error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+.promo-form-success {
+  color: green;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+.promo-form-info {
+  color: #444;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
