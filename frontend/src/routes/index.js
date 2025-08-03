@@ -1,11 +1,11 @@
 // src/routes/index.js
 
 // Layout mặc định cho người dùng, có Header và Footer, Sidebar, Breadcrumb
-import DefaultLayout from "../components/layouts/DefaultLayout";
+import DefaultLayout from "../layouts/DefaultLayout";
 // Layot cho cart, đơn hàng,... 
-import HeaderFooterLayout from "../components/layouts/HeaderFooterLayout";
+import HeaderFooterLayout from "../layouts/HeaderFooterLayout";
 // Layout cho trang quản trị, có AdminHeader và AdminSidebar
-import AdminLayout from "../components/layouts/AdminLayout";
+import AdminLayout from "../layouts/AdminLayout";
 
 // Thêm các trang vào đây
 import AdminHome from "../pages/admin/AdminHome";
@@ -18,7 +18,7 @@ import AddProducts from "../pages/admin/AddProducts";
 //import RacketPage from "../pages/customer/Product/Racket";
 //import ShoePage from "../pages/customer/Product/Shoe";
 import ProductPage from "../pages/customer/ProductPage";
-import TestUploadPage from "../pages/testupload";
+// import TestUploadPage from "../pages/testupload";
 //import BaloPage from "../pages/customer/Product/Balo";
 import UserListPage from "../pages/admin/UserList";
 import AddPromotionPage from "../pages/admin/AddPromotion";
@@ -26,13 +26,14 @@ import RevenuePage from "../pages/admin/RevenuePage";
 import BalancePage from "../pages/admin/BalancePage";
 import PromotionListPage from "../pages/admin/PromotionList";
 import FranchisePolicy from "../pages/customer/FranchisePolicy";
-import OrderManagement from "../pages/admin/OrderManagement";
+import AllOrdersPage from "../pages/admin/AllOrdersPage";
+import ReturnReundOrdersPage from "../pages/admin/ReturnRefundOrdersPage";
 import CancelledOrders from "../pages/admin/CancelledOrdersPage";
 import AllProducts from "../pages/admin/AllProducts";
 import SaleOffPage from "../pages/customer/Saleoff";
 import ReturnRefundForm from "../pages/customer/RefundPage";
-import ForgotPasswordStep1 from "../pages/customer/ForgotPassword1";
-import ForgotPasswordStep2 from "../pages/customer/ForgotPassword2";
+import ForgotPasswordStep1 from "../pages/customer/ForgotPassword";
+import ForgotPasswordStep2 from "../pages/customer/RecoverPassword";
 import Login from "../pages/customer/Login";
 import Registration from "../pages/customer/Registration";
 import ProfilePage from "../pages/customer/ProfilePage";
@@ -170,10 +171,10 @@ const publicRoutes = [
 
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)
-  { path: "/admin", component: AdminHome, layout: AdminLayout },
+  { path: "/admin", component: AdminHome, layout: AdminLayout, allowedRoles: ["ADMIN"]  },
     
   // Quản lý người dùng
-  { path: "/admin/user-list", component: UserListPage, layout: AdminLayout },
+  { path: "/admin/user-list", component: UserListPage, layout: AdminLayout, allowedRoles: ["ADMIN"] },
   {
     path: "/admin/lock-account",
     component: LockAccountPage,
@@ -186,7 +187,7 @@ const publicRoutes = [
   },
 
   // Quản lý đơn hàng
-  { path: "/admin/all-orders", component: OrderManagement, layout: (props) => (
+  { path: "/admin/all-orders", component: AllOrdersPage, allowedRoles: ["ADMIN"], layout: (props) => (
   <AdminLayout
     {...props}
     breadcrumbItems={[
@@ -200,6 +201,7 @@ const publicRoutes = [
   {
     path: "/admin/cancelled-orders",
     component: CancelledOrders,
+    allowedRoles: ["ADMIN"],
     layout: (props) => (
   <AdminLayout
     {...props}
@@ -211,11 +213,25 @@ const publicRoutes = [
   />
   )
   },
-
+ {
+    path: "/admin/return-orders",
+    component: ReturnReundOrdersPage,
+    layout: (props) => (
+  <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Quản lý đơn hàng", path: "/admin" },
+      { label: "Trả hàng/Hoàn tiền", path: "/admin/return-orders" },
+    ]}
+  />
+  )
+  },
   // Quản lý sản phẩm
   {
     path: "/admin/all-products",
     component: AllProducts,
+    allowedRoles: ["ADMIN"],
     layout: (props) => (
   <AdminLayout
     {...props}
@@ -252,15 +268,17 @@ const publicRoutes = [
     path: "/admin/chat-management",
     component: ChatManagementPage,
     layout: AdminLayout,
+     allowedRoles: ["ADMIN"]
   },
   {
     path: "/admin/review-management",
     component: ReviewManagementPage,
     layout: AdminLayout,
+     allowedRoles: ["ADMIN"]
   },
 
   // Tài chính
-  { path: "/admin/revenue", component: RevenuePage, layout: (props) => (
+  { path: "/admin/revenue", component: RevenuePage, allowedRoles: ["ADMIN"], layout: (props) => (
   <AdminLayout
     {...props}
     breadcrumbItems={[
@@ -270,7 +288,7 @@ const publicRoutes = [
     ]}
   />
   ) },
-  { path: "/admin/balance", component: BalancePage, layout: (props) => (
+  { path: "/admin/balance", component: BalancePage, allowedRoles: ["ADMIN"], layout: (props) => (
   <AdminLayout
     {...props}
     breadcrumbItems={[
@@ -282,11 +300,11 @@ const publicRoutes = [
   ) },
 
   //Khuyến Mãi
-  { path: "/admin/add-promotion", component: AddPromotionPage, layout: AdminLayout },
-  { path: "/admin/manage-promotion", component: PromotionListPage, layout: AdminLayout },
+  { path: "/admin/add-promotion", component: AddPromotionPage, layout: AdminLayout,allowedRoles: ["ADMIN"] },
+  { path: "/admin/manage-promotion", component: PromotionListPage, layout: AdminLayout,allowedRoles: ["ADMIN"] },
   
 
-  {path: "/test", component: TestUploadPage},
+  // {path: "/test", component: TestUploadPage},
   //  404 Not Found
   // { path: '*', component: NotFoundPage, layout: DefaultLayout }
 ];
