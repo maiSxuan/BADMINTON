@@ -2,40 +2,70 @@
 
 import { useState } from "react"
 import "./RefundPage.css"
-import { useNavigate } from "react-router-dom";
 
-export default function ReturnRefundForm() {
-  const [showSuccess, setShowSuccess] = useState(false);
+export default function ReturnRefundForm({ order, onSubmit, onBack }) {
+  const [showSuccess, setShowSuccess] = useState(false)
   const [formData, setFormData] = useState({
-    request: "",
+    request: "", // This field is commented out in the original, but kept for structure
     reason: "",
     description: "",
-  });
+  })
 
-  const navigate = useNavigate(); 
+  const handleSend = async () => {
+    // Logic to send the request and update the order
+    try {
+      const response = await fetch(`http://localhost:4000/api/order/${order._id}/request-return-refund`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          return_reason: formData.reason,
+          status: "Yêu cầu trả hàng/hoàn tiền",
+        }),
+      })
 
-  const handleSend = () => {
-    setShowSuccess(true);
-    //////////////// LOGIC SEND Ở ĐÂY
-  };
+      if (response.ok) {
+        const updatedOrder = {
+          ...order,
+          return_reason: formData.reason,
+          status: "Yêu cầu trả hàng/hoàn tiền",
+        }
+        setShowSuccess(true)
+        onSubmit(updatedOrder) // Notify parent component about the update
+      } else {
+        alert("Có lỗi xảy ra khi gửi yêu cầu trả hàng/hoàn tiền.")
+      }
+    } catch (error) {
+      console.error("Lỗi khi gửi yêu cầu trả hàng/hoàn tiền:", error)
+      alert("Có lỗi xảy ra khi gửi yêu cầu trả hàng/hoàn tiền.")
+    }
+  }
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
-    }));
-  };
+    }))
+  }
 
   const handleReturnHome = () => {
-    navigate("/"); 
-  };
+    window.location.href = "/" // Navigate to home page
+  }
 
   return (
     <div className="refund-container">
-      <h1 className="title">Yêu cầu trả hàng/hoàn tiền</h1>
+      <div className="detail-header">
+        <button onClick={onBack} className="back-button">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <h1 className="title">Yêu cầu trả hàng/hoàn tiền</h1>
+      </div>
 
       <div className="form-container">
-        <div className="form-group">
+        {/* <div className="form-group">
           <label className="label">Yêu cầu</label>
           <select
             className="dropdown"
@@ -45,8 +75,7 @@ export default function ReturnRefundForm() {
             <option value="tra-hang">Trả hàng</option>
             <option value="hoan-tien">Hoàn tiền</option>
           </select>
-        </div>
-
+        </div> */}
         <div className="form-group">
           <label className="label">Lý do</label>
           <input
@@ -56,7 +85,6 @@ export default function ReturnRefundForm() {
             onChange={(e) => handleInputChange("reason", e.target.value)}
           />
         </div>
-
         <div className="form-group">
           <label className="label">Mô tả</label>
           <textarea
@@ -65,13 +93,11 @@ export default function ReturnRefundForm() {
             onChange={(e) => handleInputChange("description", e.target.value)}
           ></textarea>
         </div>
-
         <div className="send-button-container">
           <button className="send-button" onClick={handleSend}>
             GỬI
           </button>
         </div>
-
         {showSuccess && (
           <div className="overlay">
             <div className="popup">

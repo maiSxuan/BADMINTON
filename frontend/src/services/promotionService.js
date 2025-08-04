@@ -1,5 +1,8 @@
-export const createPromotion = async (token, promotionData) => {
-  const response = await fetch('http://localhost:4000/api/promotions', {
+export const createPromotion = async (promotionData) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!token) return;
+
+  const res = await fetch('http://localhost:4000/api/promotions', {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -8,189 +11,192 @@ export const createPromotion = async (token, promotionData) => {
     body: JSON.stringify(promotionData)
   });
 
-  const result = await response.json();
+  const data = await res.json();
 
-  if (!response.ok) {
-    throw new Error(result.message || 'Tạo chiến dịch thất bại.');
-  }
+  if (!res.ok) 
+    throw new Error(data.message || 'Tạo chiến dịch thất bại.');
 
-  return result; // { message, promotion }
+  return data;
 };
 
-export const updatePromotion = async (token, promotionId, updatedData) => {
-  const response = await fetch(`http://localhost:4000/api/promotions/${promotionId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify(updatedData)
-  });
-
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.message || 'Cập nhật chiến dịch thất bại.');
-  }
-
-  return result; // { message, promotion }
-};
-
-export const deletePromotion = async (token, promotionId) => {
-  const response = await fetch(`http://localhost:4000/api/promotions/${promotionId}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    }
-  });
-
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.message || 'Xoá chiến dịch thất bại.');
-  }
-
-  return result; // { message: '...' }
-};
-
-export const fetchAllPromotions = async (token) => {
-  if (!token) throw new Error('Chưa đăng nhập');
-
+// xem toàn bộ chiến dịch khuyến mãi
+export const getAllPromotions = async () => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!token) return;
+    
   const res = await fetch('http://localhost:4000/api/promotions', {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
     }
   });
 
-  const data = await res.json();
+  if (!res.ok) 
+    throw new Error(`Không thể tải danh sách chiến dịch khuyến mãi`);
 
-  if (!res.ok) throw new Error(data.message || 'Lỗi khi lấy danh sách chiến dịch');
-
-  return data.promotions; // array
+  return await res.json(); 
 };
 
-export const fetchPromotionById = async (promotionId, token) => {
-  if (!token) throw new Error('Chưa đăng nhập');
+// xem chi tiết 1 chiên dịch khuyến mãi
+export const getPromotionById = async(promotionId) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  if (!token) return;
 
   const res = await fetch(`http://localhost:4000/api/promotions/${promotionId}`, {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  if (!res.ok) 
+    throw new Error("Lỗi! Không thể xem chi tiết chiến dịch");
+
+  const data = await res.json();
+  return data.promotion;
+}
+
+// xóa một chiến dịch khuyến mãi
+export const deletePromotion = async (promotionId) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  if (!token) return;
+
+  const res = await fetch(`http://localhost:4000/api/promotions/${promotionId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
     }
   });
 
-  const data = await res.json();
+  if (!res.ok)
+    throw new Error('Xoá chiến dịch thất bại');
 
-  if (!res.ok) throw new Error(data.message || 'Lỗi khi lấy chi tiết chiến dịch');
-
-  return data.promotion; // object
+  return await res.json();
 };
 
-export const addCodesToPromotion = async (promotionId, codes, token) => {
-  if (!token) throw new Error('Chưa đăng nhập');
+// thêm mã giảm giá vào chiến dịch
+export const addCodeToPromotion = async (promotionId, codes) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!token) return;
 
-  if (!Array.isArray(codes) || codes.length === 0)
-    throw new Error('Danh sách mã giảm giá không hợp lệ');
-
-  const res = await fetch(`http://localhost:4000/api/promotions/${promotionId}/add-codes`, {
+  const res = await fetch(`http://localhost:4000/api/promotions/${promotionId}/codes/add`, {
     method: 'PATCH',
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({ codes })
   });
 
-  const data = await res.json();
+  if (!res.ok) 
+    throw new Error('Failed to add discount codes');
 
-  if (!res.ok) throw new Error(data.message || 'Lỗi khi thêm mã giảm giá');
-
-  return data.updatedPromotion;
+  return await res.json();
 };
 
-export const removeCodesFromPromotion = async (promotionId, codes, token) => {
-  if (!token) throw new Error('Chưa đăng nhập');
+// thêm sản phẩm vào chiến dịch + áp mã giảm giá
+export const addProductToPromotion = async ({ promotionId, productId, code }) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  if (!token) return; 
 
-  if (!Array.isArray(codes) || codes.length === 0)
-    throw new Error('Danh sách mã cần xoá không hợp lệ');
+  const res = await fetch(`http://localhost:4000/api/promotions/${promotionId}/products/add-and-apply-code`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      productDiscounts: [{ productId, code }],
+    }),
+  });
 
-  const res = await fetch(`http://localhost:4000/api/promotions/${promotionId}/remove-codes`, {
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Lỗi khi áp dụng mã");
+
+  return data;
+};
+
+// xóa mã giảm giá
+export const removeCodeFromPromotion = async (promotionId, codes) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  if (!token) return;
+
+  const res = await fetch(`http://localhost:4000/api/promotions/${promotionId}/codes/remove`,  {
     method: 'PATCH',
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify({ codes })
+    body: JSON.stringify({ codes }),
+  });
+
+  if (!res.ok)
+    throw new Error('Không thể xóa mã giảm giá');
+
+  return await res.json();
+}
+
+// xóa sản phẩm khỏi chiến dịch
+export const removeProductFromPromotion = async (promotionId, productId) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  if (!token) return;
+
+  const res = await fetch(`http://localhost:4000/api/promotions/${promotionId}/products/remove-product`,  {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ productId }),
+  });
+
+  if (!res.ok)
+    throw new Error('Không thể xóa sản phẩm khỏi chiến dịch');
+
+  return await res.json();
+}
+
+// chỉnh sửa promotion 
+export const updatePromotion = async (promotionId, updatedData) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  if (!token) return;
+
+  const res = await fetch(`http://localhost:4000/api/promotions/${promotionId}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(updatedData)
   });
 
   const data = await res.json();
 
-  if (!res.ok) throw new Error(data.message || 'Lỗi khi xoá mã');
-
-  return data.updatedCodes; // array hoặc object, tùy vào backend
-};
-
-export const addProductsToPromotion = async (promotionId, productDiscounts, token) => {
-  if (!token) throw new Error('Chưa đăng nhập');
-
-  if (!Array.isArray(productDiscounts) || productDiscounts.length === 0) {
-    throw new Error('Danh sách sản phẩm cần áp mã không hợp lệ');
+  if (!res.ok) {
+    throw new Error(res.message || 'Cập nhật chiến dịch thất bại.');
   }
 
-  const res = await fetch(`http://localhost:4000/api/promotions/${promotionId}/add-products`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({ productDiscounts })
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) throw new Error(data.message || 'Lỗi khi thêm sản phẩm vào khuyến mãi');
-
-  return data.updatedPromotion; // Giả sử BE trả về promotion đã cập nhật
+  return data; 
 };
 
-export const removeProductFromPromotion = async (promotionId, productId, token) => {
-  if (!token) throw new Error('Chưa đăng nhập');
-  if (!promotionId || !productId) throw new Error('Thiếu thông tin promotionId hoặc productId');
+// thay đổi trạng thái promotion
+export const togglePromotionStatus = async (promotionId) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  if (!token) return;
 
-  const res = await fetch(`http://localhost:4000/api/promotions/${promotionId}/products/remove`, {
-    method: 'PATCH',
+  const res = await fetch(`http://localhost:4000/api/promotions/${promotionId}`, {
+    method: "PATCH",
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify({ productId })
   });
 
   const data = await res.json();
+  if (!res.ok)
+    throw new Error(data.message || 'Thay đổi trạng thái thất bại');
 
-  if (!res.ok) throw new Error(data.message || 'Lỗi khi xoá sản phẩm khỏi khuyến mãi');
-
-  return data.updatedPromotion; // giả định BE trả về promotion đã cập nhật
-};
-
-export const togglePromotionActive = async (promotionId, token) => {
-  if (!token) throw new Error('Unauthorized – token missing');
-  if (!promotionId) throw new Error('Thiếu promotionId');
-
-  const res = await fetch(`http://localhost:4000/api/promotions/${promotionId}/toggle`, {
-    method: 'PATCH',
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) throw new Error(data.message || 'Failed to toggle promotion status');
-
-  return data.promotion; // giả định BE trả về { message, promotion }
+  return data.promotion;
 };

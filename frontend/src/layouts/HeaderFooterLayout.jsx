@@ -1,7 +1,7 @@
 import React from "react";
-import Header from "../customer/Header";
-import Footer from "../customer/Footer";
-import Breadcrumb from "../common/breadcrumb";
+import Header from "../components/customer/Header";
+import Footer from "../components/customer/Footer";
+import Breadcrumb from "../components/common/breadcrumb";
 import "./HeaderFooterLayout.css";
 
 const HeaderFooterLayout = ({ children, breadcrumbItems = [] }) => {

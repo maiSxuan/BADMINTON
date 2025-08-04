@@ -17,7 +17,8 @@ import './AdminSidebar.css';
       title: 'Quản lý đơn hàng',
       subItems: [
         { label: 'Tất cả', path: '/admin/all-orders' },
-        { label: 'Đơn hủy', path: '/admin/cancelled-orders' },
+        { label: 'Đơn hủy', path: '/admin/cancelled-orders'},
+        { label: 'Trả hàng/hoàn tiền', path: '/admin/return-orders'}
       ],
     },
     {

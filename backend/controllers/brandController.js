@@ -1,4 +1,4 @@
-const Brand = require('../models/brandModel');
+const Brand = require('../models/Brand');
 const slugify = require('slugify');
 
 exports.getAllBrands = async (req, res) => {

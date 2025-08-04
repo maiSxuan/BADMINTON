@@ -1,15 +1,8 @@
 /* src/components/HomeProduct.css */
 
 /* --- CÁC STYLE CHUNG & SECTIONS KHÁC (GIỮ NGUYÊN TỪ CODE GỐC) --- */
-.product-section {
-  background-color: #ffffff;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 16px;
-}
+.product-section { background-color: #ffffff; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
 
 /* Features Section */
 .features { padding: 12px 0; }
@@ -28,11 +21,44 @@
 .underline-left::before { left: 0; }
 .underline-center::before { left: 50%; transform: translate(-50%); }
 .underline-right::before { right: 0; }
-.category-tabs-wrapper { width: 100%; overflow-x: auto; margin-bottom: 16px; }
-.category-tabs { display: flex; overflow-x: auto; gap: 16px; padding: 12px 8px; scroll-behavior: smooth; cursor: grab; max-width: 100%; box-sizing: border-box; }
-.category-tabs:active { cursor: grabbing; }
-.category-tabs::-webkit-scrollbar { display: none; }
-.tab-button { width: 180px; flex: 0 0 auto; padding: 12px 24px; border: 1px solid #e6e6e6; border-radius: 6px; background-color: #ffffff; color: #000000; font-weight: 500; cursor: pointer; transition: all 0.2s; font-size: 14px; white-space: nowrap; text-align: center; }
+
+/* --- SỬA Ở ĐÂY: Thanh Lọc Sản Phẩm có trượt ngang --- */
+.category-tabs-wrapper {
+  width: 100%;
+  overflow-x: auto; /* Bật thanh trượt ngang khi nội dung tràn */
+  margin-bottom: 16px;
+  -webkit-overflow-scrolling: touch; /* Hỗ trợ cuộn mượt trên mobile */
+}
+/* Ẩn thanh trượt mặc định trên các trình duyệt hỗ trợ */
+.category-tabs-wrapper::-webkit-scrollbar {
+  height: 4px; /* Làm cho thanh trượt nhỏ hơn */
+}
+.category-tabs-wrapper::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 2px;
+}
+
+.category-tabs {
+  display: flex; /* Dùng flex để các item nằm trên một hàng */
+  gap: 16px;
+  padding: 12px 8px;
+  width: max-content; /* Quan trọng: Cho phép container rộng ra theo nội dung */
+}
+
+.tab-button {
+  flex: 0 0 auto; /* Ngăn các nút bị co lại */
+  padding: 12px 24px;
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #000000;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  white-space: nowrap;
+  text-align: center;
+}
 .tab-button.active { background-color: #a6fcf5; border-color: #a6fcf5; }
 .tab-button:hover { background-color: #f5f5f5; }
 .tab-button.active:hover { background-color: #a6fcf5; opacity: 0.8; }
@@ -133,14 +159,70 @@
 .image-card:hover { filter: brightness(1.1); }
 .sale-title { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
 .sale-subtitle { font-size: 14px; opacity: 0.9; }
+.category-section {
+  padding: 12px 0 32px 0;
+}
 
-.category-section { padding: 12px 0 32px 0; }
-.category-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 32px; }
-.category-card { background: linear-gradient(135deg, #bf6a02, #ff0101); color: white; border-radius: 8px; padding: 24px; text-align: center; cursor: pointer; transition: all 0.2s; min-height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-decoration: none; }
-.category-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
-.category-icon { font-size: 32px; margin-bottom: 12px; }
-.category-title { font-weight: bold; font-size: 14px; line-height: 1.2; }
+.category-grid-container {
+  /* --- A: Container để giới hạn chiều cao và bật thanh trượt DỌC --- */
+  /* Chiều cao này tương đương với 2 hàng item + khoảng cách giữa chúng */
+  max-height: 216px; /* (min-height 100px * 2) + (gap 16px) */
+  overflow-y: auto;   /* Bật thanh trượt DỌC khi nội dung tràn */
+  padding-right: 8px; /* Thêm padding để thanh trượt không đè lên nội dung */
+  margin: 32px;
+}
 
+/* Tùy chỉnh thanh trượt dọc cho đẹp hơn */
+.category-grid-container::-webkit-scrollbar {
+  width: 6px;
+}
+.category-grid-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+.category-grid-container::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+.category-grid-container::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+.category-grid {
+  /* --- B: Dùng Grid 4 cột đơn giản, tự động xuống hàng --- */
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.category-card {
+  /* --- C: Chỉ cần định nghĩa chiều cao, chiều rộng sẽ tự động theo grid --- */
+  background: linear-gradient(135deg, #bf6a02, #ff0102);
+  color: white;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+}
+
+.category-card:hover { 
+  transform: translateY(-2px); 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
+}
+
+.category-title {
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 1.4;
+  word-break: break-word; /* Giữ lại để xử lý tên quá dài */
+}
 /* Responsive Design (giữ nguyên từ code gốc) */
 @media (max-width: 1024px) {
   .features-grid, .homepage-product-grid { grid-template-columns: repeat(3, 1fr); }

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './ProductPage.css';
+// Import các hàm service của bạn
+import { getAllBrands, getAllCategories, getProductsOnQuery } from '../../services';
 
 // Dữ liệu tĩnh cho bộ lọc giá
 const priceRanges = {
@@ -12,43 +14,56 @@ const priceRanges = {
 };
 
 function ProductPage() {
+    const location = useLocation();
+    const navigate = useNavigate();
+    
+    // State cho dữ liệu
     const [products, setProducts] = useState([]);
     const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1 });
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-
     const [brands, setBrands] = useState([]);
     const [categories, setCategories] = useState([]);
+    
+    // State cho trạng thái UI
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [isFiltersLoading, setIsFiltersLoading] = useState(true);
-
-    const [filters, setFilters] = useState({
-        price: null,
-        brands: [],
-        categories: []
+    
+    // State cho bộ lọc và phân trang
+    const [filters, setFilters] = useState(() => {
+        const params = new URLSearchParams(location.search);
+        const urlCategories = params.get('categories')?.split(',').filter(Boolean) || [];
+        const urlBrands = params.get('brands')?.split(',').filter(Boolean) || [];
+        const urlPrice = params.get('price') || null;
+        return { price: urlPrice, brands: urlBrands, categories: urlCategories };
     });
     const [currentPage, setCurrentPage] = useState(1);
     
-    // Tải dữ liệu bộ lọc (brands, categories)
+    // Effect này sẽ đồng bộ state filters khi URL thay đổi
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const urlCategories = params.get('categories')?.split(',').filter(Boolean) || [];
+        const urlBrands = params.get('brands')?.split(',').filter(Boolean) || [];
+        const urlPrice = params.get('price') || null;
+        const urlPage = parseInt(params.get('page')) || 1;
+
+        setFilters({ price: urlPrice, brands: urlBrands, categories: urlCategories });
+        setCurrentPage(urlPage);
+    }, [location.search]);
+    
+    // Effect để tải dữ liệu cho các bộ lọc (brands, categories)
     useEffect(() => {
         const fetchFilterData = async () => {
             setIsFiltersLoading(true);
             try {
-                const [brandsRes, categoriesRes] = await Promise.all([
-                    fetch('/api/brands'),
-                    fetch('/api/categories')
+                // Sử dụng các hàm service đã import
+                const [brandsData, categoriesData] = await Promise.all([
+                    getAllBrands(),
+                    getAllCategories()
                 ]);
-
-                if (!brandsRes.ok || !categoriesRes.ok) {
-                    throw new Error('Không thể tải dữ liệu bộ lọc.');
-                }
-
-                const brandsData = await brandsRes.json();
-                const categoriesData = await categoriesRes.json();
-                
                 setBrands(brandsData);
                 setCategories(categoriesData);
             } catch (err) {
-                setError(prevError => prevError || err.message);
+                setError(p => p || err.message);
             } finally {
                 setIsFiltersLoading(false);
             }
@@ -56,69 +71,82 @@ function ProductPage() {
         fetchFilterData();
     }, []);
 
-    // Tải sản phẩm dựa trên bộ lọc và trang hiện tại
+    // Effect để tải danh sách sản phẩm khi bộ lọc hoặc trang thay đổi
     const fetchProducts = useCallback(async () => {
         setIsLoading(true);
         setError(null); 
         
-        const params = new URLSearchParams({ page: currentPage, view:'public' });
+        // --- BẮT ĐẦU CHỈNH SỬA ---
+        // 1. Tạo một object JavaScript thuần túy chứa các bộ lọc
+        const queryParams = { 
+            page: currentPage, 
+        };
+        
+        // 2. Thêm các bộ lọc vào object nếu chúng tồn tại
         if (filters.price) {
-            params.append('price', filters.price);
+            queryParams.price = filters.price;
         }
-
-        params.append('brands', filters.brands.length > 0 ? filters.brands.join(',') : 'all');
-        params.append('categories', filters.categories.length > 0 ? filters.categories.join(',') : 'all');
-
+        if (filters.brands.length > 0) {
+            queryParams.brands = filters.brands.join(',');
+        }
+        if (filters.categories.length > 0) {
+            queryParams.categories = filters.categories.join(',');
+        }
+        
         try {
-            const response = await fetch(`/api/products?${params.toString()}`);
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Không thể tải dữ liệu sản phẩm.');
-            }
-            const result = await response.json();
+            // 3. Truyền object thuần túy đó vào hàm service getProductsOnQuery
+            // Service sẽ tự động thêm `view=public` và tạo chuỗi query string.
+            const result = await getProductsOnQuery(queryParams);
+
             setProducts(result.data);
             setPagination(result.pagination);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
+        } catch (err) { 
+            setError(err.message); 
+        } finally { 
+            setIsLoading(false); 
         }
+        // --- KẾT THÚC CHỈNH SỬA ---
     }, [currentPage, filters]);
 
-    useEffect(() => {
-        fetchProducts();
+    useEffect(() => { 
+        fetchProducts(); 
     }, [fetchProducts]);
 
-    // *** SỬA LỖI VÀ CẢI TIẾN TÍNH NĂNG TẠI ĐÂY ***
+    // Hàm xử lý khi người dùng thay đổi bộ lọc
     const handleFilterChange = (filterType, value) => {
-        setFilters(prevFilters => {
-            const newFilters = { ...prevFilters };
-
-            // Xử lý cho Radio Button (bộ lọc giá)
-            if (filterType === 'price') {
-                // Nếu click vào radio đang được chọn -> bỏ chọn (set về null)
-                // Nếu click vào radio khác -> chọn giá trị mới
-                newFilters.price = prevFilters.price === value ? null : value;
-            } 
-            // Xử lý cho Checkbox (brands, categories)
-            else { 
-                const currentValues = prevFilters[filterType] || [];
-                
-                if (currentValues.includes(value)) {
-                    // Nếu đã có trong mảng -> loại bỏ nó (bỏ chọn)
-                    newFilters[filterType] = currentValues.filter(item => item !== value);
-                } else {
-                    // Nếu chưa có -> thêm nó vào mảng (chọn thêm)
-                    newFilters[filterType] = [...currentValues, value];
-                }
+        const params = new URLSearchParams(location.search);
+        
+        if (filterType === 'price') {
+            if (params.get('price') === value) {
+                params.delete('price');
+            } else {
+                params.set('price', value);
             }
-            
-            return newFilters;
-        });
-        // Reset về trang đầu tiên mỗi khi bộ lọc thay đổi
-        setCurrentPage(1);
+        } else { // brands hoặc categories
+            const currentValues = params.get(filterType)?.split(',').filter(Boolean) || [];
+            if (currentValues.includes(value)) {
+                const newValues = currentValues.filter(item => item !== value);
+                if (newValues.length > 0) {
+                    params.set(filterType, newValues.join(','));
+                } else {
+                    params.delete(filterType);
+                }
+            } else {
+                params.set(filterType, [...currentValues, value].join(','));
+            }
+        }
+
+        params.delete('page');
+        navigate({ search: params.toString() });
     };
 
+    const handlePageChange = (pageNumber) => {
+        const params = new URLSearchParams(location.search);
+        params.set('page', pageNumber);
+        navigate({ search: params.toString() });
+    };
+
+    // Hàm render một nhóm bộ lọc
     const renderFilterGroup = (title, items, filterType, selectedValues) => (
         <div className="filter-group">
             <h3>{title}</h3>
@@ -153,11 +181,8 @@ function ProductPage() {
                                             type="radio" 
                                             name="price" 
                                             value={key} 
-                                            // Sử dụng onClick thay vì onChange để bắt được sự kiện click lại
-                                            onClick={(e) => handleFilterChange('price', e.target.value)}
-                                            // Vẫn cần checked để hiển thị đúng trạng thái
+                                            onClick={() => handleFilterChange('price', key)}
                                             checked={filters.price === key}
-                                            // Thêm onChange rỗng để tránh warning của React
                                             onChange={() => {}}
                                         /> {label}
                                     </label>
@@ -165,9 +190,7 @@ function ProductPage() {
                             ))}
                         </ul>
                     </div>
-                    {isFiltersLoading ? (
-                        <p>Đang tải bộ lọc...</p>
-                    ) : (
+                    {isFiltersLoading ? (<p>Đang tải bộ lọc...</p>) : (
                         <>
                             {renderFilterGroup("THƯƠNG HIỆU", brands, 'brands', filters.brands)}
                             {renderFilterGroup("CHỌN SẢN PHẨM", categories, 'categories', filters.categories)}
@@ -189,15 +212,16 @@ function ProductPage() {
                                             <p className="price">{product.price.toLocaleString('vi-VN')} ₫</p>
                                         </Link>
                                     ))
-                                ) : (
-                                    <p className="no-products">Không tìm thấy sản phẩm phù hợp.</p>
-                                )}
+                                ) : ( <p className="no-products">Không tìm thấy sản phẩm phù hợp.</p> )}
                             </div>
                             <nav className="pagination">
                                 {pagination.totalPages > 1 &&
                                     Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(pageNumber => (
-                                        <button key={pageNumber} className={currentPage === pageNumber ? 'active' : ''}
-                                            onClick={() => setCurrentPage(pageNumber)}>
+                                        <button 
+                                            key={pageNumber} 
+                                            className={currentPage === pageNumber ? 'active' : ''} 
+                                            onClick={() => handlePageChange(pageNumber)}
+                                        >
                                             {pageNumber}
                                         </button>
                                     ))}

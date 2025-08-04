@@ -2,7 +2,7 @@
   import "./UserList.css"
   import  Pagination  from '../../components/common/Pagination';
   import { Trash, SquarePen,Lock,LockOpen } from 'lucide-react';
-  import axios from "axios";
+  import { getAllUsers, deleteUser, toggleUserStatus } from '../../services';
   import { useNavigate } from "react-router-dom";
 
   const UserListPage = () => {
@@ -14,8 +14,8 @@
     let usersPerPage = 10;
 
     useEffect(() => {
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
 
     // Chưa đăng nhập hoặc không phải admin -> redirect
     if (!token || !user || user.user_type !== "ADMIN") {
@@ -26,10 +26,8 @@
 
     const getUserData = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/users/user-list", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setUsers(response.data);
+        const data = await getAllUsers(token);
+        setUsers(data);
       } catch (err) {
         console.error("Lỗi khi lấy dữ liệu người dùng:", err);
         alert("Không thể tải danh sách người dùng.");
@@ -50,10 +48,8 @@
       if (!confirm) return;
 
       try {
-        const token = localStorage.getItem("token"); 
-        await axios.delete(`http://localhost:4000/api/users/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+        await deleteUser(id, token);
         setUsers(prev => prev.filter(user => user._id !== id));
         alert("Xóa người dùng thành công");
       } catch (err) {
@@ -64,14 +60,11 @@
   const handleLockUser = async (id) => {
     if (!window.confirm("Bạn có chắc chắn muốn thay đổi trạng thái người dùng này?")) return;
     try {
-      const token = localStorage.getItem("token"); 
-      const res = await axios.patch(`http://localhost:4000/api/users/status/${id}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+      const res = await toggleUserStatus(id, token);
       setUsers(prev =>
         prev.map(user =>
-          user._id === id ? { ...user, status: res.data.status } : user
+          user._id === id ? { ...user, status: res.status } : user
         )
       );
       alert("Cập nhật trạng thái thành công");

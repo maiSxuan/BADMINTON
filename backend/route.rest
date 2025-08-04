@@ -194,50 +194,48 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZ
 ### ADD ITEM 1
 POST http://localhost:4000/api/cart
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzkzODE5MCwiZXhwIjoxNzU0MTEwOTkwfQ.evd5FRqQp6zeJFnZ324N2KALN2EIFbj10B0_j5c45ng
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjE0MDM3MTlmLTFiMzgtNDg1OS1iMTQxLTEyOTUyNjhmMmQ3MSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM4OTE2NTIsImV4cCI6MTc1NDA2NDQ1Mn0.2qNhB8nfPN4iT6pIMvcD536rage1K7Et15qwnoKZliU
 
 {
-  "product": "688a9e427b2e4321c83625a8",
-  "variant_id": "688a9e427b2e4321c83625a9",
-  "option_id": "688a9e427b2e4321c83625ab",
-  "sku_code": "TSM2910-STEEL GREY-M",
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d4593f",
   "quantity": 2
 }
 
 ### ADD ITEM 2
 POST http://localhost:4000/api/cart
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzkzODE5MCwiZXhwIjoxNzU0MTEwOTkwfQ.evd5FRqQp6zeJFnZ324N2KALN2EIFbj10B0_j5c45ng
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjE0MDM3MTlmLTFiMzgtNDg1OS1iMTQxLTEyOTUyNjhmMmQ3MSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM4OTE2NTIsImV4cCI6MTc1NDA2NDQ1Mn0.2qNhB8nfPN4iT6pIMvcD536rage1K7Et15qwnoKZliU
 
 {
-  "product": "688a9e427b2e4321c83625a8",
-  "variant_id": "688a9e427b2e4321c83625a9",
-  "option_id": "688a9e427b2e4321c83625aa",
-  "sku_code": "TSM2910-STEEL GREY-S",
-  "quantity": 2
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d45943",
+  "quantity": 1
 }
 
 ### ADD ITEM 3
 POST http://localhost:4000/api/cart
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzkzODE5MCwiZXhwIjoxNzU0MTEwOTkwfQ.evd5FRqQp6zeJFnZ324N2KALN2EIFbj10B0_j5c45ng
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1Mzc2Mzg5NSwiZXhwIjoxNzUzOTM2Njk1fQ.YZA9QkCtbL-dF0FdoVoUKdnxWobaZqT9iw-32Uh2n_A
 
 {
-  "product": "688a5d3ea24707d206d0b0b8",
-  "variant_id": "688a5d3ea24707d206d0b0b9",
-  "option_id": "688a5d3ea24707d206d0b0ba",
-  "quantity": 2
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d45942",
+  "quantity": 1
 }
 
 ### REMOVE ITEM
 DELETE http://localhost:4000/api/cart/688a9e427b2e4321c83625a9
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzkzODE5MCwiZXhwIjoxNzU0MTEwOTkwfQ.evd5FRqQp6zeJFnZ324N2KALN2EIFbj10B0_j5c45ng
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1Mzc2Mzg5NSwiZXhwIjoxNzUzOTM2Njk1fQ.YZA9QkCtbL-dF0FdoVoUKdnxWobaZqT9iw-32Uh2n_A
 
 {
-  "product": "688a9e427b2e4321c83625a8",
-  "variant_id": "688a9e427b2e4321c83625a9",
-  "option_id": "688a9e427b2e4321c83625ab"
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d45943"
 }
 
 
@@ -247,9 +245,9 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzkzODE5MCwiZXhwIjoxNzU0MTEwOTkwfQ.evd5FRqQp6zeJFnZ324N2KALN2EIFbj10B0_j5c45ng
 
 {
-  "product": "688a9e427b2e4321c83625a8",
-  "variant_id": "688a9e427b2e4321c83625a9",
-  "option_id": "688a9e427b2e4321c83625ab",
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d45943",
   "delta": -1,
   "priceAtTime": 149000
 }
@@ -350,17 +348,17 @@ Content-Type: application/json
 // get all promotions
 ###
 GET http://localhost:4000/api/promotions
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM5NjI0NzAsImV4cCI6MTc1NDEzNTI3MH0.ifap-Fug311xUGB5GMfsTxj_O0mFr87zKe9-EzRO03w
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQyMDYzNjAsImV4cCI6MTc1NDIwOTk2MH0.fBE-XIulXr2iDD0KoVtbf5PYAz-kKZhV7X1BZrjpIKI
 
 // get promotion by id
 ###
-GET http://localhost:4000/api/promotions/6887a39e0c88bf52316411bf
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM5NjI0NzAsImV4cCI6MTc1NDEzNTI3MH0.ifap-Fug311xUGB5GMfsTxj_O0mFr87zKe9-EzRO03w
+GET http://localhost:4000/api/promotions/688f10a407f3944a4f3b7c8f
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQxOTQyNjcsImV4cCI6MTc1NDE5Nzg2N30.6yz8lWYlrFN7A2gcRy1Gy1v6poI6B54nYl2QpgufJ4I
 
 ###
 POST http://localhost:4000/api/promotions
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM5NjI0NzAsImV4cCI6MTc1NDEzNTI3MH0.ifap-Fug311xUGB5GMfsTxj_O0mFr87zKe9-EzRO03w
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQyMDYzNjAsImV4cCI6MTc1NDIwOTk2MH0.fBE-XIulXr2iDD0KoVtbf5PYAz-kKZhV7X1BZrjpIKI
 
 {
   "name": "Sale giữa tháng 8",
@@ -371,9 +369,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZ
 
 // thêm mã giảm giá vào chiến dịch
 ###
-PATCH http://localhost:4000/api/promotions/688908380ce0bf11277a50c2/codes/add
+PATCH http://localhost:4000/api/promotions/688f10a407f3944a4f3b7c8f/codes/add
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM3MTY5NjQsImV4cCI6MTc1Mzg4OTc2NH0.2V2w7-ygysT3SaGDZR88J8_y427cnX48yAUL7RKdEBI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQyMDYzNjAsImV4cCI6MTc1NDIwOTk2MH0.fBE-XIulXr2iDD0KoVtbf5PYAz-kKZhV7X1BZrjpIKI
 
 {
   "codes": [
@@ -392,14 +390,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZ
 
 // thêm sản phẩm vào chiến dịch
 ###
-PATCH http://localhost:4000/api/promotions/688908380ce0bf11277a50c2/products/add-and-apply-code
+PATCH http://localhost:4000/api/promotions/688f10a407f3944a4f3b7c8f/products/add-and-apply-code
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM3MTY5NjQsImV4cCI6MTc1Mzg4OTc2NH0.2V2w7-ygysT3SaGDZR88J8_y427cnX48yAUL7RKdEBI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQyMDYzNjAsImV4cCI6MTc1NDIwOTk2MH0.fBE-XIulXr2iDD0KoVtbf5PYAz-kKZhV7X1BZrjpIKI
 
 {
   "productDiscounts": [
     {
-      "productId": "688612262bb650195807b274",
+      "productId": ["688612262bb650195807b274", "688b20ce76de7d9563c70324"],
       "code": "SUM30"
     },
     {
@@ -409,13 +407,27 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZ
   ]
 }
 
-### Remove a product from promotion
-PATCH http://localhost:4000/api/promotions/688908380ce0bf11277a50c2/products/remove-product
+### thêm sản phẩm 2
+PATCH http://localhost:4000/api/promotions/688f10a407f3944a4f3b7c8f/products/add-and-apply-code
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM3MTY5NjQsImV4cCI6MTc1Mzg4OTc2NH0.2V2w7-ygysT3SaGDZR88J8_y427cnX48yAUL7RKdEBI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQyMTI2NjksImV4cCI6MTc1NDIxNjI2OX0.KZF2MYwOQZP0k7O3aE7w_IpKqNaF-wZ47XN3yfvC9I4
 
 {
-  "productId": "6885fab0e9cfb5ca4ecc62d0"
+  "productDiscounts": [
+    {
+      "productId": "688a562ba24707d206d0afff",
+      "code": "SUM40"
+    }
+  ]
+}
+
+### Remove a product from promotion
+PATCH http://localhost:4000/api/promotions/688b5864c556a3cb72f32e32/products/remove-product
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQxODI2NTMsImV4cCI6MTc1NDE4NjI1M30.SBZLk_e-qFcGiifzGx3Z-OOBL3A3keev4vebEZvXoOQ
+
+{
+  "productId": "688612262bb650195807b274"
 }
 
 // quản lí active
@@ -426,9 +438,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZ
 
 // xóa promotion
 ###
-DELETE http://localhost:4000/api/promotions/688b5a95798a28f1130cadb6
+DELETE http://localhost:4000/api/promotions/6887a39e0c88bf52316411bf
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM5NjI0NzAsImV4cCI6MTc1NDEzNTI3MH0.ifap-Fug311xUGB5GMfsTxj_O0mFr87zKe9-EzRO03w
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQxODI2NTMsImV4cCI6MTc1NDE4NjI1M30.SBZLk_e-qFcGiifzGx3Z-OOBL3A3keev4vebEZvXoOQ
 
 
 

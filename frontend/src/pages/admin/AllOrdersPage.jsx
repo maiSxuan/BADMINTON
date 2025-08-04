@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Search, X, Package, Truck, MapPin, Phone, Mail } from "lucide-react"
 import "./OrderManagement.css"
 
-const CancelledOrderPage = () => {
+const AllOrdersPage = () => {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedStatus, setSelectedStatus] = useState("Tất cả")
@@ -14,7 +14,7 @@ const CancelledOrderPage = () => {
   const [showOrderDetail, setShowOrderDetail] = useState(false)
 
   const statusTabs = ["Tất cả", 'Chờ xác nhận', 'Chờ lấy', 'Đang vận chuyển',
-      'Đang giao', 'Đã giao', 'Hoàn thành']
+      'Đang giao', 'Đã giao', 'Hoàn thành', 'Đã hủy', 'Trả hàng/hoàn tiền']
 
   const statusColors = {
     "Chờ xác nhận": { backgroundColor: "#fef3c7", color: "#92400e" },
@@ -25,7 +25,8 @@ const CancelledOrderPage = () => {
     "Đã giao": { backgroundColor: "#dcfce7", color: "#166534" },
     "Hoàn thành": { backgroundColor: "#dcfce7", color: "#166534" },
     "Đã hủy": { backgroundColor: "#fecaca", color: "#dc2626" },
-    "Trả hàng/hoàn tiền": { backgroundColor: "#f3f4f6", color: "#374151" },
+    "Tiến hành trả hàng/hoàn tiền": { backgroundColor: "#f3f4f6", color: "#374151" },
+    "Đã trả hàng/hoàn tiền": { backgroundColor: "#dcfce7", color: "#166534" },
   }
 
   // Fetch orders from backend
@@ -36,7 +37,7 @@ const CancelledOrderPage = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true)
-      const response = await fetch("http://localhost:4000/api/order/cancellation-orders")
+      const response = await fetch("http://localhost:4000/api/order")
       const data = await response.json()
       if (data.success) {
         setOrders(data.data)
@@ -87,18 +88,115 @@ const CancelledOrderPage = () => {
       year: "numeric",
     })
   }
+  const handlePrintPackingSlip = (orderId) => {
+    // Find the order
+    const order = orders.find((o) => o._id === orderId)
+    if (!order) return
 
-  const handleAcceptCancellation = async (orderId) => {
-    if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
-      try {
-        await updateOrderStatus(orderId, "Đã hủy")
-        alert("Đã hủy đơn hàng thành công!")
-      } catch (error) {
-        alert("Có lỗi xảy ra khi hủy đơn hàng!")
-      }
-    }
+    // Create print content
+    const printContent = `
+      <div style="font-family: Arial, sans-serif; padding: 20px;">
+        <h2>PHIẾU ĐÓNG GÓI</h2>
+        <hr>
+        <p><strong>Mã đơn hàng:</strong> ${order._id}</p>
+        <p><strong>Ngày tạo:</strong> ${formatDate(order.created_at)}</p>
+        <p><strong>Khách hàng:</strong> ${order.shippingInfo.fullName}</p>
+        <p><strong>Số điện thoại:</strong> ${order.shippingInfo.phone}</p>
+        <p><strong>Địa chỉ:</strong> ${[
+          order.shippingInfo.houseNumber,
+          order.shippingInfo.address,
+          order.shippingInfo.ward,
+          order.shippingInfo.district,
+          order.shippingInfo.city,
+        ]
+          .filter(Boolean)
+          .join(", ")}</p>
+        <hr>
+        <h3>Danh sách sản phẩm:</h3>
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th style="padding: 8px;">SKU</th>
+              <th style="padding: 8px;">Số lượng</th>
+              <th style="padding: 8px;">Giá</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${order.items
+              .map(
+                (item) => `
+              <tr>
+                <td style="padding: 8px;">${item.sku_code}</td>
+                <td style="padding: 8px;">${item.quantity}</td>
+                <td style="padding: 8px;">${formatCurrency(item.priceAtTime)}</td>
+              </tr>
+            `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <hr>
+        <p><strong>Tổng tiền:</strong> ${formatCurrency(order.total_amount)}</p>
+        <p><strong>Ghi chú:</strong> ${order.note || "Không có"}</p>
+      </div>
+    `
+
+    // Open print window
+    const printWindow = window.open("", "_blank")
+    printWindow.document.write(printContent)
+    printWindow.document.close()
+    printWindow.print()
   }
 
+const handleUpdateStatus = async (orderId) => {
+  const order = orders.find((o) => o._id === orderId)
+  if (!order) return
+
+  const immutableStatuses = ["Đã trả hàng/hoàn tiền", "Đã hủy"]
+  if (immutableStatuses.includes(order.status)) {
+    alert("Không thể cập nhật trạng thái đơn hàng này!")
+    return
+  }
+
+  // Đặc biệt xử lý luồng trả hàng
+  if (order.status === "Tiến hành trả hàng/hoàn tiền") {
+    const nextStatus = "Đã trả hàng/hoàn tiền"
+    if (window.confirm(`Xác nhận chuyển sang trạng thái "${nextStatus}"?`)) {
+      try {
+        await updateOrderStatus(orderId, nextStatus)
+        alert("Cập nhật trạng thái thành công!")
+      } catch (error) {
+        alert("Có lỗi xảy ra khi cập nhật trạng thái!")
+      }
+    }
+    return
+  }
+
+  // Các trạng thái bình thường
+  const statusOptions = [
+    "Chờ xác nhận",
+    "Chờ lấy",
+    "Đang vận chuyển",
+    "Đang giao",
+    "Đã giao",
+  ]
+
+  const currentIndex = statusOptions.indexOf(order.status)
+  const nextStatus = statusOptions[currentIndex + 1]
+
+  if (nextStatus) {
+    if (window.confirm(`Cập nhật trạng thái đơn hàng từ "${order.status}" thành "${nextStatus}"?`)) {
+      try {
+        await updateOrderStatus(orderId, nextStatus)
+        alert("Cập nhật trạng thái thành công!")
+      } catch (error) {
+        alert("Có lỗi xảy ra khi cập nhật trạng thái!")
+      }
+    }
+  } else {
+    alert("Đơn hàng đã ở trạng thái cuối cùng!")
+  }
+}
 
   const handleOrderClick = (order, event) => {
     // Only open detail if not clicking on action buttons
@@ -124,7 +222,10 @@ const CancelledOrderPage = () => {
       (selectedStatus === "Chờ lấy" && order.status === "Chờ lấy") ||
       (selectedStatus === "Đang giao" && order.status === "Đang giao") ||
       (selectedStatus === "Đã giao" && order.status === "Đã giao") ||
-      (selectedStatus === "Hoàn thành" && order.status === "Hoàn thành")
+      (selectedStatus === "Hoàn thành" && order.status === "Hoàn thành") ||
+      (selectedStatus === "Đã hủy" && order.status === "Đã hủy") ||
+      (selectedStatus === "Trả hàng/hoàn tiền" && order.status === "Tiến hành trả hàng/hoàn tiền") ||
+      (selectedStatus === "Trả hàng/hoàn tiền" && order.status === "Đã trả hàng/hoàn tiền")
 
     return matchesSearch && matchesStatus
   })
@@ -136,6 +237,19 @@ const CancelledOrderPage = () => {
 
       <div className="main-layout">
         <main className="main-content">
+          {/* Status Tabs */}
+          <div className="status-tabs">
+            {statusTabs.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setSelectedStatus(tab)}
+                className={`status-tab ${selectedStatus === tab ? "active" : ""}`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
           {/* Search */}
           <div className="search-section">
             <select value={searchType} onChange={(e) => setSearchType(e.target.value)} className="search-select">
@@ -163,7 +277,7 @@ const CancelledOrderPage = () => {
                   <th>ID đơn hàng</th>
                   <th>Trạng thái</th>
                   <th>Thanh toán</th>
-                  <th>Lý do</th>
+                  <th>Giao hàng</th>
                   <th>Hành động</th>
                 </tr>
               </thead>
@@ -208,23 +322,41 @@ const CancelledOrderPage = () => {
                         </div>
                       </td>
                       <td>
-                        <div className="shipping-provider">{order.cancellation_reason}</div>
+                        <div className="shipping-provider">{order.shipping_provider}</div>
                       </td>
                       <td>
-                      {order.status !== "Đã hủy" && (
                         <div className="om-action-buttons">
-                          <button
+                          {/* <button
                             className="om-action-btn cancel-btn"
                             onClick={(e) => {
-                              e.stopPropagation();
-                              handleAcceptCancellation(order._id);
+                              e.stopPropagation()
+                              handleCancelOrder(order._id)
                             }}
                             title="Hủy đơn hàng"
                           >
-                            Duyệt yêu cầu
+                            <X className="btn-icon" />
+                          </button> */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handlePrintPackingSlip(order._id)
+                            }}
+                            className="om-action-btn print-btn"
+                            title="In phiếu đóng gói"
+                          >
+                            In phiếu đóng gói
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleUpdateStatus(order._id)
+                            }}
+                            className="om-action-btn update-btn"
+                            title="Cập nhật trạng thái"
+                          >
+                            Cập nhật trạng thái
                           </button>
                         </div>
-                      )}
                       </td>
                     </tr>
                   ))
@@ -358,4 +490,5 @@ const CancelledOrderPage = () => {
   )
 }
 
-export default CancelledOrderPage
+export default AllOrdersPage
+

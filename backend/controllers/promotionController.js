@@ -1,5 +1,5 @@
-const Promotion = require('../models/PromotionModel');
-const Product = require('../models/ProductModel');
+const Promotion = require('../models/Promotion');
+const Product = require('../models/Product');
 const mongoose = require('mongoose');
 
 exports.createPromotion = async (req, res) => {
@@ -74,10 +74,10 @@ exports.updatePromotion = async (req, res) => {
         if (!existingPromotion)
             return res.status(404).json({ message: 'Promotion not found' });
 
-        const updatedStartDate = startDate ?? existingPromotion.startDate;
-        const updatedEndDate = endDate ?? existingPromotion.endDate;
+        const updatedStartDate = startDate !== undefined ? new Date(startDate) : existingPromotion.startDate;
+        const updatedEndDate = endDate !== undefined ? new Date(endDate) : existingPromotion.endDate;
 
-        if (new Date(updatedStartDate) >= new Date(updatedEndDate))
+        if (updatedStartDate >= updatedEndDate)
             return res.status(400).json({ message: 'Invalid timestamps' });
 
         existingPromotion.name = name ?? existingPromotion.name;
@@ -128,7 +128,9 @@ exports.addCodesToPromotion = async (req, res) => {
         promotion.listCode.push(...codes);
         await promotion.save();
 
-        return res.status(200).json({ message: 'Codes added successfully', updatedPromotion: promotion });
+        const updatedPromotion = await Promotion.findById(promotionId).populate('productDiscounts.productId');
+
+        return res.status(200).json({ message: 'Codes added successfully', updatedPromotion });
     } catch (err) {
         console.error('Add codes error:', err);
         res.status(500).json({ message: 'Error when adding promotion code' });
@@ -149,50 +151,47 @@ exports.removeCodesFromPromotion = async (req, res) => {
 
         const originalCnt = promotion.listCode.length;
         promotion.listCode = promotion.listCode.filter((codeObj) => !codes.includes(codeObj.code));
+        const removedCodes = codes.filter(code =>
+            promotion.listCode.every(codeObj => codeObj.code !== code)
+        );
 
         const removeCnt = originalCnt - promotion.listCode.length;
         if (removeCnt === 0)
             return res.status(400).json({ message: 'Codes not exist' });
 
-        await promotion.save();
+        const before = promotion.productDiscounts.length;
+        const productsToRemove = promotion.productDiscounts.filter(
+            pd => removedCodes.includes(pd.code)
+        );
 
-        return res.status(200).json({ message: `Remove successfully ${removeCnt} promotion code`, updatedCodes: promotion.listCode });
+        promotion.productDiscounts = promotion.productDiscounts.filter(
+            pd => !removedCodes.includes(pd.code)
+        );
+
+        for (const pd of productsToRemove) {
+            const product = await Product.findById(pd.productId);
+            if (product) {
+                product.sale = false;
+                product.sale_price = product.price;
+                product.appliedCode = null;
+                product.promotion = null;
+                await product.save();
+            }
+        }
+
+        await promotion.save();
+        const updatedPromotion = await Promotion.findById(promotionId).populate('productDiscounts.productId')
+
+        return res.status(200).json({ 
+            message: `Xóa ${removeCnt} mã và ${productsToRemove.length} sản phẩm liên quan thành công`, 
+            updatedPromotion,
+            updatedCodes: promotion.listCode 
+        });
     } catch (err) {
         console.error('Remove codes error:', err);
         res.status(500).json({ message: 'Error when removing promotion code' });
     }
 };
-
-// exports.addProductToPromotion = async (req, res) => {
-//     try {
-//         const { promotionId } = req.params;
-//         const { productIds } = req.body;
-
-//         if (!Array.isArray(productIds) || productIds.length === 0)
-//             return res.status(400).json({ message: 'Invalid productIds' });
-
-//         const validProductIds = productIds.filter(id => mongoose.Types.ObjectId.isValid(id));
-//         if (validProductIds.length === 0)
-//             return res.status(400).json({ message: 'All productIds are invalid' });
-
-//         const promotion = await Promotion.findById(promotionId);
-//         if (!promotion)
-//             return res.status(404).json({ message: 'Promotion not found' });
-
-//         const curProductIds = promotion.productIds.map(id => id.toString());
-//         const newProductIds = productIds.filter(
-//             id => !curProductIds.includes(id)
-//         );
-
-//         promotion.productIds.push(...newProductIds);
-//         await promotion.save();
-
-//         return res.status(200).json({ message: 'Add product to promotion successfully', updatedPromotion: promotion });
-//     } catch (err) {
-//         console.error('Add product to promotion error', err);
-//         return res.status(500).json({ message: 'Error when adding product' });
-//     }
-// };
 
 exports.addProductToPromotion = async (req, res) => {
     const { promotionId } = req.params;
@@ -220,7 +219,7 @@ exports.addProductToPromotion = async (req, res) => {
             }
         }
 
-        const updateTasks = productDiscounts.map(async ({ productId, code }) => {
+        const updateTasks = flatDiscounts.map(async ({ productId, code }) => {
             if (!mongoose.Types.ObjectId.isValid(productId)) return;
 
             const promoCode = promotion.listCode.find(c => c.code === code && c.isActive);
@@ -257,8 +256,11 @@ exports.addProductToPromotion = async (req, res) => {
 
         await Promise.all(updateTasks);
         await promotion.save();
+        const updatedPromotion = await Promotion.findById(promotionId)
+            .populate('productDiscounts.productId') // optional nếu bạn cần populate
+            .populate('listCode'); // populate thêm mã nếu cần
 
-        return res.status(200).json({ message: 'Products added and promotion code applied successfully' });
+        return res.status(200).json({ message: 'Products added and promotion code applied successfully', updatedPromotion });
     } catch (err) {
         console.error('Add product with code error:', err);
         return res.status(500).json({ message: 'Internal server error' });
@@ -295,8 +297,9 @@ exports.removeProductFromPromotion = async (req, res) => {
         }
 
         await promotion.save();
+        const updatedPromotion = await Promotion.findById(promotionId).populate('productDiscounts.productId');
 
-        return res.status(200).json({ message: 'Remove product successfully', updatedPromotion: promotion });
+        return res.status(200).json({ message: 'Remove product successfully', updatedPromotion });
     } catch (err) {
         console.error('Remove product from promotion', err);
         return res.status(500).json({ message: 'Error when removing product' });

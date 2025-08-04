@@ -1,20 +1,17 @@
 const Order = require('../models/Order')
-const Product = require('../models/ProductModel')
+const Product = require('../models/Product')
 const mongoose = require('mongoose')
+
 const createOrder = async (req, res) => {
   try {
-    const userId = req.user.id;
     const {
+      userId,
+      shippingInfo,
       items,
       totalAmount,
       orderNote,
-      deliveryMethod,
-      shippingInfo
+      deliveryMethod
     } = req.body;
-
-    // if (!userId) {
-    //   return res.status(400).json({ message: "Thiếu userId" });
-    // }
 
     const shippingProviderMap = {
       'nhanh': 'Giao hàng tiết kiệm',
@@ -22,7 +19,9 @@ const createOrder = async (req, res) => {
       'tai-cua-hang': 'Tự đến lấy'
     };
 
-    // Kiểm tra tồn kho cho từng item
+    // Mảng chứa thông tin đã đầy đủ sau khi kiểm tra tồn kho
+    const verifiedItems = [];
+
     for (const item of items) {
       const product = await Product.findById(item.product_id);
       if (!product) {
@@ -42,29 +41,27 @@ const createOrder = async (req, res) => {
       if (option.stock_quantity < item.quantity) {
         return res.status(400).json({
           success: false,
-          message: `Sản phẩm ${item.name} - ${item.variant_name} - size ${item.size} chỉ còn ${option.stock_quantity} sản phẩm`
+          message: `Sản phẩm ${product.name} - ${variant.name} - size ${option.value} chỉ còn ${option.stock_quantity} sản phẩm`
         });
       }
+
+      // Nếu đã kiểm tra hợp lệ, lưu lại thông tin để tạo đơn hàng
+      verifiedItems.push({
+        product: new mongoose.Types.ObjectId(item.product_id),
+        variant_id: new mongoose.Types.ObjectId(item.variant_id),
+        option_id: new mongoose.Types.ObjectId(item.option_id),
+        sku_code: option.sku_code,   
+        quantity: item.quantity,
+        priceAtTime: item.priceAtTime
+      });
     }
-    // Tạo đơn hàng
+
     const newOrder = new Order({
       user_id: userId,
-      items: items.map(item => ({
-        product_id: item.product_id,
-        variant_id: item.variant_id,
-        option_id: item.option_id,
-        name: item.name,
-        variant_name: item.variant_name,
-        sku_code: item.sku_code,
-        size: item.size,
-        quantity: item.quantity,
-        price: item.price,
-        list_price: item.list_price || item.price,
-        thumbnail_url: item.thumbnail_url || ""
-      })),
+      shippingInfo: shippingInfo,
+      items: verifiedItems,
       total_amount: totalAmount,
       picked_up_at: shippingInfo?.address || "",
-      phone_number: shippingInfo?.phone || "",
       note: orderNote,
       shipping_provider: shippingProviderMap[deliveryMethod] || "Không xác định",
       payment_method: 'COD',
@@ -74,7 +71,7 @@ const createOrder = async (req, res) => {
 
     await newOrder.save();
 
-    // Cập nhật tồn kho sau khi đơn được tạo thành công
+    // Trừ tồn kho
     for (const item of items) {
       const product = await Product.findById(item.product_id);
       const variant = product.variants.id(item.variant_id);
@@ -96,17 +93,59 @@ const createOrder = async (req, res) => {
   }
 };
 
+// const getAllOrders = async (req, res) => {
+//   try {
+//     // console.log('getAllOrders được gọi');
+//     const orders = await Order.find();
+//     res.status(200).json({ success: true, data: orders });
+//   } catch (error) {
+//     console.error('Lỗi khi lấy danh sách đơn hàng:', error);
+//     res.status(500).json({ success: false, message: 'Lỗi server khi lấy danh sách đơn hàng' });
+//   }
+// };
+
 const getAllOrders = async (req, res) => {
   try {
-    // console.log('getAllOrders được gọi');
-    const orders = await Order.find();
+    const excludeStatuses = [
+      "Yêu cầu hủy",
+      // "Đã hủy",
+      "Yêu cầu trả hàng/hoàn tiền",
+      //"Tiến hành trả hàng/hoàn tiền",
+      //"Đã trả hàng/hoàn tiền"
+    ];
+
+    const orders = await Order.find({ status: { $nin: excludeStatuses } }).sort({ created_at: -1 });
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng:', error);
-    res.status(500).json({ success: false, message: 'Lỗi server khi lấy danh sách đơn hàng' });
+    console.error("Lỗi khi lấy đơn hàng thường:", error);
+    res.status(500).json({ success: false, message: "Lỗi server khi lấy đơn hàng thường" });
   }
 };
 
+
+const getCancelledReqOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ status: ["Yêu cầu hủy", "Đã hủy"] }).sort({ created_at: -1 });
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error("Lỗi khi lấy đơn hàng yêu cầu hủy:", error);
+    res.status(500).json({ success: false, message: "Lỗi server khi lấy đơn hàng yêu cầu hủy" });
+  }
+}
+
+const getReturnRefundReqOrders = async (req, res) => {
+  try {
+    const returnStatuses = [
+      "Yêu cầu trả hàng/hoàn tiền"
+    ];
+
+    const orders = await Order.find({ status: { $in: returnStatuses } }).sort({ created_at: -1 });
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error("Lỗi khi lấy đơn hàng hoàn tiền:", error);
+    res.status(500).json({ success: false, message: "Lỗi server khi lấy đơn hàng hoàn tiền" });
+  }
+};
 
 const updateOrderStatus = async (req, res) => {
   try {
@@ -114,8 +153,9 @@ const updateOrderStatus = async (req, res) => {
     const { status } = req.body;
 
     const validStatuses = [
-      'Chờ xác nhận', 'Chờ thanh toán', 'Chờ lấy', 'Đang vận chuyển',
-      'Đang giao', 'Đã giao', 'Hoàn thành', 'Đã hủy', 'Trả hàng/hoàn tiền'
+       'Chờ xác nhận', 'Chờ thanh toán', 'Chờ lấy', 'Đang vận chuyển',
+      'Đang giao', 'Đã giao', 'Hoàn thành', 'Yêu cầu hủy', 'Đã hủy', 'Yêu cầu trả hàng/hoàn tiền', 
+      'Tiến hành trả hàng/hoàn tiền', 'Đã trả hàng/hoàn tiền'
     ];
 
     if (!validStatuses.includes(status)) {
@@ -128,7 +168,6 @@ const updateOrderStatus = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng' });
     }
 
-    // Nếu trạng thái mới là "Đã hủy" và đơn trước đó chưa hủy → hoàn lại stock
     if (status === 'Đã hủy' && order.status !== 'Đã hủy') {
       for (const item of order.items) {
         const product = await Product.findById(item.product_id);
@@ -156,9 +195,65 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
+const getOrdersByUserId = async (req, res) => {
+  try {
+    const userId = req.params.userId
+
+    const orders = await Order.find({ user_id: userId })
+
+    res.status(200).json({ success: true, data: orders })
+  } catch (error) {
+    console.error('Lỗi khi lấy đơn hàng theo user_id:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi server khi lấy đơn hàng theo người dùng',
+    })
+  }
+}
+
+const requestReturnOrCancel = async (req, res) => {
+  try {
+    const { orderId } = req.params
+    const { type, reason } = req.body
+
+    const order = await Order.findById(orderId)
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng' })
+    }
+
+    if (type === 'return') {
+      order.status = 'Yêu cầu trả hàng/hoàn tiền'
+      order.return_reason = reason
+    } else if (type === 'cancel') {
+      order.status = 'Yêu cầu hủy'
+      order.cancellation_reason = reason
+    } else {
+      return res.status(400).json({ success: false, message: 'Loại yêu cầu không hợp lệ' })
+    }
+
+    await order.save()
+
+    res.status(200).json({
+      success: true,
+      message: `Đã gửi yêu cầu ${type === 'return' ? 'trả hàng/hoàn tiền' : 'hủy đơn hàng'} thành công`,
+      data: order,
+    })
+  } catch (error) {
+    console.error('Lỗi khi xử lý yêu cầu:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi server khi gửi yêu cầu hủy/trả hàng',
+    })
+  }
+}
+
 module.exports = {
   createOrder,
   getAllOrders,
-  updateOrderStatus
+  updateOrderStatus,
+  getCancelledReqOrders,
+  getReturnRefundReqOrders,
+  getOrdersByUserId,
+  requestReturnOrCancel
 };
 

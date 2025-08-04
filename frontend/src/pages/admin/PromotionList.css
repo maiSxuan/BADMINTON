@@ -1,91 +1,551 @@
-
 .promotion-list-page {
   width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  min-height: 100vh;
+  /* background: #fdf2f8; */
 }
 
-.promotion-list-page h1 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 600;
-  color: #333;
+.promotion-list-page p {
+  text-align: center;
+  padding: 40px 24px;
+  font-size: 16px;
+  color: #6b7280;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid #f3f4f6;
 }
 
-.table-container {
-  background-color: #ffffff; 
-  border-radius: 8px; 
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); 
+.promotion-error {
+  color: #d62a2a !important;
+  background: #fee2e2 !important;
+  border: 1px solid #fecaca;
+  font-weight: 500;
+}
+
+.promo-table-container {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   overflow: hidden;
+  border: 1px solid #f3f4f6;
 }
 
 .promotion-list-page table {
   width: 100%;
-  border-collapse: collapse; 
+  border-collapse: collapse;
+  font-size: 12px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  overflow: hidden;
+  border: 1px solid #f3f4f6;
 }
 
 .promotion-list-page th {
-  background-color: #fafafa; 
-  padding: 15px;
-  text-align: left;
-  font-size: 13px;
-  font-weight: 600;
-  color: #555;
+  background: #ffffff;
+  padding: 12px 20px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: sans-serif;
+  color: #000000;
   text-transform: uppercase;
-  border-bottom: 1px solid #f0f0f0; 
-  height: 50px;
+  letter-spacing: 0.6px;
+  border-bottom: 1px solid #e3e3e3;
 }
 
 .promotion-list-page td {
-  padding: 15px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e3e3e3;
   font-size: 14px;
-  color: #333;
-  height: 50px;
-  vertical-align: middle; 
+  font-weight: 500;
+  color: #232c39;
+  text-align: center;
+  /* vertical-align: middle; */
+  /* transition: all 0.2s ease; */
+}
+
+.promotion-status-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.promotion-list-page tbody tr {
+  transition: all 0.2s ease;
 }
 
 .promotion-list-page tbody tr:last-child td {
   border-bottom: none;
 }
 
-.promotion-list-page tbody tr:hover {
-  background-color: #f8f9fa;
-}
-
-.action-cell {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 15px; 
-}
-
-.action-cell button {
+.promotion-list-page button {
+  background: transparent;
   border: none;
-  background-color: transparent;
   cursor: pointer;
-  padding: 5px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
-.action-cell button:hover {
-  background-color: #e9ecef;
+.promotion-id {
+  color: #ec4899 !important;
+  padding: 6px 12px;
+  border-radius: 99px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #f9a8d4;
+  transition: all 0.2s ease;
+}
+
+.promotion-id:hover {
+  background: #ec4899;
+  color: white !important;
+  transform: translateY(-1px);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.promo-edit-cell {
+  text-align: center;
+}
+
+.promo-edit-cell button {
+  margin: 0 4px;
+  padding: 6px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.promo-edit-cell button:hover {
+  transform: translateY(-1px);
+}
+
+.promo-status-active,
+.promo-status-inactive {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-block;
+  width: 160px;
+}
+
+.promo-status-active {
+  background: #d1fae5;
+  color: #1c644f;
+  border: 1px solid #94dcba;
+}
+
+.promo-status-inactive {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.toggle-btn {
+  background: #f4ebf8;
+  border: 1px solid #d1d5db;
+  border-radius: 99px;
+  width: 48px;
+  height: 26px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-btn .thumb {
+  height: 18px;
+  width: 18px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.toggle-btn.toggled {
+  background: #34d399;
+  border-color: #34d399;
+}
+
+.toggle-btn.toggled .thumb {
+  left: calc(48px - 22px);
+}
+
+.promotion-detail-panel {
+  background: #ffffff;
+  border: 1px solid #f3f4f6;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 20px 0;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.promo-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.promo-panel-header button {
+  /* background: #fee2e2; */
+  color: #000000;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  /* border: 1px solid #fca5a5; */
+}
+
+.promo-panel-header button:hover {
+  background: #ff5b5b;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.promotion-header {
+  font-size: 25px;
+  font-weight: 700;
+  color: #1c1d46;
+}
+
+.promo-step-navigation {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  background: #f9fafb;
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid #f3f4f6;
+}
+
+.promo-step-navigation button {
+  flex: 1;
+  padding: 10px 16px;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  color: #000000;
+  background: transparent;
+}
+
+.promo-step-navigation button:hover {
+  background: #ffffff;
+  color: #1a2537;
+}
+
+.promo-step-navigation .active {
+  background: #ffffff;
+  color: #ec4899;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid #f4d2e5;
+}
+
+.promo-step-content {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.promotion-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #f3f4f6;
+}
+
+.promotion-table th,
+.promotion-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 14px;
+  vertical-align: middle;
+  text-align: left;
+}
+
+.promotion-table th {
+  background: #fce7f3;
+  color: #000000;
+  font-weight: 600;
+  font-family: sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 12px;
+}
+
+.promotion-table td strong {
+  font-weight: 600;
+  color: #000000;
+}
+
+.promotion-discount-tab th,
+.promotion-discount-tab td {
+  text-align: center;
+}
+
+.promotion-product-tab th,
+.promotion-product-tab td {
+  text-align: center;
+}
+
+.promotion-product-tab td:first-child {
+  text-align: left;
+}
+
+.promo-table-action-btn {
+  padding: 6px 12px;
+  transition: all 0.2s ease;
+}
+
+.promo-table-action-btn:hover {
+  transform: translateY(-1px);
+}
+
+.promo-add-discount-form,
+.promo-product-add-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #f3f4f6;
+}
+
+.promo-add-discount-form input,
+.promo-add-discount-form select,
+.promo-product-add-row select {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: #ffffff;
+}
+
+.promo-add-discount-form input:focus,
+.promo-add-discount-form select:focus,
+.promo-product-add-row select:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 0 0 2px #fce7f3;
+}
+
+.promo-add-discount-form button,
+.promo-product-add-row button {
+  background: #34d399;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.promo-add-discount-form button:hover,
+.promo-product-add-row button:hover {
+  background: #10b981;
+  transform: translateY(-1px);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.promotion-update-form {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  margin: 20px 0;
+  border: 1px solid #f3f4f6;
+}
+
+.promotion-update-form h3 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.promotion-update-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.promotion-update-form input,
+.promotion-update-form textarea {
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: #ffffff;
+}
+
+.promotion-update-form input:focus,
+.promotion-update-form textarea:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 0 0 2px #fce7f3;
+}
+
+.promotion-update-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.promotion-update-form button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.promo-edit-button {
+  display: flex;
+  gap: 16px;
+  margin-left: auto;
+}
+
+.promotion-update-form button[type="submit"] {
+  background: #e472ab;
+  color: white;
+  width: 200px;
+}
+
+.promotion-update-form button[type="submit"]:hover {
+  background: #ff5da6;
+}
+
+.promotion-update-form button[type="button"] {
+  background: #f3f4f6;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+  width: 100px;
+}
+
+.promotion-update-form button[type="button"]:hover {
+  background: #f9fafb;
+  color: #374151;
 }
 
 .promotion-pagination {
-    margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid #f0f0f0;
+  margin-top: auto;
+  padding: 20px 0;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: center;
 }
 
-.promotion-list-page button {
-    background-color: transparent;
-    border:none;
-    cursor:pointer;
-    
+@media (max-width: 1024px) {
+  .promotion-list-page {
+    padding: 16px;
+  }
+
+  .promotion-detail-panel,
+  .promotion-update-form {
+    padding: 20px;
+  }
+
+  .promo-add-discount-form,
+  .promo-product-add-row {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .promotion-list-page h1 {
+    font-size: 24px;
+  }
+
+  .promotion-header {
+    font-size: 20px;
+  }
+
+  .promo-step-navigation {
+    flex-direction: column;
+  }
+
+  .promo-panel-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .promotion-list-page th,
+  .promotion-list-page td {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .promo-table-container {
+    overflow-x: auto;
+  }
+
+  .promotion-list-page table {
+    min-width: 600px;
+  }
+}
+
+@media (max-width: 480px) {
+  .promotion-list-page {
+    padding: 12px;
+  }
+
+  .promotion-detail-panel,
+  .promotion-update-form {
+    padding: 16px;
+  }
+
+  .promo-edit-cell button {
+    margin: 2px;
+    padding: 4px;
+  }
+
+  .toggle-btn {
+    width: 44px;
+    height: 24px;
+  }
+
+  .toggle-btn .thumb {
+    width: 16px;
+    height: 16px;
+  }
+
+  .toggle-btn.toggled .thumb {
+    left: calc(44px - 20px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

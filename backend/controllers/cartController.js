@@ -1,11 +1,13 @@
 const { Cart } = require('../models/Cart');
-const Product = require('../models/ProductModel');
+const Product = require('../models/Product');
 const mongoose = require('mongoose');
 
 exports.getCart = async (req, res) => {
     try {
         const userId = req.user.id;
-        const cart = await Cart.findOne({ user: userId }).populate('items.product');
+        const cart = await Cart.findOne({ user: userId })
+            .populate('items.product')
+            .populate('items.option_id');
 
         if (!cart) 
             return res.status(200).json({ items: [], totalQuantity: 0, totalPrice: 0 });
@@ -16,7 +18,6 @@ exports.getCart = async (req, res) => {
             const product = item.product;
             const variant = product.variants.id(item.variant_id);
             const option = variant.options.id(item.option_id);
-
             return {
                 _id: item._id,
                 productId: product._id,
@@ -83,7 +84,7 @@ exports.addToCart = async (req, res) => {
             item.variant_id.equals(variantId) &&
             item.option_id.equals(optionId)
         );
-
+        
         if (existingItem)
             existingItem.quantity += quantity;
         else {
@@ -102,6 +103,7 @@ exports.addToCart = async (req, res) => {
 
         res.status(200).json({ message: 'Item added to cart', cart: cart.toObject() });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: 'Error adding to cart', error: err.message });
     }
 };

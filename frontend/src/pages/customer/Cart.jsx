@@ -240,26 +240,11 @@ const CartPage = () => {
   useEffect(() => {
     const fetchCartData = async () => {
       try {
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (!token) return;
-
-        // const response = await fetch('http://localhost:4000/api/cart', {
-        //   method: 'GET',
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //     'Content-Type': 'application/json'
-        //   }
-        // });
-
-        // if (!response.ok)
-        //   throw new Error(`HTTP Error! status: ${response.status}`)
-
-        // const data = await response.json();
-        const data = await fetchCart(token);
+        const data = await fetchCart();
 
         const cartWithSelected = data.items.map(item => ({
           _id: item._id,
-          name: item.productName || 'Không rõ tên',
+          name: item.name || 'Không rõ tên',
           productId: item.productId, 
           variantId: item.variantId,
           optionId: item.optionId,
@@ -271,37 +256,23 @@ const CartPage = () => {
           image: item.image || "/placeholder.svg"
         }));
 
-        setCartItems(cartWithSelected);
+        setCartItems(cartWithSelected)
       } catch (err) {
         console.error('Failed to fetch cart:', err)
       } finally {
         setLoading(false)
       }
-    };
-    fetchCartData();
-  }, []);
+    }
+
+    fetchCartData()
+  }, [])
 
   const handleQuantityChange = async (item, amount) => {
     if (![1, -1].includes(amount)) return
-
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      if (!token) return;
+    if (![1, -1].includes(amount)) return
 
     try {
-      // await fetch(`http://localhost:4000/api/cart/${item.variantId}`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     Authorization: 'Bearer ${token}',
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify({
-      //     product: item.productId,
-      //     variant_id: item.variantId,
-      //     option_id: item.optionId,
-      //     delta: amount
-      //   })
-      // });
-      await updateCartItemQuantity(token, item.variantId, {
+      await updateCartItemQuantity(item.variantId, {
         product: item.productId,
         variant_id: item.variantId,
         option_id: item.optionId,
@@ -316,7 +287,7 @@ const CartPage = () => {
             ? { ...newItem, quantity: newItem.quantity + amount }
             : newItem
         )
-      );
+      )
     } catch (err) {
       console.error('Error updating quantity:', err);
     } 
@@ -325,24 +296,8 @@ const CartPage = () => {
   const handleRemoveItem = async (item) => {
     if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?")) return;
 
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      if (!token) return;
-
     try {
-      // await fetch(`http://localhost:4000/api/cart/${item.variantId}`, {
-      //   method: 'DELETE',
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify({
-      //     product: item.productId, 
-      //     variant_id: item.variantId,
-      //     option_id: item.optionId
-      //   })
-      // });
-
-      await removeItemFromCart(token, item.variantId, {
+      await removeItemFromCart(item.variantId, {
         product: item.productId,
         variant_id: item.variantId,
         option_id: item.optionId
@@ -354,27 +309,28 @@ const CartPage = () => {
               i.variantId === item.variantId &&
               i.optionId === item.optionId)
         )
-      );
+      )
     } catch (err) {
-      console.error("Failed to remove item:", err);
+      console.error("Failed to remove item:", err)
     }
-  };
+  }
 
   const handleSelectItem = (item) => {
-    setCartItems((prevItems) =>
-      prevItems.map((i) => (i._id === item._id ? { ...i, selected: !i.selected } : i)),
+    setCartItems(prev =>
+      prev.map(i =>
+        i._id === item._id ? { ...i, selected: !i.selected } : i
+      )
     )
   }
 
   const handleSelectAll = () => {
     const newSelectAll = !selectAll
-    setSelectAll(newSelectAll);
-    setCartItems((prevItems) => prevItems.map((i) => ({ ...i, selected: newSelectAll })))
+    setSelectAll(newSelectAll)
+    setCartItems(prev => prev.map(i => ({ ...i, selected: newSelectAll })))
   }
 
-  const handleProceedToPurchase = () => { 
-    const selectedItems = cartItems.filter((i) => i.selected)
-
+  const handleProceedToPurchase = () => {
+    const selectedItems = cartItems.filter(i => i.selected)
     if (selectedItems.length === 0) {
       alert("Vui lòng chọn ít nhất một sản phẩm để mua hàng!")
       return
@@ -389,15 +345,13 @@ const CartPage = () => {
     }));
 
     navigate("/purchase", {
-      state: {
-        selectedItems: mappedItems,
-      },
+      state: { selectedItems: mappedItems }
     })
   }
 
   const formatCurrency = (amount) =>
     new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount)
-
+  
   if (loading) {
     return <div className="text-center py-10 text-gray-500">Đang tải giỏ hàng...</div>;
   }
@@ -447,7 +401,7 @@ const CartPage = () => {
 
                   <div className="item-details">
                     <h3 className="item-name">{item.name}</h3>
-                    <p className="item-variant">{item.option?.color} - {item.option?.size}</p>
+                    <p className="item-variant">{item.color} - {item.size}</p>
                     <p className="item-unit-price">Đơn giá: {formatCurrency(item.price)}</p>
                   </div>
 

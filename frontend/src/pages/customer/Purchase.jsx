@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import "./Purchase.css"
-
+import { createOrder } from "../../services/orderService"
 const PurchasePage = () => {
   const location = useLocation()
+  const selectedItems = location.state?.selectedItems || [];
   const navigate = useNavigate()
 
   // Lấy danh sách sản phẩm từ Cart
@@ -20,9 +21,6 @@ const PurchasePage = () => {
     district: "",
     ward: "",
     houseNumber: "",
-    storeLocation: "",
-    note: "",
-    shippingMethod: "",
     saveInfo: false,
   })
   const user = JSON.parse(localStorage.getItem("user"))
@@ -61,20 +59,7 @@ useEffect(() => {
 //   if (location.state && location.state.selectedItems) {
 //     setCartItems(location.state.selectedItems)
 //   } else {
-    const testItem = {
-      product_id: "6886334c4400bc0b50d4593d",
-      variant_id: "6886334c4400bc0b50d45949",
-      option_id:  "6886334c4400bc0b50d4594d",
-      name: "Giày Cầu Lông Taro TR024-1",
-      sku_code: "TR024-1-WHT-36",
-      variant: "Trắng xanh",
-      size: "36",
-      quantity: 25,
-      price: 499000,
-      thumbnail_url: "https://res.cloudinary.com/dwex11tdu/image/upload/v1751559915/maxdhq9vdqrg1ogvm30v.webp"
-    }
-    setCartItems([testItem])
-    // navigate("/cart") 
+     setCartItems(selectedItems)
 //   }
 }, [location.state])
 
@@ -120,71 +105,50 @@ useEffect(() => {
   }
 
   const handlePlaceOrder = async () => {
-  setIsLoading(true)
+    setIsLoading(true);
 
-  try {
-    // const userId = user?.id
+    try {
+      const userId = user?.userID;
 
-    // if (!userId) {
-    //   showToastMessage("Bạn cần đăng nhập để đặt hàng")
-    //   return
-    // }
+      if (!userId) {
+        showToastMessage("Bạn cần đăng nhập để đặt hàng");
+        return;
+      }
 
-    // Kiểm tra dữ liệu bắt buộc
-    if (!shippingInfo.phone || !shippingInfo.address) {
-      showToastMessage("Vui lòng nhập đầy đủ thông tin giao hàng")
-      return
+      if (!shippingInfo.phone || !shippingInfo.address) {
+        showToastMessage("Vui lòng nhập đầy đủ thông tin giao hàng");
+        return;
+      }
+
+      const orderData = {
+        userId: userId,
+        shippingInfo: shippingInfo,
+        items: selectedItems.map(item => ({
+          product_id: item.product_id,
+          variant_id: item.variant_id,
+          option_id: item.option_id,
+          quantity: item.quantity,
+          priceAtTime: item.price
+          })),
+        totalAmount: totalAmount,
+        orderNote: orderNote,
+        deliveryMethod: deliveryMethod
+      };
+
+      const data = await createOrder(orderData);
+
+      setOrderId(data.orderId);
+      setCurrentStep("tracking");
+      showToastMessage("Đặt hàng thành công");
+
+    } catch (error) {
+      console.error('Lỗi gửi đơn hàng:', error);
+      showToastMessage(error.message || "Có lỗi xảy ra, vui lòng thử lại");
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    const orderData = {
-      items: cartItems.map(item => ({
-        product_id: item.product_id,             // Bắt buộc
-        variant_id: item.variant_id,             // Bắt buộc
-        option_id: item.option_id,               // Bắt buộc
-
-        // Các trường hiển thị
-        name: item.name,
-        variant_name: item.variant || "Mặc định",
-        sku_code: item.sku_code,
-        size: item.size || "",
-        quantity: item.quantity,
-        price: item.price,
-        list_price: item.list_price || item.price,
-        thumbnail_url: item.thumbnail_url || item.image || ""
-      })),
-      totalAmount: totalAmount,
-      shippingInfo: {
-        phone: shippingInfo.phone,
-        address: shippingInfo.address
-      },
-      orderNote: orderNote,
-      deliveryMethod: deliveryMethod
-    }
-
-    const response = await fetch('http://localhost:4000/api/order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData)
-    })
-
-    const data = await response.json()
-
-    if (response.ok) {
-      setOrderId(data.orderId)
-      setCurrentStep("tracking")
-      showToastMessage("Đặt hàng thành công")
-    } else {
-      console.error("Lỗi từ backend:", data)
-      showToastMessage(data.message || "Có lỗi xảy ra khi đặt hàng")
-    }
-
-  } catch (error) {
-    console.error('Lỗi gửi đơn hàng:', error)
-    showToastMessage("Có lỗi xảy ra, vui lòng thử lại")
-  } finally {
-    setIsLoading(false)
-  }
-}
 
 
 

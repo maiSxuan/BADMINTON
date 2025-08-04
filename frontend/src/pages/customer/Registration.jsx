@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { registerUser } from "../../services";
 import "./Registration.css";
 import Logo from "../../components/common/logo";
 
@@ -68,9 +68,7 @@ const Registration = () => {
 
     if (Object.keys(validateErrors).length === 0) {
       try {
-        const response = await axios.post(
-          "http://localhost:4000/api/auth/register",
-          {
+        await registerUser ({
             name: formData.name,
             phone: formData.phone,
             address: formData.address,
@@ -79,18 +77,25 @@ const Registration = () => {
           }
         );
 
-        localStorage.setItem("token", response.data.token);
-        alert("Đăng ký thành công!");
-        navigate("/login");
+        //const user = response.data.user;
+        // localStorage.setItem("token", response.data.token);
+        // localStorage.setItem("user", JSON.stringify(user));
+        //window.dispatchEvent(new Event("loginStatusChanged"));
+
+        // if(user.user_type === 'ADMIN'){
+        //   navigate("/admin");
+        // } else{
+        //   navigate("/");
+        // }
+        alert("Đăng ký thành công! Vui lòng đăng nhập.");
+        navigate("/login")
       } catch (error) {
         const field = error.response?.data?.field;
         const message = error.response?.data?.message || "Đăng ký thất bại";
 
-        // Nếu có field cụ thể từ server, gán lỗi vào đúng trường
         if (field) {
           setErrors((prev) => ({ ...prev, [field]: message }));
         } else {
-          // Trường hợp lỗi không rõ, gán lỗi toàn cục (ví dụ server hỏng)
           alert(message);
         }
       }

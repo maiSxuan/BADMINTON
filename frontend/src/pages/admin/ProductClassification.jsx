@@ -2,23 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import "./ProductClassification.css";
-
-const API_URL = 'http://localhost:4000/api';
+import { uploadImage,deleteImage } from "../../services";
 
 const uploadImageToServer = async (file) => {
     const formData = new FormData();
     formData.append('image', file);
-    const response = await fetch(`${API_URL}/upload/image`, { method: 'POST', body: formData });
-    if (!response.ok) throw new Error('Tải ảnh thất bại.');
-    return await response.json();
+    return await uploadImage(file)
 };
 
 const deleteImageFromServer = async (public_id) => {
-    await fetch(`${API_URL}/upload/image`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ public_id }),
-    });
+    await deleteImage(public_id)
 };
 
 const MAX_IMAGES_PER_VARIANT = 5;
