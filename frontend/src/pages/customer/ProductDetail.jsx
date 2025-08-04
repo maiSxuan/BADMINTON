@@ -2,6 +2,19 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import './ProductDetail.css'; // File CSS của bạn
 import { getProductBySlug } from '../../services';
+import ratingService from '../../services/ratingService';
+
+const StarRating = ({ rating }) => {
+    const totalStars = 5;
+    return (
+        <div className="star-rating">
+            {[...Array(totalStars)].map((_, index) => {
+                const starClass = index < rating ? 'filled' : 'empty';
+                return <span key={index} className={`star ${starClass}`}>★</span>;
+            })}
+        </div>
+    );
+};
 
 const ProductDetailPage = () => {
     const { slug } = useParams();
@@ -12,6 +25,8 @@ const ProductDetailPage = () => {
     const [quantity, setQuantity] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [reviews, setReviews] = useState([]);
+    const [reviewsLoading, setReviewsLoading] = useState(true);
 
     useEffect(() => {
         const loadProductData = async () => {
@@ -45,6 +60,25 @@ const ProductDetailPage = () => {
         };
         loadProductData();
     }, [slug]);
+
+    useEffect(() => {
+        const loadReviews = async () => {
+            if (!product?._id) return; // Chỉ chạy khi có product ID
+
+            try {
+                setReviewsLoading(true);
+                const data = await ratingService.getRatingsByProduct(product._id);
+                setReviews(data.reviews || []);
+            } catch (err) {
+                console.error("Lỗi khi tải đánh giá:", err);
+                // Không set lỗi chung để tránh ảnh hưởng cả trang
+            } finally {
+                setReviewsLoading(false);
+            }
+        };
+
+        loadReviews();
+    }, [product?._id]);
 
     const handleVariantSelect = (variantToSelect) => {
         setSelectedVariant(variantToSelect);
@@ -170,6 +204,29 @@ const ProductDetailPage = () => {
                     </div>
                 </div>
             )}
+            <div className="product-reviews-section">
+                <h2 className="reviews-title">Đánh giá từ khách hàng</h2>
+                {reviewsLoading ? (
+                    <p>Đang tải đánh giá...</p>
+                ) : reviews.length > 0 ? (
+                    <div className="review-list">
+                        {reviews.map((review) => (
+                            <div key={review._id} className="review-item">
+                                <div className="review-header">
+                                    <span className="review-user">{review.user?.name || 'Người dùng'}</span>
+                                    <StarRating rating={review.rating} />
+                                </div>
+                                <p className="review-comment">{review.comment}</p>
+                                <p className="review-date">
+                                    {new Date(review.createdAt).toLocaleDateString('vi-VN')}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="no-reviews">Chưa có đánh giá nào cho sản phẩm này.</p>
+                )}
+            </div>
         </div>
     );
 };

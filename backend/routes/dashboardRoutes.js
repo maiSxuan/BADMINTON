@@ -10,7 +10,7 @@ const {
 
 router.get('/stats/orders', getOrderStatistics);
 router.get('/stats/revenue', getRevenueStatistics);
-router.get('/products/top-selling', getTopSellingProducts);
-router.get('/products/low-stock', getLowStockAlerts);
+router.get('/stats/top-selling', getTopSellingProducts);
+router.get('/stats/low-stock', getLowStockAlerts);
 
 module.exports = router;
