@@ -1,17 +1,26 @@
-"use client"
+// src/pages/admin/products/AllProducts.jsx
+
+"use client";
 
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AllProducts.css";
-import { getAllCategories,getProductsOnQuery,deleteProduct,togglePublishProduct } from "../../services";
+import { getProductsOnQuery, getAllCategories, deleteProduct, togglePublishProduct, getAllBrands } from "../../services";
+
 const AllProducts = () => {
     const navigate = useNavigate();
     const [allProducts, setAllProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    
+    // State cho bộ lọc
     const [categories, setCategories] = useState([]);
+    const [brands, setBrands] = useState([]); // 
     const [searchTerm, setSearchTerm] = useState("");
-    const [filterCategory, setFilterCategory] = useState("Tất cả");
+    const [filterCategory, setFilterCategory] = useState("Tất cả danh mục");
+    const [filterBrand, setFilterBrand] = useState("Tất cả thương hiệu");
+
+    // State cho modal chi tiết
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showProductDetail, setShowProductDetail] = useState(false);
     
@@ -20,12 +29,14 @@ const AllProducts = () => {
             setIsLoading(true);
             setError(null);
             try {
-                const [productsData, categoriesData] = await Promise.all([
+                const [productsResult, categoriesData, brandsData] = await Promise.all([
                     getProductsOnQuery({ limit: 1000, view: 'admin' }),
-                    getAllCategories()
+                    getAllCategories(),
+                    getAllBrands() // Gọi thêm API lấy brands
                 ]);
-                setAllProducts(productsData.data); // productsData có { data, count, ... }
+                setAllProducts(productsResult.data);
                 setCategories(categoriesData);
+                setBrands(brandsData); // Lưu danh sách brands vào state
             } catch (err) {
                 setError(err.message || 'Không thể tải dữ liệu từ server.');
             } finally {
@@ -37,47 +48,51 @@ const AllProducts = () => {
 
     const filteredProducts = useMemo(() => allProducts.filter(p => 
         p.name.toLowerCase().includes(searchTerm.toLowerCase()) && 
-        (filterCategory === "Tất cả" || p.prod === filterCategory)
-    ), [allProducts, searchTerm, filterCategory]);
+        (filterCategory === "Tất cả danh mục" || p.prod === filterCategory) &&
+        (filterBrand === "Tất cả thương hiệu" || p.brand === filterBrand) 
+    ), [allProducts, searchTerm, filterCategory, filterBrand]);
 
     const stats = useMemo(() => [
         { title: "Tổng sản phẩm", value: allProducts.length },
         { title: "Tổng tồn kho", value: allProducts.reduce((sum, p) => sum + (p.stock || 0), 0) },
         { title: "Danh mục", value: categories.length },
-        { title: "Sắp hết hàng", value: allProducts.filter(p => p.stock > 0 && p.stock < 10).length },
-    ], [allProducts, categories]);
+        { title: "Thương hiệu", value: brands.length },
+        { title: "Sắp hết hàng", value: allProducts.filter(p => p.stock > 0 && p.stock < 10).length } 
+    ], [allProducts, categories, brands]);
 
+    // Các hàm handler (không thay đổi logic chính)
     const handleProductClick = (product) => {
         setSelectedProduct(product);
         setShowProductDetail(true);
     };
-
     const handleAdd = () => navigate("/admin/add-product");
-
-   const handleDeleteProduct = async (slug, e) => {
-    e.stopPropagation();
-    if (window.confirm("Hành động này sẽ XÓA VĨNH VIỄN sản phẩm. Bạn chắc chắn?")) {
+    const handleEdit = (slug, e) => {
+        e.stopPropagation();
+        navigate(`/admin/edit-product/${slug}`);
+    };
+    const handleDeleteProduct = async (slug, e) => {
+        e.stopPropagation();
+        if (window.confirm("Hành động này sẽ XÓA VĨNH VIỄN sản phẩm. Bạn chắc chắn?")) {
+            try {
+                await deleteProduct(slug);
+                setAllProducts(prev => prev.filter(p => p.slug !== slug));
+                alert('Xóa thành công.');
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+    };
+    const handleTogglePublish = async (product, e) => {
+        e.stopPropagation();
         try {
-            await deleteProduct(slug);
-            setAllProducts(prev => prev.filter(p => p.slug !== slug));
-            alert('Xóa thành công.');
+            await togglePublishProduct(product.slug);
+            setAllProducts(prev =>
+                prev.map(p => p.id === product.id ? { ...p, is_published: !p.is_published } : p)
+            );
         } catch (err) {
             alert(err.message);
         }
-    }
-};
-
-    const handleTogglePublish = async (product, e) => {
-    e.stopPropagation();
-    try {
-        await togglePublishProduct(product.slug);
-        setAllProducts(prev =>
-            prev.map(p => p.id === product.id ? { ...p, is_published: !p.is_published } : p)
-        );
-    } catch (err) {
-        alert(err.message);
-    }
-};
+    };
 
     return (
         <div className="product-management">
@@ -100,9 +115,14 @@ const AllProducts = () => {
                 </div>
                 <div className="filter-controls">
                     <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="filter-select">
-                        <option>Tất cả</option>
+                        <option>Tất cả danh mục</option>
                         {categories.map(cat => (<option key={cat._id} value={cat.name}>{cat.name}</option>))}
                     </select>
+                    <select value={filterBrand} onChange={(e) => setFilterBrand(e.target.value)} className="filter-select">
+                        <option>Tất cả thương hiệu</option>
+                        {brands.map(brand => (<option key={brand._id} value={brand.name}>{brand.name}</option>))}
+                    </select>
+
                     <button className="filter-btn">Bộ lọc</button>
                 </div>
             </div>
@@ -113,7 +133,7 @@ const AllProducts = () => {
                 : (
                     <table className="products-table">
                         <thead>
-                            <tr><th>Hình ảnh</th><th>Thông tin sản phẩm</th><th>Danh mục</th><th>Giá bán</th><th>Tồn kho</th><th>Trạng thái</th><th>Thao tác</th></tr>
+                            <tr><th>Hình ảnh</th><th>Thông tin sản phẩm</th><th>Thương hiệu</th><th>Giá bán</th><th>Tồn kho</th><th>Trạng thái</th><th>Thao tác</th></tr>
                         </thead>
                         <tbody>
                             {filteredProducts.map((product) => (
@@ -125,7 +145,7 @@ const AllProducts = () => {
                                             <div className="product-details">{product.brand} • {product.prod}</div>
                                         </div>
                                     </td>
-                                    <td>{product.prod}</td>
+                                    <td>{product.brand}</td> 
                                     <td className="price">{product.price.toLocaleString('vi-VN')} đ</td>
                                     <td>
                                         {product.stock}
@@ -138,12 +158,9 @@ const AllProducts = () => {
                                     </td>
                                     <td>
                                         <div className="action-buttons-cell">
-                                            <button className={`action-btn ${product.is_published ? 'unpublish-btn' : 'publish-btn'}`} onClick={(e) => handleTogglePublish(product, e)}>
-                                                {product.is_published ? 'Ẩn' : 'Bán'}
-                                            </button>
-                                            <button className="action-btn delete-btn" onClick={(e) => handleDeleteProduct(product.slug, e)}>
-                                                Xóa
-                                            </button>
+                                            <button className="action-btn edit-btn" onClick={(e) => handleEdit(product.slug, e)}>Sửa</button>
+                                            <button className={`action-btn ${product.is_published ? 'unpublish-btn' : 'publish-btn'}`} onClick={(e) => handleTogglePublish(product, e)}>{product.is_published ? 'Ẩn' : 'Bán'}</button>
+                                            <button className="action-btn delete-btn" onClick={(e) => handleDeleteProduct(product.slug, e)}>Xóa</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -169,7 +186,7 @@ const AllProducts = () => {
                                         <p><strong>Tên sản phẩm:</strong> {selectedProduct.name}</p>
                                         <p><strong>Thương hiệu:</strong> {selectedProduct.brand}</p>
                                         <p><strong>Ngành hàng:</strong> {selectedProduct.prod}</p>
-                                        <p><strong>Mô tả:</strong> {selectedProduct.description || 'Chưa có mô tả.'}</p>
+                                        <p><strong>Mô tả:</strong> <span dangerouslySetInnerHTML={{ __html: selectedProduct.description?.replace(/\n/g, '<br />') || 'Chưa có mô tả.' }} /></p>
                                     </div>
                                 </div>
                             </div>
@@ -182,7 +199,7 @@ const AllProducts = () => {
                                             <tbody>
                                                 {selectedProduct.variants.map((variant) => 
                                                     variant.options.map((option, index) => (
-                                                        <tr key={option._id || index}>
+                                                        <tr key={option._id || `${variant.name}-${index}`}>
                                                             <td>{variant.name} - {option.value}</td>
                                                             <td>{option.price.toLocaleString('vi-VN')} đ</td>
                                                             <td>{option.stock_quantity}</td>
@@ -195,11 +212,6 @@ const AllProducts = () => {
                                     </div>
                                 </div>
                             )}
-                        </div>
-                        <div className="modal-footer">
-                            <button className="update-product-btn" onClick={() => navigate(`/admin/edit-product/${selectedProduct.slug}`)}>
-                                Chỉnh sửa sản phẩm
-                            </button>
                         </div>
                     </div>
                 </div>

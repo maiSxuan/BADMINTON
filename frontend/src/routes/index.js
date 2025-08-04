@@ -171,16 +171,7 @@ const publicRoutes = [
 
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)
-  
-  
-
-  //{path: "/test", component: TestUploadPage},
-  //  404 Not Found
-  // { path: '*', component: NotFoundPage, layout: DefaultLayout }
-];
-
-const privateRoutes = [
-  { path: "/admin", component: AdminHome, layout: AdminLayout, allowedRoles: ["ADMIN"] },
+  { path: "/admin", component: AdminHome, layout: AdminLayout, allowedRoles: ["ADMIN"]  },
     
   // Quản lý người dùng
   { path: "/admin/user-list", component: UserListPage, layout: AdminLayout, allowedRoles: ["ADMIN"] },
@@ -188,13 +179,11 @@ const privateRoutes = [
     path: "/admin/lock-account",
     component: LockAccountPage,
     layout: AdminLayout,
-    allowedRoles: ["ADMIN"]
   },
   {
     path: "/admin/reset-password",
     component: ResetPasswordPage,
     layout: AdminLayout,
-    allowedRoles: ["ADMIN"]
   },
 
   // Quản lý đơn hàng
@@ -224,7 +213,7 @@ const privateRoutes = [
   />
   )
   },
-    {
+ {
     path: "/admin/return-orders",
     component: ReturnReundOrdersPage,
     layout: (props) => (
@@ -238,7 +227,6 @@ const privateRoutes = [
   />
   )
   },
-
   // Quản lý sản phẩm
   {
     path: "/admin/all-products",
@@ -255,7 +243,16 @@ const privateRoutes = [
   />
   )
   },
-  { path: "/admin/add-product", component: AddProducts, allowedRoles: ["ADMIN"], layout: (props) => (
+  {path: "/admin/edit-product/:slug", component: AddProducts, layout:   (props) => (
+  <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Quản lý sản phẩm ", path: "/admin" },
+      { label: "Sửa đơn hàng", path: "/admin/edit-product/:slug" },
+    ]}
+  />)},
+  { path: "/admin/add-product", component: AddProducts, layout: (props) => (
   <AdminLayout
     {...props}
     breadcrumbItems={[
@@ -271,13 +268,13 @@ const privateRoutes = [
     path: "/admin/chat-management",
     component: ChatManagementPage,
     layout: AdminLayout,
-    allowedRoles: ["ADMIN"]
+     allowedRoles: ["ADMIN"]
   },
   {
     path: "/admin/review-management",
     component: ReviewManagementPage,
     layout: AdminLayout,
-    allowedRoles: ["ADMIN"]
+     allowedRoles: ["ADMIN"]
   },
 
   // Tài chính
@@ -303,8 +300,15 @@ const privateRoutes = [
   ) },
 
   //Khuyến Mãi
-  { path: "/admin/add-promotion", component: AddPromotionPage, layout: AdminLayout, allowedRoles: ["ADMIN"] },
-  { path: "/admin/manage-promotion", component: PromotionListPage, layout: AdminLayout, allowedRoles: ["ADMIN"] },
+  { path: "/admin/add-promotion", component: AddPromotionPage, layout: AdminLayout,allowedRoles: ["ADMIN"] },
+  { path: "/admin/manage-promotion", component: PromotionListPage, layout: AdminLayout,allowedRoles: ["ADMIN"] },
+  
+
+  // {path: "/test", component: TestUploadPage},
+  //  404 Not Found
+  // { path: '*', component: NotFoundPage, layout: DefaultLayout }
 ];
+
+const privateRoutes = [];
 
 export { publicRoutes, privateRoutes };

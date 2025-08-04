@@ -66,3 +66,17 @@ export const togglePublishProduct = async (slug) => {
 
     return response.json();
 };
+export const editProduct = async (slug, updatedData) => {
+    if (!slug) throw new Error("Slug is required for editing.");
+    const res = await fetch(`http://localhost:4000/api/products/${slug}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData)
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Không thể cập nhật sản phẩm.");
+    }
+    return await res.json();
+};

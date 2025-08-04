@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const cloudinary = require("../config/cloudinary");
-
+const authMiddleware = require("../middleware/authMiddleware");
 module.exports = router;
 
 const {
@@ -10,7 +9,7 @@ const {
     getProductBySlug,
     updateProductBySlug,
     togglePublishStatusBySlug,
-    deleteProductBySlug
+    deleteProductBySlug,
 } = require('../controllers/productController');
 
 
@@ -21,12 +20,11 @@ const {
 router.get('/', getAllProducts);
 // Route cụ thể hơn (có tham số) đặt sau
 router.get('/:slug', getProductBySlug); 
-
+router.put('/:slug', updateProductBySlug);
 // 2. CREATE
 router.post('/', createProduct);
 
 // 3. UPDATE
-router.put('/:slug', updateProductBySlug);
 router.patch('/:slug/toggle-publish', togglePublishStatusBySlug);
 
 // 4. DELETE
