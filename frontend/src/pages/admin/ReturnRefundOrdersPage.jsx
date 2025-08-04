@@ -4,17 +4,15 @@ import { useState, useEffect } from "react"
 import { Search, X, Package, Truck, MapPin, Phone, Mail } from "lucide-react"
 import "./OrderManagement.css"
 
-const CancelledOrderPage = () => {
+const ReturnReundOrdersPage = () => {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
-  const [selectedStatus, setSelectedStatus] = useState("Tất cả")
+  const [selectedStatus] = useState("Tất cả")
   const [searchTerm, setSearchTerm] = useState("")
   const [searchType, setSearchType] = useState("ID đơn hàng")
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [showOrderDetail, setShowOrderDetail] = useState(false)
 
-  const statusTabs = ["Tất cả", 'Chờ xác nhận', 'Chờ lấy', 'Đang vận chuyển',
-      'Đang giao', 'Đã giao', 'Hoàn thành']
 
   const statusColors = {
     "Chờ xác nhận": { backgroundColor: "#fef3c7", color: "#92400e" },
@@ -36,7 +34,7 @@ const CancelledOrderPage = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true)
-      const response = await fetch("http://localhost:4000/api/order/cancellation-orders")
+      const response = await fetch("http://localhost:4000/api/order/return-refund-orders")
       const data = await response.json()
       if (data.success) {
         setOrders(data.data)
@@ -88,14 +86,12 @@ const CancelledOrderPage = () => {
     })
   }
 
-  const handleAcceptCancellation = async (orderId) => {
-    if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
-      try {
-        await updateOrderStatus(orderId, "Đã hủy")
-        alert("Đã hủy đơn hàng thành công!")
-      } catch (error) {
-        alert("Có lỗi xảy ra khi hủy đơn hàng!")
-      }
+  const handleAcceptReturnRefund = async (orderId) => {
+    try {
+      await updateOrderStatus(orderId, "Tiến hành trả hàng/hoàn tiền")
+      alert("Đã chấp nhận yêu cầu hoàn trả/hoàn tiền!")
+    } catch (error) {
+      alert("Có lỗi xảy ra khi chấp nhận yêu cầu!")
     }
   }
 
@@ -208,18 +204,18 @@ const CancelledOrderPage = () => {
                         </div>
                       </td>
                       <td>
-                        <div className="shipping-provider">{order.cancellation_reason}</div>
+                        <div className="shipping-provider">{order.return_reason}</div>
                       </td>
                       <td>
-                      {order.status !== "Đã hủy" && (
+                      {(
                         <div className="om-action-buttons">
                           <button
                             className="om-action-btn cancel-btn"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleAcceptCancellation(order._id);
+                              handleAcceptReturnRefund(order._id);
                             }}
-                            title="Hủy đơn hàng"
+                            title="Duyệt yêu cầu"
                           >
                             Duyệt yêu cầu
                           </button>
@@ -358,4 +354,4 @@ const CancelledOrderPage = () => {
   )
 }
 
-export default CancelledOrderPage
+export default ReturnReundOrdersPage 

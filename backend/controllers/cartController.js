@@ -1,11 +1,13 @@
-const Cart = require('../models/Cart');
+const { Cart } = require('../models/Cart');
 const Product = require('../models/Product');
 const mongoose = require('mongoose');
 
 exports.getCart = async (req, res) => {
     try {
         const userId = req.user.id;
-        const cart = await Cart.findOne({ user: userId }).populate('items.product');
+        const cart = await Cart.findOne({ user: userId })
+            .populate('items.product')
+            .populate('items.option_id');
 
         if (!cart) 
             return res.status(200).json({ items: [], totalQuantity: 0, totalPrice: 0 });
@@ -14,22 +16,20 @@ exports.getCart = async (req, res) => {
 
         const transformedItems = cart.items.map((item) => {
             const product = item.product;
-            const variant = product.variants?.find(v => v.variant_id.toString() === item.variant_id.toString());
-            const option = variant?.options?.find(o => o.sku_code === item.sku_code);
-
+            const variant = product.variants.id(item.variant_id);
+            const option = variant.options.id(item.option_id);
             return {
                 _id: item._id,
                 productId: product._id,
                 variantId: item.variant_id,
+                optionId: item.option_id,
                 name: product.name,
                 image: variant?.images?.[0] || product.thumbnail_url || '/placeholder.svg',
                 quantity: item.quantity,
                 price: item.priceAtTime,
                 sku_code: item.sku_code,
-                option: {
-                    color: variant?.name || 'Không xác định',
-                    size: option?.value || 'Không xác định',
-                },
+                color: variant?.name || 'Không xác định',
+                size: option?.value || 'Không xác định',
             };
         });
 
@@ -48,10 +48,10 @@ exports.getCart = async (req, res) => {
 exports.addToCart = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { product: productId, variant_id: variantId, sku_code: optionSku, quantity } = req.body;
+        const { product: productId, variant_id: variantId, option_id: optionId, quantity } = req.body;
 
-        if (!mongoose.Types.ObjectId.isValid(productId))
-            return res.status(400).json({ message: 'Invalid productId' });
+        if (!mongoose.Types.ObjectId.isValid(productId) || !mongoose.Types.ObjectId.isValid(variantId))
+            return res.status(400).json({ message: 'Invalid productId or variantId' });
 
         if (quantity <= 0)
             return res.status(400).json({ message: 'Quantity must be greater than zero' });
@@ -60,11 +60,11 @@ exports.addToCart = async (req, res) => {
         if (!product)
             return res.status(404).json({ message: 'Product not found' });
 
-        const variant = product.variants.find(v => v.variant_id.toString() === variantId);
+        const variant = product.variants.id(variantId);
         if (!variant)
             return res.status(404).json({ message: 'Variant not found' });
 
-        const option = variant.options.find(o => o.sku_code === optionSku);
+        const option = variant.options.id(optionId);
         if (!option)
             return res.status(404).json({ message: 'Option not found' });
 
@@ -82,17 +82,17 @@ exports.addToCart = async (req, res) => {
         const existingItem = cart.items.find(item =>
             item.product.equals(productId) &&
             item.variant_id.equals(variantId) &&
-            item.sku_code === optionSku
+            item.option_id.equals(optionId)
         );
-
+        
         if (existingItem)
             existingItem.quantity += quantity;
         else {
             cart.items.push({
-                product: productId,
-                variant_id: variantId,
-                name: product.name,
-                sku_code: optionSku,
+                product: new mongoose.Types.ObjectId(productId),
+                variant_id: new mongoose.Types.ObjectId(variantId),
+                option_id: new mongoose.Types.ObjectId(optionId),
+                sku_code: option.sku_code,
                 quantity,
                 priceAtTime: option.price
             });
@@ -103,6 +103,7 @@ exports.addToCart = async (req, res) => {
 
         res.status(200).json({ message: 'Item added to cart', cart: cart.toObject() });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: 'Error adding to cart', error: err.message });
     }
 };
@@ -110,12 +111,11 @@ exports.addToCart = async (req, res) => {
 exports.removeCartItem = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { product: productId, variant_id: variantId, sku_code: optionSku } = req.body;
+        const { product: productId, variant_id: variantId, option_id: optionId } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(productId) || !mongoose.Types.ObjectId.isValid(variantId)) 
             return res.status(400).json({ message: 'Invalid productId or variantId' });
         
-
         const cart = await Cart.findOne({ user: userId });
         if (!cart) 
             return res.status(404).json({ message: 'Cart not found' });
@@ -125,7 +125,7 @@ exports.removeCartItem = async (req, res) => {
         cart.items = cart.items.filter(item => 
             !(item.product.equals(productId) &&
               item.variant_id.equals(variantId) &&
-              item.sku_code === optionSku)
+              item.option_id.equals(optionId))
         );
 
         if (cart.items.length === prevLength) 
@@ -144,7 +144,7 @@ exports.removeCartItem = async (req, res) => {
 exports.updateCartItem = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { product: productId, variant_id: variantId, sku_code: optionSku, delta, priceAtTime } = req.body;
+        const { product: productId, variant_id: variantId, option_id: optionId, delta, priceAtTime } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(productId) || !mongoose.Types.ObjectId.isValid(variantId)) 
             return res.status(400).json({ message: 'Invalid productId or variantId' });
@@ -156,11 +156,11 @@ exports.updateCartItem = async (req, res) => {
         if (!product)
             return res.status(404).json({ message: 'Product not found' });
 
-        const variant = product.variants.find(v => v.variant_id.toString() === variantId);
+        const variant = product.variants.id(variantId);
         if (!variant)
             return res.status(404).json({ message: 'Variant not found' });
 
-        const option = variant.options.find(o => o.sku_code === optionSku);
+        const option = variant.options.id(optionId);
         if (!option)
             return res.status(404).json({ message: 'Option not found' });
 
@@ -171,7 +171,7 @@ exports.updateCartItem = async (req, res) => {
         const item = cart.items.find(item => 
             item.product.equals(productId) &&
             item.variant_id.equals(variantId) &&
-            item.sku_code === optionSku
+            item.option_id.equals(optionId)
         );
 
         if (!item) 

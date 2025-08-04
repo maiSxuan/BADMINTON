@@ -1,6 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom";
+import { requestPasswordReset } from "../../services";
 import "./ForgotPassword.css"
 
 export default function ForgotPasswordStep1() {
@@ -8,6 +10,7 @@ export default function ForgotPasswordStep1() {
   const [showPopup, setShowPopup] = useState(false)
   const [countdown, setCountdown] = useState(60)
   const [canResend, setCanResend] = useState(false)
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (showPopup && countdown > 0) {
@@ -18,22 +21,34 @@ export default function ForgotPasswordStep1() {
     }
   }, [countdown, showPopup])
 
-  const handleSubmit = () => {
-    if (email) {
-      console.log("Sending reset email to:", email)
-      setShowPopup(true)
-      setCountdown(60)
-      setCanResend(false)
+  const handleSubmit = async () => {
+    if (!email) return alert("Vui lòng nhập email");
+    try {
+      await requestPasswordReset(email);
+      setShowPopup(true);
+      setCountdown(60);
+      setCanResend(false);
+    } catch (err) {
+      alert(err.response?.data?.message || "Lỗi gửi email hoặc email không tồn tại");
     }
   }
 
-  const handleResend = () => {
+  const handleResend = async () => {
     if (canResend) {
-      setCountdown(60)
-      setCanResend(false)
-      console.log("Resending email...")
+      try {
+        await requestPasswordReset(email);
+        setCountdown(60);
+        setCanResend(false);
+        alert("Đã gửi lại mã xác nhận");
+      } catch (err) {
+        alert("Lỗi khi gửi lại: " + err.message);
+      }
     }
-  }
+  };
+
+  const goToStep2 = () => {
+    navigate("/recover-password", { state: { email } });
+  };
 
   return (
     <div className="forgot-container">
@@ -67,6 +82,9 @@ export default function ForgotPasswordStep1() {
               disabled={!canResend}
             >
               GỬI LẠI
+            </button>
+            <button className="forgot-button" onClick={goToStep2}>
+              TIẾP TỤC
             </button>
           </div>
         </div>

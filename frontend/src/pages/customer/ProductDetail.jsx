@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import './ProductDetail.css'; // File CSS của bạn
-import { getProductBySlug } from '../../services';
+import { addItemToCart, getProductBySlug } from '../../services';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 import ratingService from '../../services/ratingService';
 
 const StarRating = ({ rating }) => {
@@ -15,7 +19,6 @@ const StarRating = ({ rating }) => {
         </div>
     );
 };
-
 const ProductDetailPage = () => {
     const { slug } = useParams();
     const [product, setProduct] = useState(null);
@@ -27,6 +30,8 @@ const ProductDetailPage = () => {
     const [error, setError] = useState('');
     const [reviews, setReviews] = useState([]);
     const [reviewsLoading, setReviewsLoading] = useState(true);
+    const [isAdding, setIsAdding] = useState(false);
+
 
     useEffect(() => {
         const loadProductData = async () => {
@@ -105,6 +110,35 @@ const ProductDetailPage = () => {
             return newQuantity;
         });
     };
+
+    const handleAddToCart = async () => {
+        if (!product || !selectedVariant || !selectedOption) {
+            toast.error("Vui lòng chọn đầy đủ thông tin sản phẩm");
+            return;
+        }
+
+        if (selectedOption.stock_quantity < quantity) {
+            toast.error("Số lượng vượt quá tồn kho");
+            return;
+        }
+
+        setIsAdding(true);
+
+        try {
+            await addItemToCart({
+                productId: product._id,
+                variantId: selectedVariant._id,
+                optionId: selectedOption._id,
+                quantity,
+            });
+            toast.success('Thêm sản phẩm vào giỏ hàng thành công');
+            setQuantity(1);
+        } catch (err) {
+            toast.error(err.message);
+        } finally {
+            setIsAdding(false)
+        }
+    }
     
     // Lấy giá bán và giá gốc (nếu có) từ option được chọn
     const displayPrice = useMemo(() => selectedOption?.price || 0, [selectedOption]);
@@ -191,7 +225,13 @@ const ProductDetailPage = () => {
 
                     <div className="action-buttons">
                         <button className="action-btn buy-now-btn" disabled={!selectedOption || selectedOption.stock_quantity === 0}>Mua ngay</button>
-                        <button className="action-btn add-to-cart-btn" disabled={!selectedOption || selectedOption.stock_quantity === 0}>Thêm vào giỏ hàng</button>
+                        <button 
+                            className="action-btn add-to-cart-btn" 
+                            disabled={!selectedOption || selectedOption.stock_quantity === 0}
+                            onClick={handleAddToCart}
+                        >
+                            {isAdding ? "Đang thêm..." : "Thêm vào giỏ hàng"}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -227,6 +267,7 @@ const ProductDetailPage = () => {
                     <p className="no-reviews">Chưa có đánh giá nào cho sản phẩm này.</p>
                 )}
             </div>
+            <ToastContainer position='top-right' autoClose={3000} />
         </div>
     );
 };

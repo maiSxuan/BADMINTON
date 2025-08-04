@@ -189,76 +189,72 @@ Content-Type: application/json
 
 ### GET cart
 GET http://localhost:4000/api/cart
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1Mzc2Mzg5NSwiZXhwIjoxNzUzOTM2Njk1fQ.YZA9QkCtbL-dF0FdoVoUKdnxWobaZqT9iw-32Uh2n_A
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzkzODE5MCwiZXhwIjoxNzU0MTEwOTkwfQ.evd5FRqQp6zeJFnZ324N2KALN2EIFbj10B0_j5c45ng
 
 ### ADD ITEM 1
-POST http://localhost:4000/api/cart/add
+POST http://localhost:4000/api/cart
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1Mzc2Mzg5NSwiZXhwIjoxNzUzOTM2Njk1fQ.YZA9QkCtbL-dF0FdoVoUKdnxWobaZqT9iw-32Uh2n_A
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjE0MDM3MTlmLTFiMzgtNDg1OS1iMTQxLTEyOTUyNjhmMmQ3MSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM4OTE2NTIsImV4cCI6MTc1NDA2NDQ1Mn0.2qNhB8nfPN4iT6pIMvcD536rage1K7Et15qwnoKZliU
 
 {
-  "product": "687fe226a5fd9fd9efa23ade",
-  "variant_id": "687fe226a5fd9fd9efa23ae0",
-  "name": "Vợt cầu lông Yonex Nanoflare Starbucks",
-  "sku_code": "Starbucks-HỒNG-4U",
-  "quantity": 2,
-  "priceAtTime": 1499999
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d4593f",
+  "quantity": 2
 }
 
 ### ADD ITEM 2
-POST http://localhost:4000/api/cart/add
+POST http://localhost:4000/api/cart
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxOTc2NCwiZXhwIjoxNzUzNTkyNTY0fQ.fyBIfOaSxYRJrlXeKbp0Q78VX4giPrBwi9iA7HnXrlU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjE0MDM3MTlmLTFiMzgtNDg1OS1iMTQxLTEyOTUyNjhmMmQ3MSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM4OTE2NTIsImV4cCI6MTc1NDA2NDQ1Mn0.2qNhB8nfPN4iT6pIMvcD536rage1K7Et15qwnoKZliU
 
 {
-  "product": "687fe226a5fd9fd9efa23ade",
-  "variant_id": "687fe226a5fd9fd9efa23ae2",
-  "sku_code": "Starbucks-XANH-4U",
-  "quantity": 1,
-  "priceAtTime": 1499999
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d45943",
+  "quantity": 1
 }
 
 ### ADD ITEM 3
-POST http://localhost:4000/api/cart/add
+POST http://localhost:4000/api/cart
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxOTc2NCwiZXhwIjoxNzUzNTkyNTY0fQ.fyBIfOaSxYRJrlXeKbp0Q78VX4giPrBwi9iA7HnXrlU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1Mzc2Mzg5NSwiZXhwIjoxNzUzOTM2Njk1fQ.YZA9QkCtbL-dF0FdoVoUKdnxWobaZqT9iw-32Uh2n_A
 
 {
-  "product": "68769383ec6c802345648de6",
-  "variant_id": "68770001fec6c80234568001",
-  "sku_code": "TR024-1-WHT-36",
-  "quantity": 2,
-  "priceAtTime": 499000
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d45942",
+  "quantity": 1
 }
 
 ### REMOVE ITEM
-DELETE http://localhost:4000/api/cart/remove
+DELETE http://localhost:4000/api/cart/688a9e427b2e4321c83625a9
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxOTc2NCwiZXhwIjoxNzUzNTkyNTY0fQ.fyBIfOaSxYRJrlXeKbp0Q78VX4giPrBwi9iA7HnXrlU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1Mzc2Mzg5NSwiZXhwIjoxNzUzOTM2Njk1fQ.YZA9QkCtbL-dF0FdoVoUKdnxWobaZqT9iw-32Uh2n_A
 
 {
-  "product": "687fe226a5fd9fd9efa23ade",
-  "variant_id": "687fe226a5fd9fd9efa23ae2",
-  "sku_code": "Starbucks-XANH-4U"
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d45943"
 }
 
 
 ### UPDATE ITEM
-PUT http://localhost:4000/api/cart/update
+PUT http://localhost:4000/api/cart/688a9e427b2e4321c83625a9
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxOTc2NCwiZXhwIjoxNzUzNTkyNTY0fQ.fyBIfOaSxYRJrlXeKbp0Q78VX4giPrBwi9iA7HnXrlU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzkzODE5MCwiZXhwIjoxNzU0MTEwOTkwfQ.evd5FRqQp6zeJFnZ324N2KALN2EIFbj10B0_j5c45ng
 
 {
-  "product": "687fe226a5fd9fd9efa23ade",
-  "variant_id": "687fe226a5fd9fd9efa23ae0",
-  "sku_code": "Starbucks-HỒNG-4U",
+  "product": "6886334c4400bc0b50d4593d",
+  "variant_id": "6886334c4400bc0b50d4593e",
+  "option_id": "6886334c4400bc0b50d45943",
   "delta": -1,
-  "priceAtTime": 1299999
+  "priceAtTime": 149000
 }
 
 ### CLEAR CART
-DELETE http://localhost:4000/api/cart/clear
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjBlZGZmZjNmLWEwNmYtNDczOS1iOThhLWFhZDg3ZTNhYjY4YSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzQxODI4MCwiZXhwIjoxNzUzNTkxMDgwfQ.wL_FKLD7dfh_HxlcEKJDwvUoJ4cwj1aw-bXNzmcsZhQ
+DELETE http://localhost:4000/api/cart
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzkzODE5MCwiZXhwIjoxNzU0MTEwOTkwfQ.evd5FRqQp6zeJFnZ324N2KALN2EIFbj10B0_j5c45ng
 
 ### Tạo sản phẩm Giày Cầu Lông Taro TR024-1
 POST http://localhost:4000/api/products
@@ -338,3 +334,113 @@ Content-Type: application/json
 }
 ###
 GET http://localhost:4000/api/products/get-stock?product_id=6886062b8af40557b4acaeb0&variant_id=6886062b8af40557b4acaeb6&option_id=6886062b8af40557b4acaeb1
+
+// test promotions
+###
+POST http://localhost:4000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@gmail.com",
+  "password": "123456789"
+}
+
+// get all promotions
+###
+GET http://localhost:4000/api/promotions
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQyMDYzNjAsImV4cCI6MTc1NDIwOTk2MH0.fBE-XIulXr2iDD0KoVtbf5PYAz-kKZhV7X1BZrjpIKI
+
+// get promotion by id
+###
+GET http://localhost:4000/api/promotions/688f10a407f3944a4f3b7c8f
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQxOTQyNjcsImV4cCI6MTc1NDE5Nzg2N30.6yz8lWYlrFN7A2gcRy1Gy1v6poI6B54nYl2QpgufJ4I
+
+###
+POST http://localhost:4000/api/promotions
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQyMDYzNjAsImV4cCI6MTc1NDIwOTk2MH0.fBE-XIulXr2iDD0KoVtbf5PYAz-kKZhV7X1BZrjpIKI
+
+{
+  "name": "Sale giữa tháng 8",
+  "description": "Giảm giá vài sản phẩm dòng Yonex",
+  "startDate": "2025-08-10T00:00:00.000Z",
+  "endDate": "2025-08-15T00:00:00.000Z"
+}
+
+// thêm mã giảm giá vào chiến dịch
+###
+PATCH http://localhost:4000/api/promotions/688f10a407f3944a4f3b7c8f/codes/add
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQyMDYzNjAsImV4cCI6MTc1NDIwOTk2MH0.fBE-XIulXr2iDD0KoVtbf5PYAz-kKZhV7X1BZrjpIKI
+
+{
+  "codes": [
+    {
+      "code": "SUM30",
+      "discountType": "percentage",
+      "discountValue": 30
+    },
+    {
+      "code": "SUM400K",
+      "discountType": "fixed",
+      "discountValue": 400000
+    }
+  ]
+}
+
+// thêm sản phẩm vào chiến dịch
+###
+PATCH http://localhost:4000/api/promotions/688f10a407f3944a4f3b7c8f/products/add-and-apply-code
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQyMDYzNjAsImV4cCI6MTc1NDIwOTk2MH0.fBE-XIulXr2iDD0KoVtbf5PYAz-kKZhV7X1BZrjpIKI
+
+{
+  "productDiscounts": [
+    {
+      "productId": ["688612262bb650195807b274", "688b20ce76de7d9563c70324"],
+      "code": "SUM30"
+    },
+    {
+      "productId": "6885fab0e9cfb5ca4ecc62d0",
+      "code": "SUM400K"
+    }
+  ]
+}
+
+### thêm sản phẩm 2
+PATCH http://localhost:4000/api/promotions/688f10a407f3944a4f3b7c8f/products/add-and-apply-code
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQyMTI2NjksImV4cCI6MTc1NDIxNjI2OX0.KZF2MYwOQZP0k7O3aE7w_IpKqNaF-wZ47XN3yfvC9I4
+
+{
+  "productDiscounts": [
+    {
+      "productId": "688a562ba24707d206d0afff",
+      "code": "SUM40"
+    }
+  ]
+}
+
+### Remove a product from promotion
+PATCH http://localhost:4000/api/promotions/688b5864c556a3cb72f32e32/products/remove-product
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQxODI2NTMsImV4cCI6MTc1NDE4NjI1M30.SBZLk_e-qFcGiifzGx3Z-OOBL3A3keev4vebEZvXoOQ
+
+{
+  "productId": "688612262bb650195807b274"
+}
+
+// quản lí active
+###
+PATCH http://localhost:4000/api/promotions/688908380ce0bf11277a50c2/toggle
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTM3MTY5NjQsImV4cCI6MTc1Mzg4OTc2NH0.2V2w7-ygysT3SaGDZR88J8_y427cnX48yAUL7RKdEBI
+
+// xóa promotion
+###
+DELETE http://localhost:4000/api/promotions/6887a39e0c88bf52316411bf
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQxODI2NTMsImV4cCI6MTc1NDE4NjI1M30.SBZLk_e-qFcGiifzGx3Z-OOBL3A3keev4vebEZvXoOQ
+
+
+

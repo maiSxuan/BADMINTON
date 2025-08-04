@@ -1,15 +1,21 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './AddPromotion.css';
+import { createPromotion } from '../../services/index';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AddPromotionPage = () => {
-  const [step,setStep] = useState(1);
+  // const [step, setStep] = useState(1);
   const [promotionData, setPromotionData] = useState({
     name: '',
     startDate: '',
     endDate: '',
     description: ''
   });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,32 +25,36 @@ const AddPromotionPage = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleCreatePromotion = async (e) => {
     e.preventDefault();
-    try{
-    const response = await fetch ('http://localhost:4000/api/promotions',{
-        method:"POST",
-        headers:{
-            "Content-type": "application/json",
-        },
-        body: JSON.stringify(promotionData)
-    });
-     if (!response.ok) {
-      throw new Error(`Lỗi khi gửi: ${response.status}`);
-    }
-    }catch (error) {
-        console.error("Lỗi",error)
-    }
+    setError('');
+    setLoading(true);
 
-    console.log("Dữ liệu chiến dịch đã gửi:", promotionData);
-    alert("Tạo thành công");
+    try {
+      await createPromotion(promotionData);
+      // setStep(2);
+      toast.success("Tạo chiến dịch thành công");
+
+      setPromotionData({
+        name: '',
+        startDate: '',
+        endDate: '',
+        description: ''
+      });
+
+    } catch (error) {
+      console.error("Lỗi khi tạo chiến dịch:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="add-promotion-container">
       <h1 className="page-title">Tạo Chiến Dịch Khuyến Mãi</h1>
 
-      <form className="promotion-form" onSubmit={handleSubmit}>
+      <form className="promotion-form" onSubmit={handleCreatePromotion}>
         
         <label htmlFor="promo-name" className="form-label">Tên chiến dịch</label>
         <input
@@ -80,22 +90,28 @@ const AddPromotionPage = () => {
         />
 
         <label htmlFor="promo-description" className="form-label">Mô tả chiến dịch</label>
-        <textarea
+        <input
           id="promo-description"
           name="description"
-          className="form-textarea"
+          className="form-input"
           rows="8"
           value={promotionData.description}
           onChange={handleChange}
           required
-        ></textarea>
+        />
+
+        {loading && <p className="promo-form-info">Đang gửi dữ liệu...</p>}
+        {error && <p className="promo-form-error">{error}</p>}
       
         <div></div> 
         <div className="form-actions">
-          <button type="submit" className="submit-btn">Tạo Chiến Dịch</button>
+          <button type="submit" className="submit-btn" disabled={loading}>
+            {loading ? 'Đang xử lý...' : 'Tạo Chiến Dịch'}
+          </button>
         </div>
 
       </form>
+      <ToastContainer position='top-right' autoClose={3000} />
     </div>
   );
 };

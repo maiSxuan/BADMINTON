@@ -26,13 +26,14 @@ import RevenuePage from "../pages/admin/RevenuePage";
 import BalancePage from "../pages/admin/BalancePage";
 import PromotionListPage from "../pages/admin/PromotionList";
 import FranchisePolicy from "../pages/customer/FranchisePolicy";
-import OrderManagement from "../pages/admin/OrderManagement";
+import AllOrdersPage from "../pages/admin/AllOrdersPage";
+import ReturnReundOrdersPage from "../pages/admin/ReturnRefundOrdersPage";
 import CancelledOrders from "../pages/admin/CancelledOrdersPage";
 import AllProducts from "../pages/admin/AllProducts";
 import SaleOffPage from "../pages/customer/Saleoff";
 import ReturnRefundForm from "../pages/customer/RefundPage";
-import ForgotPasswordStep1 from "../pages/customer/ForgotPassword1";
-import ForgotPasswordStep2 from "../pages/customer/ForgotPassword2";
+import ForgotPasswordStep1 from "../pages/customer/ForgotPassword";
+import ForgotPasswordStep2 from "../pages/customer/RecoverPassword";
 import Login from "../pages/customer/Login";
 import Registration from "../pages/customer/Registration";
 import ProfilePage from "../pages/customer/ProfilePage";
@@ -170,16 +171,7 @@ const publicRoutes = [
 
   // --- Admin Routes với AdminLayout ---
   // Trang admin mặc định (dashboard)
-  
-  
-
-  //{path: "/test", component: TestUploadPage},
-  //  404 Not Found
-  // { path: '*', component: NotFoundPage, layout: DefaultLayout }
-];
-
-const privateRoutes = [
-  { path: "/admin", component: AdminHome, layout: AdminLayout, allowedRoles: ["ADMIN"] },
+  { path: "/admin", component: AdminHome, layout: AdminLayout, allowedRoles: ["ADMIN"]  },
     
   // Quản lý người dùng
   { path: "/admin/user-list", component: UserListPage, layout: AdminLayout, allowedRoles: ["ADMIN"] },
@@ -187,17 +179,15 @@ const privateRoutes = [
     path: "/admin/lock-account",
     component: LockAccountPage,
     layout: AdminLayout,
-    allowedRoles: ["ADMIN"]
   },
   {
     path: "/admin/reset-password",
     component: ResetPasswordPage,
     layout: AdminLayout,
-    allowedRoles: ["ADMIN"]
   },
 
   // Quản lý đơn hàng
-  { path: "/admin/all-orders", component: OrderManagement, allowedRoles: ["ADMIN"], layout: (props) => (
+  { path: "/admin/all-orders", component: AllOrdersPage, allowedRoles: ["ADMIN"], layout: (props) => (
   <AdminLayout
     {...props}
     breadcrumbItems={[
@@ -223,7 +213,20 @@ const privateRoutes = [
   />
   )
   },
-
+ {
+    path: "/admin/return-orders",
+    component: ReturnReundOrdersPage,
+    layout: (props) => (
+  <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Quản lý đơn hàng", path: "/admin" },
+      { label: "Trả hàng/Hoàn tiền", path: "/admin/return-orders" },
+    ]}
+  />
+  )
+  },
   // Quản lý sản phẩm
   {
     path: "/admin/all-products",
@@ -240,7 +243,16 @@ const privateRoutes = [
   />
   )
   },
-  { path: "/admin/add-product", component: AddProducts, allowedRoles: ["ADMIN"], layout: (props) => (
+  {path: "/admin/edit-product/:slug", component: AddProducts, layout:   (props) => (
+  <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Quản lý sản phẩm ", path: "/admin" },
+      { label: "Sửa đơn hàng", path: "/admin/edit-product/:slug" },
+    ]}
+  />)},
+  { path: "/admin/add-product", component: AddProducts, layout: (props) => (
   <AdminLayout
     {...props}
     breadcrumbItems={[
@@ -256,13 +268,13 @@ const privateRoutes = [
     path: "/admin/chat-management",
     component: ChatManagementPage,
     layout: AdminLayout,
-    allowedRoles: ["ADMIN"]
+     allowedRoles: ["ADMIN"]
   },
   {
     path: "/admin/review-management",
     component: ReviewManagementPage,
     layout: AdminLayout,
-    allowedRoles: ["ADMIN"]
+     allowedRoles: ["ADMIN"]
   },
 
   // Tài chính
@@ -288,8 +300,15 @@ const privateRoutes = [
   ) },
 
   //Khuyến Mãi
-  { path: "/admin/add-promotion", component: AddPromotionPage, layout: AdminLayout, allowedRoles: ["ADMIN"] },
-  { path: "/admin/manage-promotion", component: PromotionListPage, layout: AdminLayout, allowedRoles: ["ADMIN"] },
+  { path: "/admin/add-promotion", component: AddPromotionPage, layout: AdminLayout,allowedRoles: ["ADMIN"] },
+  { path: "/admin/manage-promotion", component: PromotionListPage, layout: AdminLayout,allowedRoles: ["ADMIN"] },
+  
+
+  // {path: "/test", component: TestUploadPage},
+  //  404 Not Found
+  // { path: '*', component: NotFoundPage, layout: DefaultLayout }
 ];
+
+const privateRoutes = [];
 
 export { publicRoutes, privateRoutes };

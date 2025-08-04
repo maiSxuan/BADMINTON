@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
@@ -52,13 +54,13 @@ exports.register = async (req, res) => {
         userID: newUser.userID,
         email: newUser.email,
         phone: newUser.phone,
-        fullName: newUser.name,
+        name: newUser.name,
         user_type: newUser.user_type,
       },
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Lỗi máy chủ, thử lại sau." });
+    console.error("REGISTER ERROR:", err);  // In lỗi chi tiết
+    res.status(500).json({ message: "Lỗi máy chủ, thử lại sau.", error: err.message });
   }
 };
 
@@ -102,3 +104,77 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Đăng nhập thất bại", error: err.message });
   }
 };
+
+const sendEmail = async (to, subject, text) => {
+  try {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      throw new Error("EMAIL_USER hoặc EMAIL_PASS chưa được cấu hình");
+    }
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"Support" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      text,
+    });
+  } catch (err) {
+    console.error("Send email error:", err.message);
+    throw new Error("Không thể gửi email");
+  }
+};
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "Email không tồn tại" });
+
+    console.log("EMAIL_USER:", process.env.EMAIL_USER);
+
+    // Tạo mã 6 số và lưu hashed vào DB
+    const resetToken = user.createResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
+
+    const message = `Mã xác nhận đặt lại mật khẩu của bạn là: ${resetToken}. Mã có hiệu lực trong 1 phút`;
+    await sendEmail(user.email, "Mã xác nhận đặt lại mật khẩu", message);
+
+    res.status(200).json({ message: "Mã xác nhận đã được gửi qua email" });
+  } catch (err) {
+    console.error("FORGOT PASSWORD ERROR:", err);
+    res.status(500).json({ message: "Lỗi gửi email", error: err.message });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const { email, token, newPassword } = req.body;
+  try {
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    const user = await User.findOne({
+      email,
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) return res.status(400).json({ message: "Mã không hợp lệ hoặc đã hết hạn" });
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Đặt lại mật khẩu thành công" });
+  } catch (err) {
+    console.error("RESET PASSWORD ERROR:", err);
+    res.status(500).json({ message: "Lỗi đặt lại mật khẩu" });
+  }
+};
+

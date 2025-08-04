@@ -44,6 +44,17 @@ const ProductSchema = new Schema({
             },
             message: 'Sản phẩm phải có ít nhất một phân loại hàng.'
         }
+    },
+    sale: { type: Boolean, default: false },
+    sale_price: { type: Number, default: 0 },
+    promotion: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Promotion',
+        default: null,
+    },
+    appliedCode: {
+        type: String,
+        default: null
     }
 }, { timestamps: true });
 
