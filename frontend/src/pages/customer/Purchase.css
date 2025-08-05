@@ -685,3 +685,11 @@ body {
     font-size: 0.9rem;
   }
 }
+.shipping-form-control{
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 100%;
+    width: 100%;
+}
