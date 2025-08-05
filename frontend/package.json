@@ -23,6 +23,7 @@
     "react-toastify": "^11.0.5",
     "recharts": "^3.0.2",
     "slick-carousel": "^1.8.1",
+    "vietnam-provinces": "^0.0.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

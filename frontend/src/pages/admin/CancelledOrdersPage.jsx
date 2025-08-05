@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Search, X, Package, Truck, MapPin, Phone, Mail } from "lucide-react"
 import "./OrderManagement.css"
+import { updateOrderStatus } from "../../services/orderService"
 
 const CancelledOrderPage = () => {
   const [orders, setOrders] = useState([])
@@ -48,28 +49,6 @@ const CancelledOrderPage = () => {
     }
   }
 
-  const updateOrderStatus = async (orderId, newStatus) => {
-    try {
-      const response = await fetch(`http://localhost:4000/api/order/${orderId}/status`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      })
-
-      const data = await response.json()
-      if (data.success) {
-        fetchOrders()
-        // Update selected order if it's currently being viewed
-        if (selectedOrder && selectedOrder._id === orderId) {
-          setSelectedOrder({ ...selectedOrder, status: newStatus })
-        }
-      }
-    } catch (error) {
-      console.error("Error updating order status:", error)
-    }
-  }
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN", {

@@ -4,10 +4,71 @@ import { useState, useEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import "./Purchase.css"
 import { createOrder } from "../../services/orderService"
+import { removeItemFromCart } from "../../services/cartService"
+import { provinces, districts, wards } from 'vietnam-provinces';
+import { updateOrderStatus } from "../../services/orderService"
 const PurchasePage = () => {
+  const navigate = useNavigate()
   const location = useLocation()
   const selectedItems = location.state?.selectedItems || [];
-  const navigate = useNavigate()
+  const [provinceList, setProvinceList] = useState([]);
+  const [districtList, setDistrictList] = useState([]);
+  const [wardList, setWardList] = useState([]);
+  const [selectedProvince, setSelectedProvince] = useState('');
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [selectedWard, setSelectedWard] = useState('');
+  
+  const handleAcceptCancellation = async (orderId) => {
+    if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
+      try {
+        await updateOrderStatus(orderId, "Đã hủy")
+        alert("Đã hủy đơn hàng thành công!")
+      } catch (error) {
+        alert("Có lỗi xảy ra khi hủy đơn hàng!")
+      }
+    }
+  }
+
+  useEffect(() => {
+    setProvinceList(provinces);
+  }, []);
+
+  useEffect(() => {
+    if (selectedProvince) {
+      const filteredDistricts = districts.filter(
+        (d) => d.province_code === selectedProvince
+      );
+      setDistrictList(filteredDistricts);
+      setSelectedDistrict('');
+      setWardList([]);
+      setSelectedWard('');
+    }
+  }, [selectedProvince]);
+
+  useEffect(() => {
+    if (selectedDistrict) {
+      const filteredWards = wards.filter(
+        (w) => w.district_code === selectedDistrict
+      );
+      setWardList(filteredWards);
+      setSelectedWard('');
+    }
+  }, [selectedDistrict]);
+
+  useEffect(() => {
+    const selectedProvinceName = provinceList.find(p => p.code === selectedProvince)?.name || '';
+    setShippingInfo(prev => ({ ...prev, city: selectedProvinceName }));
+  }, [selectedProvince]);
+
+  useEffect(() => {
+    const selectedDistrictName = districtList.find(d => d.code === selectedDistrict)?.name || '';
+    setShippingInfo(prev => ({ ...prev, district: selectedDistrictName }));
+  }, [selectedDistrict]);
+
+  useEffect(() => {
+    const selectedWardName = wardList.find(w => w.code === selectedWard)?.name || '';
+    setShippingInfo(prev => ({ ...prev, ward: selectedWardName }));
+  }, [selectedWard]);
 
   // Lấy danh sách sản phẩm từ Cart
   const [cartItems, setCartItems] = useState([])
@@ -32,37 +93,11 @@ const PurchasePage = () => {
   const [showToast, setShowToast] = useState(false)
   const [toastMessage, setToastMessage] = useState("")
 
-  // Mock data cho địa chỉ
-  const [cities] = useState([
-    { code: "79", name: "TP. Hồ Chí Minh" },
-    { code: "01", name: "Hà Nội" },
-    { code: "48", name: "Đà Nẵng" },
-  ])
-  const [districts] = useState([
-    { code: "760", name: "Quận 1" },
-    { code: "761", name: "Quận 2" },
-    { code: "762", name: "Quận 3" },
-    { code: "763", name: "Quận 4" },
-    { code: "764", name: "Quận 5" },
-    { code: "765", name: "Quận 7" },
-    { code: "766", name: "Quận 8" },
-  ])
-  const [wards] = useState([
-    { code: "26734", name: "Phường 1" },
-    { code: "26735", name: "Phường 2" },
-    { code: "26736", name: "Phường 3" },
-    { code: "26737", name: "Phường 4" },
-  ])
-
   // Khởi tạo dữ liệu từ Cart
-useEffect(() => {
-//   if (location.state && location.state.selectedItems) {
-//     setCartItems(location.state.selectedItems)
-//   } else {
-     setCartItems(selectedItems)
-//   }
-}, [location.state])
-
+  useEffect(() => {
+      setCartItems(selectedItems)
+  }, [location.state])
+  
   const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
   // Toast notification
@@ -136,6 +171,17 @@ useEffect(() => {
       };
 
       const data = await createOrder(orderData);
+      for (const item of selectedItems) {
+        try {
+          await removeItemFromCart(item.variant_id, {
+            product: item.product_id,
+            variant_id: item.variant_id,
+            option_id: item.option_id
+          })
+        } catch (err) {
+          console.error("Lỗi xóa item khỏi giỏ:", err.message);
+        }
+      }
 
       setOrderId(data.orderId);
       setCurrentStep("tracking");
@@ -148,9 +194,6 @@ useEffect(() => {
       setIsLoading(false);
     }
   };
-
-
-
 
   const copyOrderId = () => {
     navigator.clipboard.writeText(orderId)
@@ -267,7 +310,6 @@ useEffect(() => {
                       />
                     </div>
                   </div>
-
                   <div className="form-group">
                     <label htmlFor="email">Email *</label>
                     <input
@@ -278,54 +320,57 @@ useEffect(() => {
                       placeholder="Nhập email"
                     />
                   </div>
+                  <div className="form-group">
+            {/* Province */}
+              <label htmlFor="province">Tỉnh/Thành phố</label>
+              <select
+                id="province"
+                className="form-control"
+                value={selectedProvince}
+                onChange={(e) => setSelectedProvince(e.target.value)}
+              >
+                <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                {provinceList.map((city) => (
+                  <option key={city.code} value={city.code}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
 
-                  <div className="form-row address-row">
-                    <div className="form-group">
-                      <label htmlFor="city">Tỉnh/Thành phố *</label>
-                      <select
-                        id="city"
-                        value={shippingInfo.city}
-                        onChange={(e) => handleInputChange("city", e.target.value)}
-                      >
-                        <option value="">Chọn tỉnh/thành phố</option>
-                        {cities.map((city) => (
-                          <option key={city.code} value={city.name}>
-                            {city.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="district">Quận/Huyện *</label>
-                      <select
-                        id="district"
-                        value={shippingInfo.district}
-                        onChange={(e) => handleInputChange("district", e.target.value)}
-                      >
-                        <option value="">Chọn quận/huyện</option>
-                        {districts.map((district) => (
-                          <option key={district.code} value={district.name}>
-                            {district.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="ward">Phường/Xã *</label>
-                      <select
-                        id="ward"
-                        value={shippingInfo.ward}
-                        onChange={(e) => handleInputChange("ward", e.target.value)}
-                      >
-                        <option value="">Chọn phường/xã</option>
-                        {wards.map((ward) => (
-                          <option key={ward.code} value={ward.name}>
-                            {ward.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
+                {/* District */}
+                <label htmlFor="district">Quận/Huyện</label>
+                <select
+                  id="district"
+                  className="form-control"
+                  value={selectedDistrict}
+                  onChange={(e) => setSelectedDistrict(e.target.value)}
+                  disabled={!selectedProvince}
+                >
+                  <option value="">-- Chọn Quận/Huyện --</option>
+                  {districtList.map((district) => (
+                    <option key={district.code} value={district.code}>
+                      {district.name}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Ward */}
+                <label htmlFor="ward">Phường/Xã</label>
+                <select
+                  id="ward"
+                  className="form-control"
+                  value={selectedWard}
+                  onChange={(e) => setSelectedWard(e.target.value)}
+                  disabled={!selectedDistrict}
+                >
+                  <option value="">-- Chọn Phường/Xã --</option>
+                  {wardList.map((ward) => (
+                    <option key={ward.code} value={ward.code}>
+                      {ward.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
                   <div className="form-group">
                     <label htmlFor="houseNumber">Số nhà, tên đường *</label>
@@ -575,7 +620,7 @@ useEffect(() => {
 
                 {/* Nút hành động */}
                 <div className="modal-actions">
-                  <button className="btn btn-outline">Hủy đơn hàng</button>
+                  <button className="btn btn-outline" onClick={handleAcceptCancellation(orderId)}>Hủy đơn hàng</button>
                   <button className="btn btn-primary" onClick={() => navigate("/cart")}>
                     Quay lại giỏ hàng
                   </button>
