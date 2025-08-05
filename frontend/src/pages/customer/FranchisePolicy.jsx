@@ -103,12 +103,12 @@ const FranchisePage = () => {
                 <ul>
                     <li>
                         <img src={phone} alt="Phone" className="icon-contact"/>
-                        Hotline: 123456789
+                        Hotline: 0948245045
                     </li> 
                     
                     <li>
                         <img src={email} alt="Email" className="icon-contact"/>
-                        Email: hahaha@gmail.com
+                        Email: scdse06@gmail.com
                     </li> 
                     
                     <li>

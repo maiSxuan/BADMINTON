@@ -71,7 +71,7 @@ const publicRoutes = [
     layout: (props) => (
       <DefaultLayout
         {...props}
-        showSidebar={false}
+        // showSidebar={false}
         breadcrumbItems={[
           { label: "Trang chủ", path: "/" },
           { label: "Sản phẩm" },
@@ -86,7 +86,7 @@ const publicRoutes = [
     layout: (props) => (
       <DefaultLayout
         {...props}
-        showSidebar={false}
+        // showSidebar={false}
         breadcrumbItems={[
           { label: "Trang chủ", path: "/" },
           { label: "Sale off" },
@@ -101,7 +101,7 @@ const publicRoutes = [
     layout: (props) => (
       <DefaultLayout
         {...props}
-        showSidebar={true}
+        // showSidebar={true}
         breadcrumbItems={[
           { label: "Trang chủ", path: "/" },
           { label: "Chính sách nhượng quyền" },
@@ -116,7 +116,7 @@ const publicRoutes = [
     layout: (props) => (
       <DefaultLayout
         {...props}
-        showSidebar={true}
+        // showSidebar={true}
         breadcrumbItems={[
           { label: "Trang chủ", path: "/" },
           { label: "Giới thiệu" },
@@ -130,7 +130,7 @@ const publicRoutes = [
     layout: (props) => (
       <DefaultLayout
         {...props}
-        showSidebar={false}
+        // showSidebar={false}
         breadcrumbItems={[
           { label: "Trang chủ", path: "/" },
           { label: "Liên hệ" },
@@ -150,7 +150,7 @@ const publicRoutes = [
     layout: (props) => (
       <DefaultLayout
         {...props}
-        showSidebar={false}
+        // showSidebar={false}
         breadcrumbItems={[
           { label: "Trang chủ", path: "/" },
           { label: "Tra cứu", path: "/" }, //sua path

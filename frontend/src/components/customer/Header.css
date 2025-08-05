@@ -109,10 +109,10 @@
   font-size: 14px; 
   text-transform: uppercase;
 }
-.navbar a:hover { color: crimson; }
-.navbar a.active { color: crimson; border-bottom: 2px solid crimson; }
+.navbar a:hover { color: #ec4899; }
+.navbar a.active { color: #ec4899; border-bottom: 2px solid #ec4899; }
 strong{
-    color: crimson;
+    color: #ec4899;
 }
 
 /* .user-dropdown {
@@ -222,14 +222,14 @@ strong{
 }
 
 .navbar a:hover {
-  color: crimson;
+  color: #ec4899;
 }
 
 .navbar a.active {
-  color: crimson;
-  border-bottom: 2px solid crimson;
+  color: #ec4899;
+  border-bottom: 2px solid #ec4899;
 }
 
 strong {
-  color: crimson;
+  color: #ec4899;
 } */

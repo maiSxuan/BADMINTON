@@ -22,11 +22,11 @@
 import React from "react";
 import Header from "../components/customer/Header";
 import Footer from "../components/customer/Footer";
-import { Sidebar } from "../components/customer/Sidebar";
+// import { Sidebar } from "../components/customer/Sidebar";
 import Breadcrumb from "../components/common/breadcrumb";
 import "./DefaultLayout.css";
 
-const DefaultLayout = ({ children, showSidebar = false, breadcrumbItems = [] }) => {
+const DefaultLayout = ({ children, breadcrumbItems = [] }) => {
   return (
     <>
       <Header />
@@ -39,17 +39,15 @@ const DefaultLayout = ({ children, showSidebar = false, breadcrumbItems = [] }) 
       )}
 
       <div className="default-layout">
-        {showSidebar && (
+        {/* {showSidebar && (
           <aside className="default-sidebar">
             <Sidebar />
           </aside>
-        )}
+        )} */}
 
         <main
           className={
-            showSidebar
-              ? "default-main-content with-sidebar"
-              : "default-main-content"
+            "default-main-content"
           }
         >
           {children}
