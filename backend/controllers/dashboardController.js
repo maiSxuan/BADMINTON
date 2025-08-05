@@ -87,29 +87,47 @@ const getTopSellingProducts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 5;
 
     const topProducts = await Order.aggregate([
+      // Giai đoạn 1: Chỉ lấy các đơn hàng đã 'Hoàn thành'
       { $match: { status: 'Hoàn thành' } },
+
+      // Giai đoạn 2: Tách mỗi sản phẩm trong mảng 'items' ra thành một document riêng
       { $unwind: '$items' },
+
+      // Giai đoạn 3: Nhóm các sản phẩm giống nhau lại và tính toán
       {
-        // Nhóm theo SKU để có thống kê chính xác nhất
         $group: {
           _id: { 
             sku: '$items.sku_code',
-            name: '$items.variant_name',
+            name: '$items.variant_name', // hoặc '$items.name' tùy bạn muốn hiển thị tên gì
             thumbnail: '$items.thumbnail_url'
           },
-          totalQuantitySold: { $sum: '$items.quantity' }
+          totalQuantitySold: { $sum: '$items.quantity' },
+          
+          // --- FIX QUAN TRỌNG NHẤT ---
+          // Tính tổng doanh thu bằng cách nhân số lượng với giá *đã có sẵn trong item*
+          totalRevenue: { 
+            $sum: { 
+              $multiply: [ '$items.quantity', '$items.price' ] 
+            } 
+          }
         }
       },
+
+      // Giai đoạn 4: Sắp xếp theo số lượng bán được nhiều nhất
       { $sort: { totalQuantitySold: -1 } },
+
+      // Giai đoạn 5: Giới hạn số lượng kết quả
       { $limit: limit },
+
+      // Giai đoạn 6: Định dạng lại output cho đẹp
       {
-        // Định dạng lại output
         $project: {
           _id: 0,
           sku: '$_id.sku',
           name: '$_id.name',
           thumbnail: '$_id.thumbnail',
-          totalQuantitySold: 1
+          totalQuantitySold: 1,
+          totalRevenue: 1
         }
       }
     ]);
@@ -118,7 +136,11 @@ const getTopSellingProducts = async (req, res) => {
 
   } catch (error) {
     console.error('Lỗi khi thống kê sản phẩm bán chạy:', error);
-    res.status(500).json({ success: false, message: 'Lỗi server khi thống kê sản phẩm bán chạy' });
+    res.status(500).json({ 
+        success: false, 
+        message: 'Lỗi server khi thống kê sản phẩm bán chạy',
+        error: error.message
+    });
   }
 };
 
