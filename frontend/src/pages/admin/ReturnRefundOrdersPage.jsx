@@ -15,15 +15,8 @@ const ReturnReundOrdersPage = () => {
 
 
   const statusColors = {
-    "Chờ xác nhận": { backgroundColor: "#fef3c7", color: "#92400e" },
-    "Chờ thanh toán": { backgroundColor: "#fed7aa", color: "#c2410c" },
-    "Chờ lấy": { backgroundColor: "#dbeafe", color: "#1d4ed8" },
-    "Đang vận chuyển": { backgroundColor: "#e9d5ff", color: "#7c3aed" },
-    "Đang giao": { backgroundColor: "#c7d2fe", color: "#4338ca" },
-    "Đã giao": { backgroundColor: "#dcfce7", color: "#166534" },
-    "Hoàn thành": { backgroundColor: "#dcfce7", color: "#166534" },
-    "Đã hủy": { backgroundColor: "#fecaca", color: "#dc2626" },
-    "Trả hàng/hoàn tiền": { backgroundColor: "#f3f4f6", color: "#374151" },
+    "Yêu cầu trả hàng/hoàn tiền": { backgroundColor: "#dbeafe", color: "#1d4ed8" },
+    "Hoàn tất trả hàng/hoàn tiền": { backgroundColor: "#f3f4f6", color: "#374151" }
   }
 
   // Fetch orders from backend

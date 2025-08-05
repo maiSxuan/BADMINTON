@@ -152,7 +152,7 @@ const AllProducts = () => {
                                         {product.stock > 0 && product.stock < 10 && (<span className="low-stock-warning">Sắp hết</span>)}
                                     </td>
                                     <td>
-                                        <span className={`status-badge ${product.is_published ? 'published' : 'draft'}`}>
+                                        <span className={`status-cell ${product.is_published ? 'published' : 'draft'}`}>
                                             {product.is_published ? 'Đang bán' : 'Bị ẩn'}
                                         </span>
                                     </td>

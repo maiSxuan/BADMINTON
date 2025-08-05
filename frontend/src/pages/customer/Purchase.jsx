@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import "./Purchase.css"
 import { createOrder } from "../../services/orderService"
 import { removeItemFromCart } from "../../services/cartService"
-import { updateOrderStatus } from "../../services/orderService"
+//import { updateOrderStatus } from "../../services/orderService"
 import axios from "axios";
 const PurchasePage = () => {
   const navigate = useNavigate()
@@ -81,7 +81,28 @@ const PurchasePage = () => {
       }));
     }
   };
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      const response = await fetch(`http://localhost:4000/api/order/${orderId}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      })
 
+      const data = await response.json()
+      // if (data.success) {
+      //   fetchOrders()
+      //   // Update selected order if it's currently being viewed
+      //   if (selectedOrder && selectedOrder._id === orderId) {
+      //     setSelectedOrder({ ...selectedOrder, status: newStatus })
+      //   }
+      // }
+    } catch (error) {
+      console.error("Error updating order status:", error)
+    }
+  }
   const handleAcceptCancellation = async (orderId) => {
     if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
       try {
@@ -159,9 +180,9 @@ const PurchasePage = () => {
         userId: userId,
         shippingInfo: shippingInfo,
         items: selectedItems.map(item => ({
-          product_id: item.product_id,
-          variant_id: item.variant_id,
-          option_id: item.option_id,
+          product_id: item.productId,
+          variant_id: item.variantId,
+          option_id: item.optionId,
           quantity: item.quantity,
           priceAtTime: item.price
           })),
@@ -173,10 +194,10 @@ const PurchasePage = () => {
       const data = await createOrder(orderData);
       for (const item of selectedItems) {
         try {
-          await removeItemFromCart(item.variant_id, {
-            product: item.product_id,
-            variant_id: item.variant_id,
-            option_id: item.option_id
+          await removeItemFromCart(item.variantId, {
+            product: item.productId,
+            variant_id: item.variantId,
+            option_id: item.optionId
           })
         } catch (err) {
           console.error("Lỗi xóa item khỏi giỏ:", err.message);
@@ -241,13 +262,12 @@ const PurchasePage = () => {
               {cartItems.map((item) => (
                 <div key={item.id} className="product-item">
                   <div className="item-image-container">
-                    <img src={item.imageUrl || "/placeholder.svg"} alt={item.name} className="item-image" />
+                    <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
                   </div>
-                  <div className="product-details">
+                  <div className="purchase-product-details">
                     <h3>{item.name}</h3>
-                    <p className="variant">{item.variant}</p>
-                    <p className="quantity">Số lượng: {item.quantity}</p>
-                    <p className="unit-price">Đơn giá: {item.price.toLocaleString("vi-VN")}đ</p>
+                    <p className="variant"> {item.color} - {item.size}</p>
+                    <p className="price">{item.price.toLocaleString("vi-VN")}đ x {item.quantity}</p>
                   </div>
                   <div className="product-price">
                     <p>{(item.price * item.quantity).toLocaleString("vi-VN")}đ</p>
@@ -454,14 +474,16 @@ const PurchasePage = () => {
                     {cartItems.map((item) => (
                       <div key={item.id} className="product-item small">
                         <div className="item-image-container">
-                            <img src={item.imageUrl || "/placeholder.svg"} alt={item.name} className="item-image" />
+                            <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
                         </div>
-                        <div className="product-details">
-                          <h4>{item.name}</h4>
-                          <p className="variant">{item.variant}</p>
-                          <p className="quantity">x{item.quantity}</p>
+                        <div className="purchase-product-details">
+                          <h3>{item.name}</h3>
+                          <p className="variant"> {item.color} - {item.size}</p>
+                          <p className="price">{item.price.toLocaleString("vi-VN")}đ x {item.quantity}</p>
                         </div>
-                        <p className="product-price">{(item.price * item.quantity).toLocaleString("vi-VN")}đ</p>
+                        <div className="product-price">
+                          <p>{(item.price * item.quantity).toLocaleString("vi-VN")}đ</p>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -494,9 +516,9 @@ const PurchasePage = () => {
                   <h3>Phương thức nhận hàng</h3>
                   <div className="delivery-options">
                     {[
-                      { value: "nhanh", label: "Nhanh: Đảm bảo nhận hàng 3-5 ngày" },
-                      { value: "sieu-toc", label: "Siêu tốc: Nhận hàng ngay ngày mai" },
-                      { value: "tai-cua-hang", label: "Đến lấy tại cửa hàng" },
+                      { value: "nhanh", label: "Nhanh: Đảm bảo nhận hàng 3-5 ngày - 30.000đ" },
+                      { value: "sieu-toc", label: "Siêu tốc: Nhận hàng ngay ngày mai - 100.000đ" },
+                      { value: "tai-cua-hang", label: "Đến lấy tại cửa hàng - Freeship" },
                     ].map((method) => (
                       <div
                         key={method.value}
@@ -588,21 +610,20 @@ const PurchasePage = () => {
                 {/* Sản phẩm */}
                 <div className="product-list">
                     {cartItems.map((item) => (
-                        <div key={item.id} className="product-item small">
+                        <div key={item._id} className="product-item small">
                         <div className="item-image-container">
-                            <img src={item.imageUrl || "/placeholder.svg"} alt={item.name} className="item-image" />
+                            <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
                         </div>
 
-                        <div className="product-info">
-                            <div className="product-details">
-                            <h4>{item.name}</h4>
-                            <p className="variant">{item.variant}</p>
-                            <p className="quantity">x{item.quantity}</p>
+                            <div className="purchase-product-details">
+                            <h3>{item.name}</h3>
+                            <p className="variant"> {item.color} - {item.size}</p>
+                            <p className="price">{item.price.toLocaleString("vi-VN")}đ x {item.quantity}</p>
                             </div>
                             <p className="product-price">
                             {(item.price * item.quantity).toLocaleString("vi-VN")}đ
                             </p>
-                        </div>
+                        
                         </div>
                     ))}
                 </div>
@@ -618,7 +639,7 @@ const PurchasePage = () => {
 
                 {/* Nút hành động */}
                 <div className="modal-actions">
-                  <button className="btn btn-outline" onClick={handleAcceptCancellation(orderId)}>Hủy đơn hàng</button>
+                  <button className="btn btn-outline" >Hủy đơn hàng</button>
                   <button className="btn btn-primary" onClick={() => navigate("/cart")}>
                     Quay lại giỏ hàng
                   </button>

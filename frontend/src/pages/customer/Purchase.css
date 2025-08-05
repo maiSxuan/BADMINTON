@@ -38,7 +38,7 @@ body {
 
 .header p {
   color: #6b7280;
-  font-size: 1rem;
+  font-size: 3rem;
 }
 
 /* Card styles */
@@ -147,8 +147,8 @@ body {
 }
 
 .item-image-container {
-  width: 60px;
-  height: 60px;
+  width: 90px;
+  height: 90px;
   flex-shrink: 0;
   border-radius: 4px;
   background-color: white;
@@ -173,12 +173,15 @@ body {
   gap: 1rem;
 }
 
-.product-details {
+.purchase-product-details {
   flex-grow: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.product-details h4 {
+.purchase-product-details h4 {
   font-size: 1.1rem;
   font-weight: 600;
   color: #000;
@@ -186,7 +189,7 @@ body {
   white-space: normal;
 }
 
-.product-details .variant,
+.purchase-product-details .variant,
 .product-details .quantity {
   font-size: 0.9rem;
   color: #4a4a4a;
@@ -201,7 +204,7 @@ body {
   text-align: right;
   white-space: nowrap;
   flex-shrink: 0;
-  margin-left: 50%;
+  margin-right: 10%;
 }
 
 

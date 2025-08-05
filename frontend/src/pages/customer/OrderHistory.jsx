@@ -166,7 +166,9 @@ const handleConfirmReceived = async (order) => {
     console.log("Viết đánh giá cho đơn hàng:", order._id)
     alert("Chuyển đến trang đánh giá sản phẩm")
   }
-
+  const calculateOrderTotal = (items) => {
+    return items.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
   const handleReasonSubmit = async (reason) => {
     if (!currentOrderForAction || !dialogType) return
 
@@ -235,28 +237,26 @@ const handleConfirmReceived = async (order) => {
               {/* Header đơn hàng */}
               <div className="order-header">
                 <div className="order-info">
-                  <span className="order-id">Mã đơn hàng: #{order._id.slice(-8)}</span>
+                  <span className="order-id">Mã đơn hàng: {order._id.slice(-8)}</span>
                   <span className="order-date">Ngày đặt: {formatDate(order.created_at)}</span>
                 </div>
                 <span className={`order-status ${getStatusClass(order.status)}`}>{order.status}</span>
               </div>
               {/* Danh sách sản phẩm */}
-              <div className="order-items">
+              <div className="history-order-items">
                 {order.items.map((item, index) => (
-                  <div key={index} className="order-item">
+                  <div key={index} className="history-order-item">
                     <img
                       src={item.thumbnail_url || item.image || "/placeholder.svg?height=80&width=80&text=Product"}
                       alt={item.name}
                       className="item-image"
-                      width={80}
-                      height={80}
                     />
                     <div className="item-details">
                       <h3 className="item-name">{item.name}</h3>
                       <p className="item-variant">Phân loại hàng: {item.variant_name || item.sku_code || "Mặc định"}</p>
                       <div className="item-price-info">
                         <span className="item-quantity">x{item.quantity}</span>
-                        <span className="item-price">{formatPrice(item.price)}</span>
+                        <span className="item-price">{formatPrice(calculateOrderTotal(order.items))}</span>
                       </div>
                     </div>
                   </div>
@@ -266,7 +266,7 @@ const handleConfirmReceived = async (order) => {
               <div className="order-footer">
                 <div className="total-amount">
                   <span className="total-label">Thành tiền:</span>
-                  <span className="total-price">{formatPrice(order.total_amount)}</span>
+                  <span className="total-price">{formatPrice(calculateOrderTotal(order.items))}</span>
                 </div>
                 <div className="order-actions">
                   {order.status === "Chờ xác nhận" && (
@@ -328,6 +328,9 @@ const handleConfirmReceived = async (order) => {
 }
 
 const OrderDetail = ({ order, onBack }) => {
+  const calculateOrderTotal = (items) => {
+    return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  };
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN").format(price) + "đ"
   }
@@ -374,7 +377,7 @@ const OrderDetail = ({ order, onBack }) => {
               <h3 className="section-title">Thông tin đơn hàng</h3>
               <div className="info-list">
                 <p>
-                  <span className="info-label">Mã đơn hàng:</span> #{order._id.slice(-8)}
+                  <span className="info-label">Mã đơn hàng:</span> {order._id.slice(-8)}
                 </p>
                 <p>
                   <span className="info-label">Ngày đặt:</span> {formatDate(order.created_at)}
@@ -412,11 +415,7 @@ const OrderDetail = ({ order, onBack }) => {
                 <p>
                   <span className="info-label">Địa chỉ:</span>{" "}
                   {[
-                    order.shippingInfo.houseNumber,
-                    order.shippingInfo.address,
-                    order.shippingInfo.ward,
-                    order.shippingInfo.district,
-                    order.shippingInfo.city,
+                    order.shippingInfo.address
                   ]
                     .filter(Boolean)
                     .join(", ")}
@@ -428,36 +427,32 @@ const OrderDetail = ({ order, onBack }) => {
         {/* Danh sách sản phẩm */}
         <div className="detail-section">
           <h3 className="section-title">Sản phẩm đã đặt</h3>
-          <div className="detail-items">
-            {order.items.map((item, index) => (
-              <div key={index} className="detail-item">
-                <img
-                  src={item.thumbnail_url || item.image || "/placeholder.svg?height=80&width=80&text=Product"}
-                  alt={item.name}
-                  className="detail-item-image"
-                  width={80}
-                  height={80}
-                />
-                <div className="detail-item-info">
-                  <h4 className="detail-item-name">{item.name}</h4>
-                  <p className="detail-item-variant">Phân loại: {item.variant_name || item.sku_code || "Mặc định"}</p>
-                  <div className="detail-item-pricing">
-                    <span className="detail-item-quantity">Số lượng: {item.quantity}</span>
-                    <div className="detail-item-prices">
-                      <p className="unit-price">Đơn giá: {formatPrice(item.price)}</p>
-                      <p className="total-item-price">Thành tiền: {formatPrice(item.price * item.quantity)}</p>
+          <div className="history-order-items">
+                {order.items.map((item, index) => (
+                  <div key={index} className="history-order-item">
+                    <img
+                      src={item.thumbnail_url || item.image || "/placeholder.svg?height=80&width=80&text=Product"}
+                      alt={item.name}
+                      className="item-image"
+                    />
+                    <div className="item-details">
+                      <h3 className="item-name">{item.name}</h3>
+                      <p className="item-variant">Phân loại hàng: {item.variant_name || item.sku_code || "Mặc định"}</p>
+                      <div className="item-price-info">
+                        <span className="item-quantity">x{item.quantity}</span>
+                        <span className="item-price">{formatPrice(calculateOrderTotal(order.items))}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
         </div>
         {/* Tổng tiền */}
         <div className="detail-section">
           <div className="final-total">
             <span>Tổng cộng:</span>
-            <span className="final-price">{formatPrice(order.total_amount)}</span>
+            <span className="final-price">{formatPrice(calculateOrderTotal(order.items))}</span>
+
           </div>
           {order.note && (
             <div className="note-section">

@@ -93,16 +93,6 @@ const createOrder = async (req, res) => {
   }
 };
 
-// const getAllOrders = async (req, res) => {
-//   try {
-//     // console.log('getAllOrders được gọi');
-//     const orders = await Order.find();
-//     res.status(200).json({ success: true, data: orders });
-//   } catch (error) {
-//     console.error('Lỗi khi lấy danh sách đơn hàng:', error);
-//     res.status(500).json({ success: false, message: 'Lỗi server khi lấy danh sách đơn hàng' });
-//   }
-// };
 
 const getAllOrders = async (req, res) => {
   try {
@@ -136,7 +126,8 @@ const getCancelledReqOrders = async (req, res) => {
 const getReturnRefundReqOrders = async (req, res) => {
   try {
     const returnStatuses = [
-      "Yêu cầu trả hàng/hoàn tiền"
+      "Yêu cầu trả hàng/hoàn tiền",
+      "Hoàn tất trả hàng/hoàn tiền"
     ];
 
     const orders = await Order.find({ status: { $in: returnStatuses } }).sort({ created_at: -1 });
@@ -197,19 +188,53 @@ const updateOrderStatus = async (req, res) => {
 
 const getOrdersByUserId = async (req, res) => {
   try {
-    const userId = req.params.userId
+    const userId = req.params.userId;
 
     const orders = await Order.find({ user_id: userId })
+      .sort({ created_at: -1 })
+      .populate('items.product');
 
-    res.status(200).json({ success: true, data: orders })
+    const transformedOrders = orders.map(order => {
+      const transformedItems = order.items.map(item => {
+        const product = item.product;
+        const variant = product?.variants?.id(item.variant_id);
+        const option = variant?.options?.id(item.option_id);
+
+        return {
+          _id: item._id,
+          productId: product?._id,
+          variantId: item.variant_id,
+          optionId: item.option_id,
+          name: product?.name || 'Không xác định',
+          image: variant?.images?.[0] || product?.thumbnail_url || '/placeholder.svg',
+          quantity: item.quantity,
+          price: item.priceAtTime,
+          sku_code: item.sku_code,
+          color: variant?.name || 'Không xác định',
+          size: option?.value || 'Không xác định',
+        };
+      });
+
+      return {
+        _id: order._id,
+        status: order.status,
+        total: order.total,
+        created_at: order.created_at,
+        shippingInfo: order.shippingInfo,
+        paymentMethod: order.paymentMethod,
+        items: transformedItems,
+      };
+    });
+
+    res.status(200).json({ success: true, data: transformedOrders });
   } catch (error) {
-    console.error('Lỗi khi lấy đơn hàng theo user_id:', error)
+    console.error('Lỗi khi lấy đơn hàng theo user_id:', error);
     res.status(500).json({
       success: false,
       message: 'Lỗi server khi lấy đơn hàng theo người dùng',
-    })
+    });
   }
-}
+};
 
 const requestReturnOrCancel = async (req, res) => {
   try {

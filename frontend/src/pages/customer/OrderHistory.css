@@ -141,20 +141,24 @@
   color: #6b7280;
   background-color: #f9fafb;
 }
+.status-cancelled-request {
+  color: #dcac26;
+  background-color: #fef1e2;
+}
 
 /* Order items */
-.order-items {
+.history-order-items {
   padding: 16px;
 }
 
-.order-item {
+.history-order-item {
   display: flex;
   align-items: flex-start;
   gap: 16px;
   margin-bottom: 16px;
 }
 
-.order-item:last-child {
+.history-order-item:last-child {
   margin-bottom: 0;
 }
 
@@ -179,7 +183,7 @@
 .item-variant {
   font-size: 14px;
   color: #6b7280;
-  margin-bottom: 8px;
+  margin-bottom: 0px;
 }
 
 .item-price-info {
@@ -329,7 +333,7 @@
   margin-right: 8px;
 }
 
-/* Detail items */
+/* Detail items
 .detail-items {
   display: flex;
   flex-direction: column;
@@ -341,8 +345,8 @@
   align-items: flex-start;
   gap: 16px;
   padding: 16px;
-  background-color: #f9fafb;
-  border-radius: 8px;
+  background-color: #FFE2F6;
+  border-radius: 8px
 }
 
 .detail-item-image {
@@ -393,7 +397,7 @@
 .total-item-price {
   font-weight: 500;
   color: #111827;
-}
+} */
 
 /* Final total */
 .final-total {

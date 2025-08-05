@@ -337,11 +337,17 @@ const CartPage = () => {
     }
 
     const mappedItems = selectedItems.map(item => ({
-      product_id: item.productId,
-      variant_id: item.variantId,
-      option_id: item.optionId,
+      _id: item._id,
+      name: item.name || 'Không rõ tên',
+      productId: item.productId, 
+      variantId: item.variantId,
+      optionId: item.optionId,
       quantity: item.quantity,
-      price: item.price
+      price: item.price,
+      selected: false,
+      color: item.color || "Không xác định", 
+      size: item.size || "Không xác định",
+      image: item.image || "/placeholder.svg"
     }));
 
     navigate("/purchase", {

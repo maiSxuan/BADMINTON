@@ -19,25 +19,25 @@ export const createOrder = async (orderData) => {
   return data;
 };
 
-export const updateOrderStatus = async (orderId, newStatus) => {
-    try {
-      const response = await fetch(`http://localhost:4000/api/order/${orderId}/status`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      })
+// export const updateOrderStatus = async (orderId, newStatus) => {
+//     try {
+//       const response = await fetch(`http://localhost:4000/api/order/${orderId}/status`, {
+//         method: "PUT",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ status: newStatus }),
+//       })
 
-      const data = await response.json()
-      if (data.success) {
-        fetchOrders()
-        // Update selected order if it's currently being viewed
-        if (selectedOrder && selectedOrder._id === orderId) {
-          setSelectedOrder({ ...selectedOrder, status: newStatus })
-        }
-      }
-    } catch (error) {
-      console.error("Error updating order status:", error)
-    }
-  }
+//       const data = await response.json()
+//       if (data.success) {
+//         fetchOrders()
+//         // Update selected order if it's currently being viewed
+//         if (selectedOrder && selectedOrder._id === orderId) {
+//           setSelectedOrder({ ...selectedOrder, status: newStatus })
+//         }
+//       }
+//     } catch (error) {
+//       console.error("Error updating order status:", error)
+//     }
+//   }

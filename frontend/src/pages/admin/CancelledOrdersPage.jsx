@@ -3,30 +3,20 @@
 import { useState, useEffect } from "react"
 import { Search, X, Package, Truck, MapPin, Phone, Mail } from "lucide-react"
 import "./OrderManagement.css"
-import { updateOrderStatus } from "../../services/orderService"
 
 const CancelledOrderPage = () => {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
-  const [selectedStatus, setSelectedStatus] = useState("Tất cả")
+  const [selectedStatus,] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
   const [searchType, setSearchType] = useState("ID đơn hàng")
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [showOrderDetail, setShowOrderDetail] = useState(false)
 
-  const statusTabs = ["Tất cả", 'Chờ xác nhận', 'Chờ lấy', 'Đang vận chuyển',
-      'Đang giao', 'Đã giao', 'Hoàn thành']
 
   const statusColors = {
-    "Chờ xác nhận": { backgroundColor: "#fef3c7", color: "#92400e" },
-    "Chờ thanh toán": { backgroundColor: "#fed7aa", color: "#c2410c" },
-    "Chờ lấy": { backgroundColor: "#dbeafe", color: "#1d4ed8" },
-    "Đang vận chuyển": { backgroundColor: "#e9d5ff", color: "#7c3aed" },
-    "Đang giao": { backgroundColor: "#c7d2fe", color: "#4338ca" },
-    "Đã giao": { backgroundColor: "#dcfce7", color: "#166534" },
-    "Hoàn thành": { backgroundColor: "#dcfce7", color: "#166534" },
-    "Đã hủy": { backgroundColor: "#fecaca", color: "#dc2626" },
-    "Trả hàng/hoàn tiền": { backgroundColor: "#f3f4f6", color: "#374151" },
+    "Yêu cầu hủy": { backgroundColor: "#fef3c7", color: "#92400e" },
+    "Đã hủy": { backgroundColor: "#fecaca", color: "#dc2626" }
   }
 
   // Fetch orders from backend
@@ -49,6 +39,28 @@ const CancelledOrderPage = () => {
     }
   }
 
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      const response = await fetch(`http://localhost:4000/api/order/${orderId}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        fetchOrders()
+        // Update selected order if it's currently being viewed
+        if (selectedOrder && selectedOrder._id === orderId) {
+          setSelectedOrder({ ...selectedOrder, status: newStatus })
+        }
+      }
+    } catch (error) {
+      console.error("Error updating order status:", error)
+    }
+  }
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN", {
