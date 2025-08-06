@@ -3,14 +3,16 @@ import React, { useEffect, useState, Fragment } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { publicRoutes, privateRoutes } from "./routes/index";
 import { toast, ToastContainer } from "react-toastify";
+import {PopupProvider, usePopup } from "./components/common/popupContext";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
-function App() {
+function AppContent() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [redirectMessage, setRedirectMessage] = useState("");
+//  const [redirectMessage, setRedirectMessage] = useState("");
   const navigate = useNavigate();
+  const { showPopup } = usePopup(); 
 
   const loadUser = async () => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -64,30 +66,23 @@ function App() {
     return () => window.removeEventListener("loginStatusChanged", handleLoginStatusChange);
   }, []);
 
-  // Kiểm tra quyền truy cập
   useEffect(() => {
     if (!loading) {
       const isAdminPath = window.location.pathname.startsWith("/admin");
       if (isAdminPath && (!user || user.user_type !== "ADMIN")) {
-        setRedirectMessage("Bạn không có quyền truy cập");
-        setTimeout(() => navigate("/", { replace: true }), 800);
+        const message = "Bạn không có quyền truy cập trang này.";
+        const navigateToHome = () => navigate("/", { replace: true });
+        
+        showPopup("Truy cập bị từ chối", message, "Về Trang Chủ", navigateToHome);
+        
       }
       if (user && user.user_type === "ADMIN" && window.location.pathname === "/") {
         navigate("/admin", { replace: true });
       }
     }
-  }, [user, loading, navigate]);
-
-  // Hiển thị toast khi có thông báo
-  useEffect(() => {
-    if (redirectMessage) {
-      toast.error(redirectMessage);
-      setRedirectMessage(""); // Reset tránh lặp
-    }
-  }, [redirectMessage]);
+  }, [user, loading, navigate, showPopup]);
 
   if (loading) return <div className="loading">Đang tải...</div>;
-
   return (
     <div className="App">
       <ToastContainer position="top-center" autoClose={3000} />
@@ -139,6 +134,14 @@ function App() {
         })}
       </Routes>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <PopupProvider>
+      <AppContent />
+    </PopupProvider>
   );
 }
 

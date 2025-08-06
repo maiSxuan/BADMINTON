@@ -1,0 +1,69 @@
+/* src/components/Popup.css */
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.popup-container {
+  background-color: #FEF7F9;
+  padding: 25px 40px;
+  border-radius: 12px;
+  border: 1px solid #F8E8EE;
+  text-align: center;
+  max-width: 560px;
+  width: 90%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease;
+}
+
+.popup-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.popup-message {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 25px;
+}
+
+.popup-button {
+  background-color: #E6A4B4;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.popup-button:hover {
+  background-color: #D68D9E;
+}
+
+/* Hiệu ứng Animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
