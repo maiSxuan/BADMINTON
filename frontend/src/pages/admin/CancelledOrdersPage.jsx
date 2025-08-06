@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react"
 import { Search, X, Package, Truck, MapPin, Phone, Mail } from "lucide-react"
 import "./OrderManagement.css"
+import { getCancelledReqOrders, updateOrderStatus } from "../../services/orderService"
 
 const CancelledOrderPage = () => {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
-  const [selectedStatus,] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
   const [searchType, setSearchType] = useState("ID đơn hàng")
   const [selectedOrder, setSelectedOrder] = useState(null)
@@ -21,47 +21,22 @@ const CancelledOrderPage = () => {
 
   // Fetch orders from backend
   useEffect(() => {
-    fetchOrders()
+      setCancellationOrder()
   }, [])
-
-  const fetchOrders = async () => {
+    
+  const setCancellationOrder = async () => {
     try {
       setLoading(true)
-      const response = await fetch("http://localhost:4000/api/order/cancellation-orders")
-      const data = await response.json()
-      if (data.success) {
-        setOrders(data.data)
-      }
+      const result = await getCancelledReqOrders()
+      setOrders(result)
     } catch (error) {
-      console.error("Error fetching orders:", error)
+      console.error("Lỗi khi lấy đơn hàng:", error)
     } finally {
       setLoading(false)
     }
-  }
-
-  const updateOrderStatus = async (orderId, newStatus) => {
-    try {
-      const response = await fetch(`http://localhost:4000/api/order/${orderId}/status`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      })
-
-      const data = await response.json()
-      if (data.success) {
-        fetchOrders()
-        // Update selected order if it's currently being viewed
-        if (selectedOrder && selectedOrder._id === orderId) {
-          setSelectedOrder({ ...selectedOrder, status: newStatus })
-        }
-      }
-    } catch (error) {
-      console.error("Error updating order status:", error)
-    }
-  }
-
+  };
+  
+  
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -104,21 +79,6 @@ const CancelledOrderPage = () => {
     setShowOrderDetail(false)
     setSelectedOrder(null)
   }
-
-  const filteredOrders = orders.filter((order) => {
-    const matchesSearch = searchTerm === "" || order._id.toLowerCase().includes(searchTerm.toLowerCase())
-
-    const matchesStatus =
-      selectedStatus === "Tất cả" ||
-      (selectedStatus === "Chờ xác nhận" && order.status === "Chờ xác nhận") ||
-      (selectedStatus === "Đang vận chuyển" && order.status === "Đang vận chuyển") ||
-      (selectedStatus === "Chờ lấy" && order.status === "Chờ lấy") ||
-      (selectedStatus === "Đang giao" && order.status === "Đang giao") ||
-      (selectedStatus === "Đã giao" && order.status === "Đã giao") ||
-      (selectedStatus === "Hoàn thành" && order.status === "Hoàn thành")
-
-    return matchesSearch && matchesStatus
-  })
 
   return (
     <div className="order-management">
@@ -165,14 +125,14 @@ const CancelledOrderPage = () => {
                       Đang tải...
                     </td>
                   </tr>
-                ) : filteredOrders.length === 0 ? (
+                ) : orders.length === 0 ? (
                   <tr>
                     <td colSpan="5" className="empty-cell">
                       Không có đơn hàng nào
                     </td>
                   </tr>
                 ) : (
-                  filteredOrders.map((order) => (
+                  orders.map((order) => (
                     <tr key={order._id} className="order-row" onClick={(e) => handleOrderClick(order, e)}>
                       <td>
                         <div className="order-id-cell">

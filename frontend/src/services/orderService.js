@@ -1,6 +1,8 @@
+const BASE_URL = "http://localhost:4000/api/order";
+
 export const createOrder = async (orderData) => {
   const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-  const response = await fetch('http://localhost:4000/api/order', {
+  const response = await fetch(BASE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`
@@ -19,25 +21,71 @@ export const createOrder = async (orderData) => {
   return data;
 };
 
-// export const updateOrderStatus = async (orderId, newStatus) => {
-//     try {
-//       const response = await fetch(`http://localhost:4000/api/order/${orderId}/status`, {
-//         method: "PUT",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ status: newStatus }),
-//       })
+export const getAllOrders = async () => {
+  try {
+    const response = await fetch(BASE_URL);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    return { success: false, error };
+  }
+};
 
-//       const data = await response.json()
-//       if (data.success) {
-//         fetchOrders()
-//         // Update selected order if it's currently being viewed
-//         if (selectedOrder && selectedOrder._id === orderId) {
-//           setSelectedOrder({ ...selectedOrder, status: newStatus })
-//         }
-//       }
-//     } catch (error) {
-//       console.error("Error updating order status:", error)
-//     }
-//   }
+export const updateOrderStatus = async (orderId, newStatus) => {
+  try {
+    const response = await fetch(`${BASE_URL}/${orderId}/status`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: newStatus }),
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    return { success: false, error };
+  }
+};
+
+export const getCancelledReqOrders = async () => {
+  const response = await fetch(`${BASE_URL}/cancellation-orders`)
+  const data = await response.json()
+  if (!response.ok || !data.success) {
+    throw new Error(data.message || "Không thể lấy danh sách đơn hủy")
+  }
+  return data.data
+}
+
+export const getReturnRefundReqOrders = async () => {
+  const response = await fetch(`${BASE_URL}/return-refund-orders`)
+  const data = await response.json()
+  if (!response.ok || !data.success) {
+    throw new Error(data.message || "Không thể lấy danh sách đơn hoàn/trả hàng")
+  }
+  return data.data
+}
+
+export const getOrdersByUserId = async (userId) => {
+  const response = await fetch(`${BASE_URL}/user/${userId}`)
+  const data = await response.json()
+  if (!response.ok || !data.success) {
+    throw new Error(data.message || "Không thể lấy đơn hàng")
+  }
+  return data.data
+}
+
+export const requestReturnOrCancellation = async (orderId, type, reason) => {
+  const response = await fetch(`${BASE_URL}/request/${orderId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type, reason }),
+  })
+  const data = await response.json()
+  if (!response.ok || !data.success) {
+    throw new Error(data.message || "Không thể gửi yêu cầu")
+  }
+  return data
+}

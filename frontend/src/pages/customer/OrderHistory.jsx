@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import "./OrderHistory.css" // Import the CSS file
-
+import { updateOrderStatus, getOrdersByUserId, requestReturnOrCancellation } from "../../services/orderService"
 // ReasonDialog component for collecting cancellation/return reasons
 function ReasonDialog({ isOpen, onClose, onSubmit, title, description, placeholder, submitButtonText }) {
   const [reason, setReason] = useState("")
@@ -68,7 +68,7 @@ const OrderHistory = () => {
       const user = JSON.parse(localStorage.getItem("user") || "{}")
       if (user && user.userID) {
         const userId = user.userID
-        fetchOrders(userId)
+        setUserOrdersList(userId)
       } else {
         setLoading(false)
         setUserIdNotFound(true)
@@ -80,13 +80,11 @@ const OrderHistory = () => {
     }
   }, [])
 
-  const fetchOrders = async (userId) => {
+  const setUserOrdersList = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/order/user/${userId}`)
-      const data = await response.json()
-      if (data.success) {
-        setOrders(data.data)
-      }
+      setLoading(true)
+      const orders = await getOrdersByUserId(userId)
+      setOrders(orders)
     } catch (error) {
       console.error("Lỗi khi lấy đơn hàng:", error)
     } finally {
@@ -138,62 +136,43 @@ const OrderHistory = () => {
 
 const handleConfirmReceived = async (order) => {
   try {
-    const response = await fetch(`http://localhost:4000/api/order/${order._id}/status`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: "Hoàn thành" }), // gửi status mới
-    });
-
-    if (response.ok) {
-      setOrders((prevOrders) =>
-        prevOrders.map((o) =>
-          o._id === order._id ? { ...o, status: "Hoàn thành" } : o
-        )
-      );
-      alert("Đã xác nhận nhận hàng thành công!");
-    } else {
-      alert("Có lỗi xảy ra khi xác nhận nhận hàng");
-    }
+    await updateOrderStatus(order._id, "Hoàn thành")
+    setOrders((prev) =>
+      prev.map((o) => (o._id === order._id ? { ...o, status: "Hoàn thành" } : o))
+    )
+    alert("Đã xác nhận nhận hàng thành công!")
   } catch (error) {
-    console.error("Lỗi khi xác nhận nhận hàng:", error);
-    alert("Có lỗi xảy ra khi xác nhận nhận hàng");
+    console.error("Lỗi xác nhận nhận hàng:", error)
+    alert("Có lỗi xảy ra khi xác nhận nhận hàng.")
   }
-};
+  }
 
   const handleWriteReview = (order) => {
     console.log("Viết đánh giá cho đơn hàng:", order._id)
     alert("Chuyển đến trang đánh giá sản phẩm")
   }
+
   const calculateOrderTotal = (items) => {
     return items.reduce((total, item) => total + item.price * item.quantity, 0);
   };
+
   const handleReasonSubmit = async (reason) => {
     if (!currentOrderForAction || !dialogType) return
-
     try {
-      const response = await fetch(`http://localhost:4000/api/order/request/${currentOrderForAction._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ type: dialogType, reason }),
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        setOrders((prevOrders) =>
-          prevOrders.map((o) => (o._id === currentOrderForAction._id ? { ...o, status: data.data.status } : o)),
+      const data = await requestReturnOrCancellation(
+        currentOrderForAction._id,
+        dialogType,
+        reason
+      )
+      setOrders((prev) =>
+        prev.map((o) =>
+          o._id === currentOrderForAction._id ? { ...o, status: data.data.status } : o
         )
-        alert(data.message)
-      } else {
-        alert(data.message || "Có lỗi xảy ra khi gửi yêu cầu.")
-      }
+      )
+      alert(data.message)
     } catch (error) {
-      console.error("Lỗi khi gửi yêu cầu hủy/trả hàng:", error)
-      alert("Có lỗi xảy ra khi gửi yêu cầu hủy/trả hàng.")
+      console.error("Lỗi gửi yêu cầu:", error)
+      alert("Có lỗi xảy ra khi gửi yêu cầu.")
     } finally {
       setShowReasonDialog(false)
       setCurrentOrderForAction(null)

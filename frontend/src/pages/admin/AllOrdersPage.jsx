@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Search, X, Package, Truck, MapPin, Phone, Mail } from "lucide-react"
 import "./OrderManagement.css"
+import { getAllOrders, updateOrderStatus } from "../../services/orderService"
 
 const AllOrdersPage = () => {
   const [orders, setOrders] = useState([])
@@ -31,46 +32,33 @@ const AllOrdersPage = () => {
 
   // Fetch orders from backend
   useEffect(() => {
-    fetchOrders()
+    setOrderListData()
   }, [])
-
-  const fetchOrders = async () => {
-    try {
-      setLoading(true)
-      const response = await fetch("http://localhost:4000/api/order")
-      const data = await response.json()
-      if (data.success) {
-        setOrders(data.data)
-      }
-    } catch (error) {
-      console.error("Error fetching orders:", error)
-    } finally {
-      setLoading(false)
+  
+  const setOrderListData = async () => {
+    setLoading(true);
+    const data = await getAllOrders();
+    if (data.success) {
+      setOrders(data.data);
     }
-  }
+    setLoading(false);
+  };
 
-  const updateOrderStatus = async (orderId, newStatus) => {
-    try {
-      const response = await fetch(`http://localhost:4000/api/order/${orderId}/status`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      })
-
-      const data = await response.json()
-      if (data.success) {
-        fetchOrders()
-        // Update selected order if it's currently being viewed
-        if (selectedOrder && selectedOrder._id === orderId) {
-          setSelectedOrder({ ...selectedOrder, status: newStatus })
-        }
+  const handleUpdateOrderStatus = async (orderId, newStatus) => {
+    const data = await updateOrderStatus(orderId, newStatus);
+    if (data.success) {
+      await getAllOrders(); // Cập nhật lại danh sách
+      setOrders(prevOrders =>
+        prevOrders.map(order =>
+          order._id === orderId ? { ...order, status: newStatus } : order
+        )
+      )
+      if (selectedOrder && selectedOrder._id === orderId) {
+        setSelectedOrder({ ...selectedOrder, status: newStatus });
       }
-    } catch (error) {
-      console.error("Error updating order status:", error)
     }
-  }
+  };
+
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -163,7 +151,7 @@ const handleUpdateStatus = async (orderId) => {
     const nextStatus = "Đã trả hàng/hoàn tiền"
     if (window.confirm(`Xác nhận chuyển sang trạng thái "${nextStatus}"?`)) {
       try {
-        await updateOrderStatus(orderId, nextStatus)
+        await handleUpdateOrderStatus(orderId, nextStatus)
         alert("Cập nhật trạng thái thành công!")
       } catch (error) {
         alert("Có lỗi xảy ra khi cập nhật trạng thái!")
@@ -187,7 +175,7 @@ const handleUpdateStatus = async (orderId) => {
   if (nextStatus) {
     if (window.confirm(`Cập nhật trạng thái đơn hàng từ "${order.status}" thành "${nextStatus}"?`)) {
       try {
-        await updateOrderStatus(orderId, nextStatus)
+        await handleUpdateOrderStatus(orderId, nextStatus)
         alert("Cập nhật trạng thái thành công!")
       } catch (error) {
         alert("Có lỗi xảy ra khi cập nhật trạng thái!")

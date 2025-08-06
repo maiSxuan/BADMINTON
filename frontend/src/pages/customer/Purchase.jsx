@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import "./Purchase.css"
 import { createOrder } from "../../services/orderService"
 import { removeItemFromCart } from "../../services/cartService"
-//import { updateOrderStatus } from "../../services/orderService"
+import { updateOrderStatus } from "../../services/orderService"
 import axios from "axios";
 const PurchasePage = () => {
   const navigate = useNavigate()
@@ -81,33 +81,13 @@ const PurchasePage = () => {
       }));
     }
   };
-  const updateOrderStatus = async (orderId, newStatus) => {
-    try {
-      const response = await fetch(`http://localhost:4000/api/order/${orderId}/status`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      })
 
-      const data = await response.json()
-      // if (data.success) {
-      //   fetchOrders()
-      //   // Update selected order if it's currently being viewed
-      //   if (selectedOrder && selectedOrder._id === orderId) {
-      //     setSelectedOrder({ ...selectedOrder, status: newStatus })
-      //   }
-      // }
-    } catch (error) {
-      console.error("Error updating order status:", error)
-    }
-  }
   const handleAcceptCancellation = async (orderId) => {
     if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
       try {
         await updateOrderStatus(orderId, "Đã hủy")
         alert("Đã hủy đơn hàng thành công!")
+        navigate("/cart")
       } catch (error) {
         alert("Có lỗi xảy ra khi hủy đơn hàng!")
       }
@@ -639,7 +619,12 @@ const PurchasePage = () => {
 
                 {/* Nút hành động */}
                 <div className="modal-actions">
-                  <button className="btn btn-outline" >Hủy đơn hàng</button>
+                  <button
+                    className="btn btn-outline"
+                    onClick={() => handleAcceptCancellation(orderId)}
+                  >
+                    Hủy đơn hàng
+                  </button>
                   <button className="btn btn-primary" onClick={() => navigate("/cart")}>
                     Quay lại giỏ hàng
                   </button>

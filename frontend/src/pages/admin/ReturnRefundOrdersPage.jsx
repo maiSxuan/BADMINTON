@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Search, X, Package, Truck, MapPin, Phone, Mail } from "lucide-react"
 import "./OrderManagement.css"
+import { getReturnRefundReqOrders, updateOrderStatus } from "../../services/orderService"
 
 const ReturnReundOrdersPage = () => {
   const [orders, setOrders] = useState([])
@@ -20,47 +21,32 @@ const ReturnReundOrdersPage = () => {
   }
 
   // Fetch orders from backend
-  useEffect(() => {
-    fetchOrders()
-  }, [])
 
-  const fetchOrders = async () => {
+  useEffect(() => {
+      setRefundReturnOrder()
+  }, [])
+    
+  const setRefundReturnOrder = async () => {
     try {
       setLoading(true)
-      const response = await fetch("http://localhost:4000/api/order/return-refund-orders")
-      const data = await response.json()
-      if (data.success) {
-        setOrders(data.data)
-      }
+      const result = await getReturnRefundReqOrders()
+      setOrders(result)
     } catch (error) {
-      console.error("Error fetching orders:", error)
+      console.error("Lỗi khi lấy đơn hoàn/trả:", error)
     } finally {
       setLoading(false)
     }
   }
 
-  const updateOrderStatus = async (orderId, newStatus) => {
-    try {
-      const response = await fetch(`http://localhost:4000/api/order/${orderId}/status`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      })
-
-      const data = await response.json()
-      if (data.success) {
-        fetchOrders()
-        // Update selected order if it's currently being viewed
-        if (selectedOrder && selectedOrder._id === orderId) {
-          setSelectedOrder({ ...selectedOrder, status: newStatus })
-        }
-      }
-    } catch (error) {
-      console.error("Error updating order status:", error)
-    }
-  }
+  // const handleUpdateOrderStatus = async (orderId, newStatus) => {
+  //   const data = await updateOrderStatus(orderId, newStatus);
+  //   if (data.success) {
+  //     await getReturnRefundReqOrders(); // Cập nhật lại danh sách
+  //     if (selectedOrder && selectedOrder._id === orderId) {
+  //       setSelectedOrder({ ...selectedOrder, status: newStatus });
+  //     }
+  //   }
+  // };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -83,6 +69,11 @@ const ReturnReundOrdersPage = () => {
     try {
       await updateOrderStatus(orderId, "Tiến hành trả hàng/hoàn tiền")
       alert("Đã chấp nhận yêu cầu hoàn trả/hoàn tiền!")
+      setOrders(prevOrders =>
+        prevOrders.map(order =>
+          order._id === orderId ? { ...order, status: "Tiến hành trả hàng/hoàn tiền" } : order
+        )
+      )
     } catch (error) {
       alert("Có lỗi xảy ra khi chấp nhận yêu cầu!")
     }

@@ -115,7 +115,11 @@ const getAllOrders = async (req, res) => {
 
 const getCancelledReqOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ status: ["Yêu cầu hủy", "Đã hủy"] }).sort({ created_at: -1 });
+    const returnStatuses = [
+      "Yêu cầu hủy",
+      "Đã hủy"
+    ];
+    const orders = await Order.find({status: { $in: returnStatuses }}).sort({ created_at: -1 });
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     console.error("Lỗi khi lấy đơn hàng yêu cầu hủy:", error);
