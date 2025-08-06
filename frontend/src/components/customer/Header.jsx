@@ -3,15 +3,36 @@ import { useEffect, useState } from "react";
 import "./Header.css";
 import DropdownMenu from "../customer/DropdownMenu";
 import DropdownHeader from "./DropdownHeader";
+import Breadcrumb from "../common/breadcrumb"; 
+import { useLocation } from "react-router-dom";
 
 // Import các component/ảnh
 import Logo from "../common/logo";
-import { UserIcon, Search,Info,ShoppingCart} from "lucide-react";
+import { UserIcon, Search,ShoppingCart} from "lucide-react";
 
 const Header = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null); 
   //const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const location = useLocation();
+
+const breadcrumbMap = {
+  "/account/profile": [
+    { label: "Tài khoản", path: "/account/profile" },
+    { label: "Tài khoản của tôi" }
+  ],
+  "/order-history": [
+    { label: "Tra cứu", path: "/order-history" },
+    { label: "Lịch sử mua hàng" }
+  ],
+  "/cart": [
+    { label: "Giỏ hàng", path: "/cart" },
+    { label: "Giỏ hàng của bạn" }
+  ]
+};
+
+const breadcrumbItems = breadcrumbMap[location.pathname] || [];
 
  useEffect(() => {
     const checkLogin = () => {
@@ -105,6 +126,12 @@ const Header = () => {
           <NavLink to="/contact">LIÊN HỆ</NavLink>
         </nav>
       </div>
+      {/* Breadcrumb hiển thị nếu có */}
+      {breadcrumbItems.length > 0 && (
+        <div className="breadcrumb-wrapper">
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
+      )}
     </header>
   );
 };
