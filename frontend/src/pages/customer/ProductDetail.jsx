@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './ProductDetail.css'; // File CSS của bạn
 import { addItemToCart, getProductBySlug } from '../../services';
 import { ToastContainer, toast } from 'react-toastify';
@@ -20,6 +21,7 @@ const StarRating = ({ rating }) => {
     );
 };
 const ProductDetailPage = () => {
+    const navigate = useNavigate();
     const { slug } = useParams();
     const [product, setProduct] = useState(null);
     const [selectedVariant, setSelectedVariant] = useState(null);
@@ -111,6 +113,35 @@ const ProductDetailPage = () => {
         });
     };
 
+    const handleBuyNow = () => {
+        if (!product || !selectedVariant || !selectedOption) {
+            toast.error("Vui lòng chọn đầy đủ thông tin sản phẩm");
+            return;
+        }
+
+        if (selectedOption.stock_quantity < quantity) {
+            toast.error("Số lượng vượt quá tồn kho");
+            return;
+        }
+
+        const selectedItem = {
+            _id: product._id, // ID sản phẩm chính
+            name: product.name || 'Không rõ tên',
+            productId: product._id,
+            variantId: selectedVariant._id,
+            optionId: selectedOption._id,
+            quantity,
+            price: selectedOption.price,
+            color: selectedVariant.name || 'Không xác định',
+            size: selectedOption.value || 'Không xác định',
+            image: selectedVariant.image || product.thumbnail_url || "/placeholder.svg",
+        };
+
+        navigate("/purchase", {
+            state: { selectedItems: [selectedItem] }
+        });
+    };
+    
     const handleAddToCart = async () => {
         if (!product || !selectedVariant || !selectedOption) {
             toast.error("Vui lòng chọn đầy đủ thông tin sản phẩm");
@@ -224,7 +255,13 @@ const ProductDetailPage = () => {
                     </div>
 
                     <div className="action-buttons">
-                        <button className="action-btn buy-now-btn" disabled={!selectedOption || selectedOption.stock_quantity === 0}>Mua ngay</button>
+                        <button
+                            className="action-btn buy-now-btn"
+                            disabled={!selectedOption || selectedOption.stock_quantity === 0}
+                            onClick={handleBuyNow}
+                            >
+                            Mua ngay
+                        </button>
                         <button 
                             className="action-btn add-to-cart-btn" 
                             disabled={!selectedOption || selectedOption.stock_quantity === 0}
