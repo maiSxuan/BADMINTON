@@ -174,7 +174,16 @@ const publicRoutes = [
   { path: "/admin", component: AdminHome, layout: AdminLayout, allowedRoles: ["ADMIN"]  },
     
   // Quản lý người dùng
-  { path: "/admin/user-list", component: UserListPage, layout: AdminLayout, allowedRoles: ["ADMIN"] },
+  { path: "/admin/user-list", component: UserListPage, allowedRoles: ["ADMIN"], layout: (props) => (
+    <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Quản lý người dùng", path: "/admin" },
+      { label: "Danh sách người dùng", path: "/admin/user-list" },
+    ]}
+  />
+  ) },
   {
     path: "/admin/lock-account",
     component: LockAccountPage,
@@ -300,8 +309,27 @@ const publicRoutes = [
   ) },
 
   //Khuyến Mãi
-  { path: "/admin/add-promotion", component: AddPromotionPage, layout: AdminLayout,allowedRoles: ["ADMIN"] },
-  { path: "/admin/manage-promotion", component: PromotionListPage, layout: AdminLayout,allowedRoles: ["ADMIN"] },
+  { path: "/admin/add-promotion", component: AddPromotionPage,allowedRoles: ["ADMIN"], layout: (props) =>(
+    <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Khuyến Mãi", path: "/admin" },
+      { label: "Tạo chiến dịch", path: "/admin/add-promotion" },
+    ]}
+  />
+  ) },
+
+  { path: "/admin/manage-promotion", component: PromotionListPage, allowedRoles: ["ADMIN"], layout: (props) =>(
+    <AdminLayout
+    {...props}
+    breadcrumbItems={[
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Khuyến mãi", path: "/admin" },
+      { label: "Quản lí khuyến mãi", path: "/admin/manage-promotion" },
+    ]}
+  />
+  ) },
   
 
   // {path: "/test", component: TestUploadPage},
