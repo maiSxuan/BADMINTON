@@ -27,7 +27,6 @@ const Header = () => {
         { label: "Tài khoản của tôi" }
       ],
       "/order-history": [
-        { label: "Tra cứu", path: "/order-history" },
         { label: "Lịch sử mua hàng" }
       ],
       "/cart": [
@@ -98,7 +97,7 @@ const Header = () => {
     ? [ { label: "Đăng nhập", to: "/login" }, { label: "Đăng ký", to: "/registration" } ]
     : [ { label: "Tài khoản của tôi", to: "/account/profile" }, { label: "Đăng xuất", action: handleLogout } ];
       
-    const orderTrackingMenu = [ { label: "Theo dõi đơn hàng", to: "/order-tracking" }, { label: "Lịch sử mua hàng", to: "/order-history" } ];
+    const orderTrackingMenu = [ { label: "Lịch sử mua hàng", to: "/order-history" } ];
 
     // Xử lý khi submit form tìm kiếm (code mới)
     const handleSearchSubmit = (e) => {

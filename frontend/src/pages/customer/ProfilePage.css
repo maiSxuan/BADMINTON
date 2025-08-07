@@ -89,3 +89,22 @@
   font-size: 12px;
   margin-top: 4px;
 }
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding-right: 35px; /* để chừa chỗ cho icon */
+}
+
+.eye-icon {
+  position: absolute;
+  top: 60%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+}

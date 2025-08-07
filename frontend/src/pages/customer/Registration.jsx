@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { registerUser, verifyOtp } from "../../services";
 import "./Registration.css";
 import Logo from "../../components/common/logo";
+import { Eye, EyeOff } from "lucide-react";
 
 const Registration = () => {
   const [formData, setFormData] = useState({
@@ -50,8 +51,7 @@ const Registration = () => {
     if (!formData.address.trim())
       newErrors.address = "Địa chỉ không được để trống";
 
-    if (!formData.email.trim())
-      newErrors.email = "Email không được để trống";
+    if (!formData.email.trim()) newErrors.email = "Email không được để trống";
     else if (!emailRegex.test(formData.email))
       newErrors.email = "Email không hợp lệ";
 
@@ -71,8 +71,8 @@ const Registration = () => {
 
     if (Object.keys(validateErrors).length === 0) {
       try {
-        await registerUser (formData);
-          setStep("verify");
+        await registerUser(formData);
+        setStep("verify");
         //const user = response.data.user;
         // localStorage.setItem("token", response.data.token);
         // localStorage.setItem("user", JSON.stringify(user));
@@ -85,7 +85,6 @@ const Registration = () => {
         // }
         // alert("Đăng ký thành công! Vui lòng đăng nhập.");
         // navigate("/login")
-
       } catch (error) {
         const field = error.response?.data?.field;
         const message = error.response?.data?.message || "Đăng ký thất bại";
@@ -122,6 +121,9 @@ const Registration = () => {
     }
   };
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   return (
     <div className="registration-container">
       <div className="registration-content">
@@ -139,7 +141,9 @@ const Registration = () => {
               {/* Tên đăng nhập */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${errors.name ? "registration-input-error" : ""}`}
+                  className={`registration-input-wrapper ${
+                    errors.name ? "registration-input-error" : ""
+                  }`}
                 >
                   <input
                     type="text"
@@ -148,14 +152,18 @@ const Registration = () => {
                     onChange={(e) => handleInputChange("name", e.target.value)}
                     className="registration-form-input"
                   />
-                  {errors.name && <span className="input-error-text">{errors.name}</span>}
+                  {errors.name && (
+                    <span className="input-error-text">{errors.name}</span>
+                  )}
                 </div>
               </div>
 
               {/* Số điện thoại */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${errors.phone ? "registration-input-error" : ""}`}
+                  className={`registration-input-wrapper ${
+                    errors.phone ? "registration-input-error" : ""
+                  }`}
                 >
                   <input
                     type="tel"
@@ -164,30 +172,40 @@ const Registration = () => {
                     onChange={(e) => handleInputChange("phone", e.target.value)}
                     className="registration-form-input"
                   />
-                  {errors.phone && <span className="input-error-text">{errors.phone}</span>}
+                  {errors.phone && (
+                    <span className="input-error-text">{errors.phone}</span>
+                  )}
                 </div>
               </div>
 
               {/* Địa chỉ */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${errors.address ? "registration-input-error" : ""}`}
+                  className={`registration-input-wrapper ${
+                    errors.address ? "registration-input-error" : ""
+                  }`}
                 >
                   <input
                     type="text"
                     placeholder="Địa chỉ"
                     value={formData.address}
-                    onChange={(e) => handleInputChange("address", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("address", e.target.value)
+                    }
                     className="registration-form-input"
                   />
-                  {errors.address && <span className="input-error-text">{errors.address}</span>}
+                  {errors.address && (
+                    <span className="input-error-text">{errors.address}</span>
+                  )}
                 </div>
               </div>
 
               {/* Email */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${errors.email ? "registration-input-error" : ""}`}
+                  className={`registration-input-wrapper ${
+                    errors.email ? "registration-input-error" : ""
+                  }`}
                 >
                   <input
                     type="email"
@@ -196,40 +214,70 @@ const Registration = () => {
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     className="registration-form-input"
                   />
-                  {errors.email && <span className="input-error-text">{errors.email}</span>}
+                  {errors.email && (
+                    <span className="input-error-text">{errors.email}</span>
+                  )}
                 </div>
               </div>
 
               {/* Mật khẩu */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${errors.password ? "registration-input-error" : ""}`}
+                  className={`registration-input-wrapper ${
+                    errors.password ? "registration-input-error" : ""
+                  }`}
                 >
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Nhập mật khẩu"
                     value={formData.password}
-                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("password", e.target.value)
+                    }
                     className="registration-form-input"
                   />
-                  {errors.password && <span className="input-error-text">{errors.password}</span>}
+                  <span
+                    className="password-toggle-icon"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </span>
+                  {errors.password && (
+                    <span className="input-error-text">{errors.password}</span>
+                  )}
                 </div>
               </div>
 
               {/* Xác nhận mật khẩu */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${errors.confirmPassword ? "registration-input-error" : ""}`}
+                  className={`registration-input-wrapper ${
+                    errors.confirmPassword ? "registration-input-error" : ""
+                  }`}
                 >
                   <input
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     placeholder="Xác nhận mật khẩu"
                     value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("confirmPassword", e.target.value)
+                    }
                     className="registration-form-input"
                   />
+                  <span
+                    className="password-toggle-icon"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={20} />
+                    ) : (
+                      <Eye size={20} />
+                    )}
+                  </span>
                   {errors.confirmPassword && (
-                    <span className="input-error-text">{errors.confirmPassword}</span>
+                    <span className="input-error-text">
+                      {errors.confirmPassword}
+                    </span>
                   )}
                 </div>
               </div>
@@ -252,13 +300,15 @@ const Registration = () => {
               <button type="submit" className="registration-submit-button">
                 XÁC MINH
               </button>
-              {serverError && <div className="input-error-text">{serverError}</div>}
+              {serverError && (
+                <div className="input-error-text">{serverError}</div>
+              )}
             </form>
           )}
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default Registration;

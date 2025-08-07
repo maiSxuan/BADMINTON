@@ -167,3 +167,16 @@
         height: 100px;
     }
 }
+
+.password-input-group {
+  position: relative;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  right: -20px;
+  top: 60%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+}
