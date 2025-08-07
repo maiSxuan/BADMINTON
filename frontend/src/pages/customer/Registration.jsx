@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../../services";
+import { registerUser, verifyOtp } from "../../services";
 import "./Registration.css";
 import Logo from "../../components/common/logo";
 
@@ -15,7 +15,9 @@ const Registration = () => {
   });
 
   const [errors, setErrors] = useState({});
-  // const [errors, setServerError] = useState("");
+  const [otp, setOtp] = useState("");
+  const [step, setStep] = useState("register"); // 'register' | 'verify'
+  const [serverError, setServerError] = useState("");
   const navigate = useNavigate();
 
   const handleInputChange = (field, value) => {
@@ -65,18 +67,12 @@ const Registration = () => {
     e.preventDefault();
     const validateErrors = validate();
     setErrors(validateErrors);
+    setServerError("");
 
     if (Object.keys(validateErrors).length === 0) {
       try {
-        await registerUser ({
-            name: formData.name,
-            phone: formData.phone,
-            address: formData.address,
-            email: formData.email,
-            password: formData.password,
-          }
-        );
-
+        await registerUser (formData);
+          setStep("verify");
         //const user = response.data.user;
         // localStorage.setItem("token", response.data.token);
         // localStorage.setItem("user", JSON.stringify(user));
@@ -87,8 +83,9 @@ const Registration = () => {
         // } else{
         //   navigate("/");
         // }
-        alert("Đăng ký thành công! Vui lòng đăng nhập.");
-        navigate("/login")
+        // alert("Đăng ký thành công! Vui lòng đăng nhập.");
+        // navigate("/login")
+
       } catch (error) {
         const field = error.response?.data?.field;
         const message = error.response?.data?.message || "Đăng ký thất bại";
@@ -96,50 +93,69 @@ const Registration = () => {
         if (field) {
           setErrors((prev) => ({ ...prev, [field]: message }));
         } else {
-          alert(message);
+          setServerError(message);
         }
       }
     }
   };
 
+  // const handleRegister = async (e) => {
+  //   e.preventDefault();
+  //   setServerError("");
+  //   try {
+  //     await registerUser(formData);
+  //     setEmail(formData.email); // lưu lại email để dùng cho xác minh
+  //     setStep("verify");
+  //   } catch (err) {
+  //     setServerError(err.response?.data?.message || "Đăng ký thất bại");
+  //   }
+  // };
+
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    try {
+      await verifyOtp({ email: formData.email, otp });
+      alert("Xác minh thành công. Vui lòng đăng nhập.");
+      navigate("/login");
+    } catch (err) {
+      setServerError(err.response?.data?.message || "Xác minh thất bại");
+    }
+  };
+
   return (
     <div className="registration-container">
-      {/* <div className="refund-container"> */}
-        <div className="registration-content">
-          <div className="registration-logo">
-            <Logo size="medium" />
-          </div>
+      <div className="registration-content">
+        <div className="registration-logo">
+          <Logo size="medium" />
+        </div>
 
-          <div className="registration-form-container">
-            <h1 className="registration-title">ĐĂNG KÝ</h1>
+        <div className="registration-form-container">
+          <h1 className="registration-title">
+            {step === "register" ? "ĐĂNG KÝ" : "XÁC MINH EMAIL"}
+          </h1>
 
+          {step === "register" ? (
             <form onSubmit={handleSubmit} className="registration-form">
+              {/* Tên đăng nhập */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${
-                    errors.name ? "registration-input-error" : ""
-                  }`}
+                  className={`registration-input-wrapper ${errors.name ? "registration-input-error" : ""}`}
                 >
                   <input
                     type="text"
                     placeholder="Tên đăng nhập"
                     value={formData.name}
-                    onChange={(e) =>
-                      handleInputChange("name", e.target.value)
-                    }
+                    onChange={(e) => handleInputChange("name", e.target.value)}
                     className="registration-form-input"
                   />
-                  {errors.name && (
-                    <span className="input-error-text">{errors.name}</span>
-                  )}
+                  {errors.name && <span className="input-error-text">{errors.name}</span>}
                 </div>
               </div>
 
+              {/* Số điện thoại */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${
-                    errors.phone ? "registration-input-error" : ""
-                  }`}
+                  className={`registration-input-wrapper ${errors.phone ? "registration-input-error" : ""}`}
                 >
                   <input
                     type="tel"
@@ -148,38 +164,30 @@ const Registration = () => {
                     onChange={(e) => handleInputChange("phone", e.target.value)}
                     className="registration-form-input"
                   />
-                  {errors.phone && (
-                    <span className="input-error-text">{errors.phone}</span>
-                  )}
+                  {errors.phone && <span className="input-error-text">{errors.phone}</span>}
                 </div>
               </div>
 
+              {/* Địa chỉ */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${
-                    errors.address ? "registration-input-error" : ""
-                  }`}
+                  className={`registration-input-wrapper ${errors.address ? "registration-input-error" : ""}`}
                 >
                   <input
                     type="text"
                     placeholder="Địa chỉ"
                     value={formData.address}
-                    onChange={(e) =>
-                      handleInputChange("address", e.target.value)
-                    }
+                    onChange={(e) => handleInputChange("address", e.target.value)}
                     className="registration-form-input"
                   />
-                  {errors.address && (
-                    <span className="input-error-text">{errors.address}</span>
-                  )}
+                  {errors.address && <span className="input-error-text">{errors.address}</span>}
                 </div>
               </div>
 
+              {/* Email */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${
-                    errors.email ? "registration-input-error" : ""
-                  }`}
+                  className={`registration-input-wrapper ${errors.email ? "registration-input-error" : ""}`}
                 >
                   <input
                     type="email"
@@ -188,52 +196,40 @@ const Registration = () => {
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     className="registration-form-input"
                   />
-                  {errors.email && (
-                    <span className="input-error-text">{errors.email}</span>
-                  )}
+                  {errors.email && <span className="input-error-text">{errors.email}</span>}
                 </div>
               </div>
 
+              {/* Mật khẩu */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${
-                    errors.password ? "registration-input-error" : ""
-                  }`}
+                  className={`registration-input-wrapper ${errors.password ? "registration-input-error" : ""}`}
                 >
                   <input
                     type="password"
                     placeholder="Nhập mật khẩu"
                     value={formData.password}
-                    onChange={(e) =>
-                      handleInputChange("password", e.target.value)
-                    }
+                    onChange={(e) => handleInputChange("password", e.target.value)}
                     className="registration-form-input"
                   />
-                  {errors.password && (
-                    <span className="input-error-text">{errors.password}</span>
-                  )}
+                  {errors.password && <span className="input-error-text">{errors.password}</span>}
                 </div>
               </div>
 
+              {/* Xác nhận mật khẩu */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${
-                    errors.confirmPassword ? "registration-input-error" : ""
-                  }`}
+                  className={`registration-input-wrapper ${errors.confirmPassword ? "registration-input-error" : ""}`}
                 >
                   <input
                     type="password"
                     placeholder="Xác nhận mật khẩu"
                     value={formData.confirmPassword}
-                    onChange={(e) =>
-                      handleInputChange("confirmPassword", e.target.value)
-                    }
+                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                     className="registration-form-input"
                   />
                   {errors.confirmPassword && (
-                    <span className="input-error-text">
-                      {errors.confirmPassword}
-                    </span>
+                    <span className="input-error-text">{errors.confirmPassword}</span>
                   )}
                 </div>
               </div>
@@ -242,12 +238,27 @@ const Registration = () => {
                 ĐĂNG KÝ
               </button>
             </form>
-          </div>
+          ) : (
+            <form onSubmit={handleVerify} className="registration-form">
+              <div className="registration-form-group">
+                <input
+                  type="text"
+                  placeholder="Nhập mã OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="registration-form-input"
+                />
+              </div>
+              <button type="submit" className="registration-submit-button">
+                XÁC MINH
+              </button>
+              {serverError && <div className="input-error-text">{serverError}</div>}
+            </form>
+          )}
         </div>
-
-      {/* </div> */}
+      </div>
     </div>
   );
-};
+}
 
 export default Registration;
