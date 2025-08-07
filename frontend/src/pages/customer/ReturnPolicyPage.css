@@ -1,0 +1,169 @@
+/* Container chính cho toàn bộ trang */
+.policy-page-container {
+    display: flex;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 15px;
+}
+
+/* Phần nội dung chính (bên trái) */
+.policy-main-content {
+    flex: 3; /* Chiếm 3 phần không gian */
+    background-color: #fff;
+    padding: 24px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.policy-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.policy-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.policy-body {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #374151;
+}
+
+.policy-body p {
+    margin-bottom: 1.5em;
+}
+
+.policy-body strong {
+    font-weight: 600;
+    color: #111827;
+}
+
+.policy-body a {
+    color: #e83d3d;
+    text-decoration: none;
+    font-weight: 500;
+}
+.policy-body a:hover {
+    text-decoration: underline;
+}
+.hotline-link {
+    font-weight: 700;
+}
+
+.policy-subtitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    margin-top: 32px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e83d3d;
+}
+
+.policy-body ul {
+    list-style-type: disc; /* Kiểu danh sách dấu chấm tròn */
+    padding-left: 20px;
+    margin-bottom: 1.5em;
+}
+
+.policy-body ul li {
+    margin-bottom: 0.5em;
+}
+
+/* Thanh sidebar (bên phải) */
+.policy-sidebar {
+    flex: 1; /* Chiếm 1 phần không gian */
+    align-self: flex-start; /* Giữ cho sidebar không bị kéo dài */
+}
+
+.sidebar-widget {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+
+.widget-title {
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #111827;
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.article-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.article-item {
+    margin-bottom: 16px;
+}
+.article-item:last-child {
+    margin-bottom: 0;
+}
+
+.article-link {
+    display: flex;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.article-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.article-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.article-title {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    margin: 0 0 4px 0;
+    transition: color 0.2s;
+    /* Giới hạn 3 dòng chữ */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.article-link:hover .article-title {
+    color: #e83d3d;
+}
+
+.article-date {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 992px) {
+    .policy-page-container {
+        flex-direction: column;
+    }
+}

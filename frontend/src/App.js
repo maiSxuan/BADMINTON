@@ -1,8 +1,9 @@
 // src/App.jsx
 import React, { useEffect, useState, Fragment } from "react";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate,ScrollRestoration } from "react-router-dom";
 import { publicRoutes, privateRoutes } from "./routes/index";
 import { toast, ToastContainer } from "react-toastify";
+
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
@@ -92,7 +93,6 @@ function App() {
     <div className="App">
       <ToastContainer position="top-center" autoClose={3000} />
       <Routes>
-        {/* Public routes */}
         {publicRoutes.map((route) => {
           const Page = route.component;
           const Layout = route.layout || Fragment;

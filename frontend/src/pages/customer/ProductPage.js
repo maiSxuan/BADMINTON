@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './ProductPage.css';
-// Import các hàm service của bạn
 import { getAllBrands, getAllCategories, getProductsOnQuery } from '../../services';
+import Pagination from '../../components/common/Pagination'; // Import component Pagination
 
 // Dữ liệu tĩnh cho bộ lọc giá
 const priceRanges = {
@@ -38,7 +38,7 @@ function ProductPage() {
     });
     const [currentPage, setCurrentPage] = useState(1);
     
-    // Effect này sẽ đồng bộ state filters khi URL thay đổi
+    // Effect này sẽ đồng bộ state filters và currentPage từ URL
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const urlCategories = params.get('categories')?.split(',').filter(Boolean) || [];
@@ -55,7 +55,6 @@ function ProductPage() {
         const fetchFilterData = async () => {
             setIsFiltersLoading(true);
             try {
-                // Sử dụng các hàm service đã import
                 const [brandsData, categoriesData] = await Promise.all([
                     getAllBrands(),
                     getAllCategories()
@@ -74,38 +73,27 @@ function ProductPage() {
     // Effect để tải danh sách sản phẩm khi bộ lọc hoặc trang thay đổi
     const fetchProducts = useCallback(async () => {
         setIsLoading(true);
-        setError(null); 
         
-        // --- BẮT ĐẦU CHỈNH SỬA ---
-        // 1. Tạo một object JavaScript thuần túy chứa các bộ lọc
         const queryParams = { 
-            page: currentPage, 
+            page: currentPage,
+            limit: 12, 
         };
         
-        // 2. Thêm các bộ lọc vào object nếu chúng tồn tại
-        if (filters.price) {
-            queryParams.price = filters.price;
-        }
-        if (filters.brands.length > 0) {
-            queryParams.brands = filters.brands.join(',');
-        }
-        if (filters.categories.length > 0) {
-            queryParams.categories = filters.categories.join(',');
-        }
+        if (filters.price) queryParams.price = filters.price;
+        if (filters.brands.length > 0) queryParams.brands = filters.brands.join(',');
+        if (filters.categories.length > 0) queryParams.categories = filters.categories.join(',');
         
         try {
-            // 3. Truyền object thuần túy đó vào hàm service getProductsOnQuery
-            // Service sẽ tự động thêm `view=public` và tạo chuỗi query string.
             const result = await getProductsOnQuery(queryParams);
-
             setProducts(result.data);
             setPagination(result.pagination);
+            setError(null);
         } catch (err) { 
             setError(err.message); 
+            setProducts([]); // Xóa sản phẩm cũ nếu có lỗi
         } finally { 
             setIsLoading(false); 
         }
-        // --- KẾT THÚC CHỈNH SỬA ---
     }, [currentPage, filters]);
 
     useEffect(() => { 
@@ -117,29 +105,23 @@ function ProductPage() {
         const params = new URLSearchParams(location.search);
         
         if (filterType === 'price') {
-            if (params.get('price') === value) {
-                params.delete('price');
-            } else {
-                params.set('price', value);
-            }
-        } else { // brands hoặc categories
+            if (params.get('price') === value) params.delete('price');
+            else params.set('price', value);
+        } else {
             const currentValues = params.get(filterType)?.split(',').filter(Boolean) || [];
             if (currentValues.includes(value)) {
                 const newValues = currentValues.filter(item => item !== value);
-                if (newValues.length > 0) {
-                    params.set(filterType, newValues.join(','));
-                } else {
-                    params.delete(filterType);
-                }
+                if (newValues.length > 0) params.set(filterType, newValues.join(','));
+                else params.delete(filterType);
             } else {
                 params.set(filterType, [...currentValues, value].join(','));
             }
         }
-
         params.delete('page');
         navigate({ search: params.toString() });
     };
 
+    // Hàm xử lý khi người dùng chuyển trang
     const handlePageChange = (pageNumber) => {
         const params = new URLSearchParams(location.search);
         params.set('page', pageNumber);
@@ -214,18 +196,11 @@ function ProductPage() {
                                     ))
                                 ) : ( <p className="no-products">Không tìm thấy sản phẩm phù hợp.</p> )}
                             </div>
-                            <nav className="pagination">
-                                {pagination.totalPages > 1 &&
-                                    Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(pageNumber => (
-                                        <button 
-                                            key={pageNumber} 
-                                            className={currentPage === pageNumber ? 'active' : ''} 
-                                            onClick={() => handlePageChange(pageNumber)}
-                                        >
-                                            {pageNumber}
-                                        </button>
-                                    ))}
-                            </nav>
+                            <Pagination 
+                                currentPage={currentPage}
+                                totalPages={pagination.totalPages}
+                                onPageChange={handlePageChange}
+                            />
                         </>
                     )}
                 </section>
