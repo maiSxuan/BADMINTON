@@ -197,3 +197,42 @@
   line-height: 1;
   padding: 0;
 }
+
+  .error-message {
+    color: #d93025;
+    font-size: 13px;
+    margin-top: 6px;
+  } 
+
+  .input-error {
+    border-color: #d93025 !important;
+  }
+
+  .input-error:focus {
+    box-shadow: 0 0 0 2px rgba(217, 48, 37, 0.2);
+  }
+
+  /* Style cho thông báo lỗi của từng trường input */
+.error-message {
+  color: #d93025; /* Màu đỏ của Google */
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+/* Style cho khung input bị lỗi */
+.input-error {
+  border-color: #d93025 !important;
+}
+
+.input-error:focus {
+  border-color: #d93025 !important;
+  box-shadow: 0 0 0 2px rgba(217, 48, 37, 0.2);
+}
+
+/* Style cho thông báo lỗi chung ở trên nút submit */
+.submit-error-message {
+  color: #d93025;
+  text-align: right;
+  margin-bottom: 10px;
+  width: 100%;
+}

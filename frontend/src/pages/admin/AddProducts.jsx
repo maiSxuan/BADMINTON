@@ -1,5 +1,3 @@
-// src/pages/admin/products/AddProducts.jsx
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ProductClassification from "./ProductClassification";
@@ -50,19 +48,24 @@ const AddProducts = () => {
     const [showBrandSuggestions, setShowBrandSuggestions] = useState(false);
     const [classifications, setClassifications] = useState(createInitialClassificationState);
     const [classificationData, setClassificationData] = useState({ variants: [], config: [] });
-    // State để chứa dữ liệu bảng giá ban đầu cho component con
     const [initialClassificationData, setInitialClassificationData] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(isEditMode);
+    const [formErrors, setFormErrors] = useState({});
+    const [classificationError, setClassificationError] = useState(null);
+    const [submitError, setSubmitError] = useState(null);
+    const latestClassificationData = useRef(classificationData);
     const brandInputRef = useRef();
     const categoryInputRef = useRef();
 
     // --- EFFECTS ---
+    useEffect(() => {
+        latestClassificationData.current = classificationData;
+    }, [classificationData]);
 
-    // Effect 1: Reset state khi slug thay đổi (quan trọng khi chuyển giữa các trang edit)
     useEffect(() => {
         setIsLoading(!!slug);
-        if (!slug) { // Nếu là trang thêm mới, reset mọi thứ
+        if (!slug) {
             setProductName('');
             setDescription('');
             setCoverImage({ url: null, public_id: null });
@@ -77,11 +80,10 @@ const AddProducts = () => {
         }
     }, [slug]);
 
-    // Effect 2: Fetch dữ liệu master (brands, categories)
     useEffect(() => {
         const fetchMasterData = async () => {
             try {
-                const [categoriesData, brandsData] = await Promise.all([ getAllCategories(), getAllBrands() ]);
+                const [categoriesData, brandsData] = await Promise.all([getAllCategories(), getAllBrands()]);
                 setCategories(categoriesData);
                 setBrands(brandsData);
             } catch (err) {
@@ -91,7 +93,6 @@ const AddProducts = () => {
         fetchMasterData();
     }, []);
 
-    // Effect 3 & 4: Xử lý logic lọc cho autocomplete
     useEffect(() => {
         setFilteredBrands(
             brands.filter(brand => brand.name.toLowerCase().includes(brandInput.toLowerCase()))
@@ -104,81 +105,100 @@ const AddProducts = () => {
         );
     }, [categoryInput, categories]);
 
-    // Effect 5: Fetch và điền dữ liệu sản phẩm chi tiết trong chế độ EDIT
-    useEffect(() => {
-        if (!isEditMode) return;
+useEffect(() => {
+    if (!isEditMode) return;
 
-        const fetchAndPopulateProduct = async (productSlug) => {
-            setIsLoading(true);
-            try {
-                const product = await getProductBySlug(productSlug, 'admin');
+    const fetchAndPopulateProduct = async (productSlug) => {
+        setIsLoading(true);
+        try {
+            const product = await getProductBySlug(productSlug,'admin');
+            
+            // Điền thông tin cơ bản
+            setProductName(product.name);
+            setDescription(product.description);
+            setCoverImage({ url: product.thumbnail_url, public_id: getPublicIdFromUrl(product.thumbnail_url) });
+            // Sửa lỗi: Đảm bảo brand và category_ids tồn tại trước khi truy cập
+            if (product.brand) { 
+                setSelectedBrandId(product.brand._id); 
+                setBrandInput(product.brand.name); 
+            }
+            if (product.category_ids && product.category_ids[0]) { 
+                setSelectedCategoryId(product.category_ids[0]._id); 
+                setCategoryInput(product.category_ids[0].name); 
+            }
+            
+            // --- LOGIC TÁI CẤU TRÚC DỮ LIỆU ĐÃ SỬA LỖI ---
+            if (product.classification_config?.length > 0 && product.variants?.length > 0) {
+                const tempConfigs = [...product.classification_config];
+                while (tempConfigs.length < 2) { tempConfigs.push({ name: "" }); }
                 
-                // Điền thông tin cơ bản
-                setProductName(product.name);
-                setDescription(product.description);
-                setCoverImage({ url: product.thumbnail_url, public_id: getPublicIdFromUrl(product.thumbnail_url) });
-                if (product.brand) { setSelectedBrandId(product.brand._id); setBrandInput(product.brand.name); }
-                if (product.category_ids && product.category_ids[0]) { setSelectedCategoryId(product.category_ids[0]._id); setCategoryInput(product.category_ids[0].name); }
+                const [primaryConfig, secondaryConfig] = tempConfigs;
                 
-                // Logic chính: Tái cấu trúc state cho component con
-                if (product.classification_config?.length > 0 && product.variants?.length > 0 && product.classification_config[0].name !== 'Mặc định') {
-                    const tempConfigs = [...product.classification_config];
-                    while (tempConfigs.length < 2) { tempConfigs.push({ name: "" }); }
+                // Lấy tất cả các lựa chọn duy nhất
+                const primaryOptionNames = Array.from(new Set(product.variants.map(v => v.name)));
+                const secondaryOptionNames = Array.from(new Set(product.variants.flatMap(v => v.options.map(o => o.value))));
+                
+                // *** FIX: TẠO BẢN ĐỒ ID CHO CÁC LỰA CHỌN PHỤ ĐỂ ĐẢM BẢO NHẤT QUÁN ***
+                const secondaryOptionIdMap = new Map(
+                    secondaryOptionNames.map(name => [name, Date.now() + Math.random()])
+                );
 
-                    const newClassificationsState = tempConfigs.map((cfg, index) => {
-                        let optionNames = new Set();
-                        if (index === 0) { product.variants.forEach(v => optionNames.add(v.name)); }
-                        else { product.variants.forEach(v => v.options.forEach(opt => optionNames.add(opt.value))); }
-                        return {
-                            id: index + 1, name: cfg.name,
-                            options: Array.from(optionNames).map(optName => {
-                                const primaryVariant = (index === 0) ? product.variants.find(v => v.name === optName) : null;
-                                return {
-                                    id: Date.now() + Math.random(), name: optName, selected: true,
-                                    images: primaryVariant ? (primaryVariant.images || []).map(url => ({ url, public_id: getPublicIdFromUrl(url) })) : []
-                                };
-                            })
-                        };
-                    });
-                    
-                    const [primaryCls, secondaryCls] = newClassificationsState;
-                    if (primaryCls?.options && secondaryCls?.options) {
-                        const initialUiVariants = primaryCls.options.map(pOpt => {
-                            const dbPrimaryVariant = product.variants.find(v => v.name === pOpt.name);
+                // Xây dựng cấu trúc localClassifications hoàn chỉnh
+                const newClassifications = [
+                    {
+                        id: 1,
+                        name: primaryConfig.name,
+                        options: primaryOptionNames.map(pOptName => {
+                            const dbPrimaryVariant = product.variants.find(v => v.name === pOptName);
                             return {
-                                id: pOpt.id, name: pOpt.name, images: pOpt.images,
-                                options: secondaryCls.options.map(sOpt => {
-                                    const dbSecondaryOption = dbPrimaryVariant?.options.find(o => o.value === sOpt.name);
+                                id: Date.now() + Math.random(), // ID cho lựa chọn chính có thể ngẫu nhiên
+                                name: pOptName,
+                                selected: true,
+                                images: (dbPrimaryVariant.images || []).map(url => ({ url, public_id: getPublicIdFromUrl(url) })),
+                                // Dữ liệu lồng nhau
+                                options: secondaryOptionNames.map(sOptName => {
+                                    const dbSecondaryOption = dbPrimaryVariant.options.find(o => o.value === sOptName);
                                     return {
-                                        id: sOpt.id, name: sOpt.name,
+                                        // *** FIX: SỬ DỤNG ID TỪ BẢN ĐỒ ***
+                                        id: secondaryOptionIdMap.get(sOptName), 
+                                        name: sOptName,
                                         price: dbSecondaryOption?.price ?? '',
                                         stock: dbSecondaryOption?.stock_quantity ?? '',
                                         sku: dbSecondaryOption?.sku_code ?? ''
-                                    };
+                                    }
                                 })
-                            };
-                        });
-                        
-                        // Lưu dữ liệu ban đầu vào state để truyền cho component con
-                        setInitialClassificationData({
-                            classifications: newClassificationsState,
-                            uiVariants: initialUiVariants
-                        });
+                            }
+                        })
+                    },
+                    {
+                        id: 2,
+                        name: secondaryConfig.name,
+                        options: secondaryOptionNames.map(sOptName => ({
+                             // *** FIX: SỬ DỤNG ID TỪ BẢN ĐỒ ***
+                            id: secondaryOptionIdMap.get(sOptName),
+                            name: sOptName,
+                            selected: true,
+                        }))
                     }
-                    
-                    setClassifications(newClassificationsState);
-                }
-            } catch (error) {
-                alert(`Không thể tải dữ liệu sản phẩm: ${error.message}`);
-                navigate('/admin/products');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchAndPopulateProduct(slug);
-    }, [slug, isEditMode, navigate]);
+                ];
 
-    // Effect 6: Đóng gợi ý khi click ra ngoài
+                // Đặt cấu trúc hoàn chỉnh này làm dữ liệu ban đầu
+                setInitialClassificationData({ classifications: newClassifications });
+            }
+            // --- KẾT THÚC LOGIC SỬA LỖI ---
+
+        } catch (error) {
+            console.error("Lỗi khi tải và điền dữ liệu sản phẩm:", error);
+            alert(`Không thể tải dữ liệu sản phẩm: ${error.message}`);
+            navigate('/admin/all-products');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    fetchAndPopulateProduct(slug);
+}, [slug, isEditMode, navigate]);
+
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (brandInputRef.current && !brandInputRef.current.contains(e.target)) setShowBrandSuggestions(false);
@@ -187,57 +207,140 @@ const AddProducts = () => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
-    
+
     // --- HANDLERS ---
     const handleClassificationChange = useCallback((data) => {
         setClassificationData(data);
     }, []);
-
     const handleSelectCategory = (category) => {
-        setCategoryInput(category.name); setSelectedCategoryId(category._id); setShowCategorySuggestions(false);
+        setCategoryInput(category.name); setSelectedCategoryId(category._id); setShowCategorySuggestions(false); setFormErrors(prev => ({ ...prev, category: null }));
     };
     const handleAddNewCategory = async (name) => {
         try { const newCategory = await createCategoryByName(name); setCategories([...categories, newCategory]); handleSelectCategory(newCategory); } catch (err) { alert("Không thể thêm ngành hàng mới"); }
     };
     const handleSelectBrand = (brand) => {
-        setBrandInput(brand.name); setSelectedBrandId(brand._id); setShowBrandSuggestions(false);
+        setBrandInput(brand.name); setSelectedBrandId(brand._id); setShowBrandSuggestions(false); setFormErrors(prev => ({ ...prev, brand: null }));
     };
     const handleAddNewBrand = async (name) => {
         try { const newBrand = await createBrandByName(name); setBrands([...brands, newBrand]); handleSelectBrand(newBrand); } catch (err) { alert("Không thể thêm thương hiệu mới"); }
     };
     const handleCoverImageUpload = async (event) => {
         const file = event.target.files[0]; if (!file) return; if (coverImage.public_id) { try { await deleteImage(coverImage.public_id); } catch (error) { console.error("Lỗi khi xóa ảnh bìa cũ:", error.message); } }
-        try { const data = await uploadImage(file); setCoverImage(data); } catch (error) { alert(error.message); }
+        try { const data = await uploadImage(file); setCoverImage(data); setFormErrors(prev => ({ ...prev, coverImage: null })); } catch (error) { alert(error.message); }
     };
     const handleCoverImageRemove = async (e) => {
         e.stopPropagation(); if (!coverImage.public_id) { setCoverImage({ url: null, public_id: null }); return; }
         try { await deleteImage(coverImage.public_id); setCoverImage({ url: null, public_id: null }); } catch (error) { alert("Lỗi khi xóa ảnh: " + error.message); }
     };
 
+    // --- VALIDATION & SUBMIT ---
+    const validateForm = (data) => {
+        const newErrors = {};
+        let clsError = null;
+
+        if (!productName.trim()) newErrors.productName = "Vui lòng nhập Tên sản phẩm.";
+        if (!selectedBrandId) newErrors.brand = "Vui lòng chọn một Thương hiệu.";
+        if (!selectedCategoryId) newErrors.category = "Vui lòng chọn một Ngành hàng.";
+        if (!coverImage.url) newErrors.coverImage = "Bạn cần tải lên ảnh đại diện.";
+
+        const { config, variants } = data;
+        const primaryConfig = config.length > 0 ? config[0] : { name: '' };
+        const secondaryConfig = config.length > 1 ? config[1] : { name: '' };
+
+        if (!primaryConfig.name.trim()) {
+            clsError = "Vui lòng đặt tên cho Phân loại 1.";
+        } else if (variants.length === 0) {
+            clsError = `Vui lòng thêm ít nhất một lựa chọn cho "${primaryConfig.name}".`;
+        } else {
+            for (const variant of variants) {
+                if (!variant.name.trim()) {
+                    clsError = `Vui lòng nhập tên cho tất cả lựa chọn ở "${primaryConfig.name}".`; break;
+                }
+                if (!variant.images || variant.images.length === 0) {
+                    clsError = `Mỗi lựa chọn ở "${primaryConfig.name}" (ví dụ: "${variant.name}") phải có ít nhất một hình ảnh.`; break;
+                }
+            }
+            if (!clsError) {
+                if (!secondaryConfig.name.trim()) {
+                    clsError = "Bạn chưa thiết lập Phân loại 2. Vui lòng đặt tên hoặc thêm lựa chọn cho nó.";
+                } else if (!variants.every(v => v.options && v.options.length > 0)) {
+                    clsError = `Vui lòng thêm ít nhất một lựa chọn cho "${secondaryConfig.name}".`;
+                } else {
+                    for (const variant of variants) {
+                        for (const option of variant.options) {
+                            if (!option.value.trim()) {
+                                clsError = `Vui lòng nhập tên cho tất cả lựa chọn ở "${secondaryConfig.name}".`; break;
+                            }
+                            if (option.price === null || option.price === '' || Number(option.price) <= 0) {
+                                clsError = `Giá của phiên bản "${variant.name} - ${option.value}" phải lớn hơn 0.`; break;
+                            }
+                            
+                            // START: ĐIỀU KIỆN KIỂM TRA KHO HÀNG ĐÃ SỬA
+                            const stockValue = option.stock_quantity;
+                            const stockNumber = Number(stockValue);
+
+                            if (stockValue === null || stockValue === '' || isNaN(stockNumber) || stockNumber < 0) {
+                                clsError = `Kho hàng của phiên bản "${variant.name} - ${option.value}" phải là số không âm và không được để trống.`;
+                                break;
+                            }
+                            // END: ĐIỀU KIỆN KIỂM TRA KHO HÀNG ĐÃ SỬA
+                            
+                            if (!option.sku_code || !option.sku_code.trim()) {
+                                clsError = `SKU của phiên bản "${variant.name} - ${option.value}" không được để trống.`; break;
+                            }
+                        }
+                        if (clsError) break;
+                    }
+                }
+            }
+        }
+
+        setFormErrors(newErrors);
+        setClassificationError(clsError);
+
+        if (Object.keys(newErrors).length > 0) { setActiveTab('basic'); return false; }
+        if (clsError) { setActiveTab('sales'); return false; }
+        return true;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!productName || !selectedBrandId || !selectedCategoryId) { alert("Vui lòng điền đầy đủ Tên sản phẩm, Thương hiệu và Ngành hàng."); return; }
-        if (!coverImage.url) { alert('Bạn cần tải lên ảnh đại diện cho sản phẩm.'); return; }
-        setIsSubmitting(true);
-        try {
-            const productPayload = {
-                name: productName, description, brand: selectedBrandId, category_ids: [selectedCategoryId], thumbnail_url: coverImage.url,
-                classification_config: classificationData.config, variants: classificationData.variants,
-            };
-            if (isEditMode) {
-                const updatedProduct = await editProduct(slug, productPayload);
-                alert(`Cập nhật sản phẩm thành công: ${updatedProduct.name}`); navigate('/admin/all-products');
-            } else {
-                const newProduct = await addProduct(productPayload);
-                alert(`Tạo sản phẩm thành công: ${newProduct.name}`); navigate('/admin/all-products');
+        const currentData = latestClassificationData.current;
+        setSubmitError(null);
+        setFormErrors({});
+        setClassificationError(null);
+
+        setTimeout(() => {
+            if (!validateForm(currentData)) {
+                setSubmitError("Dữ liệu không hợp lệ. Vui lòng kiểm tra lại các trường được báo lỗi.");
+                return;
             }
-        } catch (error) {
-            alert(error.message || 'Có lỗi xảy ra.');
-        } finally {
-            setIsSubmitting(false);
-        }
+            const submitData = async () => {
+                setIsSubmitting(true);
+                try {
+                    const productPayload = {
+                        name: productName, description, brand: selectedBrandId, category_ids: [selectedCategoryId],
+                        thumbnail_url: coverImage.url, classification_config: currentData.config, variants: currentData.variants,
+                    };
+                    if (isEditMode) {
+                        await editProduct(slug, productPayload);
+                        alert(`Cập nhật sản phẩm thành công.`);
+                    } else {
+                        await addProduct(productPayload);
+                        alert(`Tạo sản phẩm thành công.`);
+                    }
+                    navigate('/admin/all-products');
+                } catch (error) {
+                    const message = error.response?.data?.message || error.message || 'Có lỗi xảy ra.';
+                    setSubmitError(message);
+                } finally {
+                    setIsSubmitting(false);
+                }
+            };
+            submitData();
+        }, 0);
     };
-    
+
     if (isLoading) { return <div className="loading-message">Đang tải dữ liệu sản phẩm...</div>; }
 
     return (
@@ -253,27 +356,36 @@ const AddProducts = () => {
             {activeTab === 'basic' && (
                 <>
                     <div className="form-row">
-                        <label className="form-label">Ảnh bìa</label>
+                        <label className="form-label">Ảnh bìa *</label>
                         <div className="form-control">
                             <div className="cover-image-uploader" onClick={() => document.getElementById('cover-image-input').click()}>
-                                {coverImage.url ? (<div className="image-preview-container"> <img src={coverImage.url} alt="Ảnh bìa" className="uploaded-image" /> <button type="button" className="remove-image-btn" onClick={handleCoverImageRemove}>×</button> </div>) : ( <div className="image-upload-placeholder"><span>Thêm ảnh</span></div> )}
+                                {coverImage.url ? (<div className="image-preview-container"> <img src={coverImage.url} alt="Ảnh bìa" className="uploaded-image" /> <button type="button" className="remove-image-btn" onClick={handleCoverImageRemove}>×</button> </div>) : (<div className="image-upload-placeholder"><span>Thêm ảnh</span></div>)}
                                 <input id="cover-image-input" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleCoverImageUpload} />
                             </div>
+                            {formErrors.coverImage && <div className="error-message">{formErrors.coverImage}</div>}
                         </div>
                     </div>
-                    <div className="form-row"> <label className="form-label">Tên sản phẩm</label> <div className="form-control"> <input type="text" className="form-input" value={productName} onChange={(e) => setProductName(e.target.value)} required /> </div> </div>
                     <div className="form-row">
-                        <label className="form-label">Thương hiệu</label>
+                        <label className="form-label">Tên sản phẩm *</label>
+                        <div className="form-control">
+                            <input type="text" className={`form-input ${formErrors.productName ? 'input-error' : ''}`} value={productName} onChange={(e) => { setProductName(e.target.value); if (formErrors.productName) setFormErrors(p => ({ ...p, productName: null })); }} />
+                            {formErrors.productName && <div className="error-message">{formErrors.productName}</div>}
+                        </div>
+                    </div>
+                    <div className="form-row">
+                        <label className="form-label">Thương hiệu *</label>
                         <div className="form-control autocomplete-wrapper" ref={brandInputRef}>
-                            <input type="text" className="form-input" value={brandInput} onFocus={() => setShowBrandSuggestions(true)} onChange={(e) => { setBrandInput(e.target.value); setShowBrandSuggestions(true); }}/>
+                            <input type="text" className={`form-input ${formErrors.brand ? 'input-error' : ''}`} value={brandInput} onFocus={() => setShowBrandSuggestions(true)} onChange={(e) => { setBrandInput(e.target.value); setShowBrandSuggestions(true); setSelectedBrandId(''); if (formErrors.brand) setFormErrors(p => ({ ...p, brand: null })); }} />
                             {showBrandSuggestions && (<ul className="autocomplete-suggestions"> {filteredBrands.map((brand) => (<li key={brand._id} onClick={() => handleSelectBrand(brand)}>{brand.name}</li>))} {filteredBrands.length === 0 && brandInput && (<li className="add-new" onClick={() => handleAddNewBrand(brandInput)}>+ Thêm mới: "{brandInput}"</li>)} </ul>)}
+                            {formErrors.brand && <div className="error-message">{formErrors.brand}</div>}
                         </div>
                     </div>
                     <div className="form-row">
-                        <label className="form-label">Ngành hàng</label>
+                        <label className="form-label">Ngành hàng *</label>
                         <div className="form-control autocomplete-wrapper" ref={categoryInputRef}>
-                            <input type="text" className="form-input" value={categoryInput} onFocus={() => setShowCategorySuggestions(true)} onChange={(e) => { setCategoryInput(e.target.value); setShowCategorySuggestions(true); }} />
+                            <input type="text" className={`form-input ${formErrors.category ? 'input-error' : ''}`} value={categoryInput} onFocus={() => setShowCategorySuggestions(true)} onChange={(e) => { setCategoryInput(e.target.value); setShowCategorySuggestions(true); setSelectedCategoryId(''); if (formErrors.category) setFormErrors(p => ({ ...p, category: null })); }} />
                             {showCategorySuggestions && (<ul className="autocomplete-suggestions"> {filteredCategories.map((cat) => (<li key={cat._id} onClick={() => handleSelectCategory(cat)}>{cat.name}</li>))} {filteredCategories.length === 0 && categoryInput && (<li className="add-new" onClick={() => handleAddNewCategory(categoryInput)}>+ Thêm mới: "{categoryInput}"</li>)} </ul>)}
+                            {formErrors.category && <div className="error-message">{formErrors.category}</div>}
                         </div>
                     </div>
                     <div className="form-row"> <label className="form-label">Mô tả sản phẩm</label> <div className="form-control"> <textarea className="form-textarea" rows="5" value={description} onChange={(e) => setDescription(e.target.value)}></textarea> </div> </div>
@@ -287,11 +399,17 @@ const AddProducts = () => {
                         initialData={initialClassificationData}
                         onClassificationsChange={setClassifications}
                         onDataChange={handleClassificationChange}
+                        error={classificationError}
                     />
                 </div>
             )}
-            
-            <div className="form-submit-row"> <button type="submit" className="final-save-btn" disabled={isSubmitting || isLoading}> {isSubmitting ? 'Đang lưu...' : (isEditMode ? 'Cập nhật sản phẩm' : 'Lưu sản phẩm')} </button> </div>
+
+            <div className="form-submit-row">
+                {submitError && <div className="submit-error-message">{submitError}</div>}
+                <button type="submit" className="final-save-btn" disabled={isSubmitting || isLoading}>
+                    {isSubmitting ? 'Đang lưu...' : (isEditMode ? 'Cập nhật sản phẩm' : 'Lưu sản phẩm')}
+                </button>
+            </div>
         </form>
     );
 };

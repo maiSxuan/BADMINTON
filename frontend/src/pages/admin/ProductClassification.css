@@ -317,3 +317,12 @@
   color: #6b7280;
   font-style: italic;
 }
+.classification-error-message {
+    background-color: #fce8e6; /* Nền đỏ nhạt */
+    border: 1px solid #d93025;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    color: #d93025; /* Chữ đỏ đậm */
+    font-size: 14px;
+}

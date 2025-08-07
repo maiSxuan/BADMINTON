@@ -22,48 +22,22 @@
 .underline-center::before { left: 50%; transform: translate(-50%); }
 .underline-right::before { right: 0; }
 
-/* --- SỬA Ở ĐÂY: Thanh Lọc Sản Phẩm có trượt ngang --- */
 .category-tabs-wrapper {
   width: 100%;
-  overflow-x: auto; /* Bật thanh trượt ngang khi nội dung tràn */
+  overflow-x: auto;
   margin-bottom: 16px;
-  -webkit-overflow-scrolling: touch; /* Hỗ trợ cuộn mượt trên mobile */
+  -webkit-overflow-scrolling: touch; 
 }
-/* Ẩn thanh trượt mặc định trên các trình duyệt hỗ trợ */
-.category-tabs-wrapper::-webkit-scrollbar {
-  height: 4px; /* Làm cho thanh trượt nhỏ hơn */
-}
-.category-tabs-wrapper::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 2px;
-}
+.category-tabs-wrapper::-webkit-scrollbar { height: 4px; }
+.category-tabs-wrapper::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
 
-.category-tabs {
-  display: flex; /* Dùng flex để các item nằm trên một hàng */
-  gap: 16px;
-  padding: 12px 8px;
-  width: max-content; /* Quan trọng: Cho phép container rộng ra theo nội dung */
-}
-
-.tab-button {
-  flex: 0 0 auto; /* Ngăn các nút bị co lại */
-  padding: 12px 24px;
-  border: 1px solid #e6e6e6;
-  border-radius: 6px;
-  background-color: #ffffff;
-  color: #000000;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 14px;
-  white-space: nowrap;
-  text-align: center;
-}
+.category-tabs { display: flex; gap: 16px; padding: 12px 8px; width: max-content; }
+.tab-button { flex: 0 0 auto; padding: 12px 24px; border: 1px solid #e6e6e6; border-radius: 6px; background-color: #ffffff; color: #000000; font-weight: 500; cursor: pointer; transition: all 0.2s; font-size: 14px; white-space: nowrap; text-align: center; }
 .tab-button.active { background-color: #a6fcf5; border-color: #a6fcf5; }
 .tab-button:hover { background-color: #f5f5f5; }
 .tab-button.active:hover { background-color: #a6fcf5; opacity: 0.8; }
 
-/* --- STYLE MỚI CHO LƯỚI SẢN PHẨM (THAY THẾ STYLE CŨ) --- */
+/* --- STYLE MỚI CHO LƯỚI SẢN PHẨM VÀ CARD --- */
 .homepage-product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -97,6 +71,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+/* KHUNG BỌC HÌNH ẢNH */
 .homepage-product-image-wrapper {
   width: 100%;
   aspect-ratio: 1 / 1; 
@@ -104,26 +79,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
-  overflow: hidden;
-  /* position: relative; */
-  /* aspect-ratio: 1 / 1; */
-  /* background-color: #fef4ff; */
-  /* border-radius: 8px; */
+  overflow: hidden; /* Quan trọng: ẩn phần ảnh bị thừa */
+  background-color: #f9f9f9; /* Thêm màu nền nhạt */
+  border-radius: 6px;
 }
 
-.product-image {
-  /* width: 100%; */
-  /* height: 100%; */
-  /* display: block; */
-  /* object-fit: contain; */
-  width: auto;
-  height: auto;
-  transform: scale(4.0); 
-  transform-origin: center;
+/* HÌNH ẢNH BÊN TRONG */
+.homepage-product-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain; /* <-- ĐÂY LÀ THUỘC TÍNH QUAN TRỌNG NHẤT */
+  /* object-fit: contain đảm bảo toàn bộ ảnh sẽ hiển thị vừa vặn trong khung mà không bị méo */
+  transform: scale(1.0); /* Reset lại scale */
 }
 
-.product-grid-info {
+/* THÔNG TIN SẢN PHẨM (TÊN, GIÁ) */
+.homepage-product-info {
+  flex-grow: 1; /* Đảm bảo phần info chiếm hết không gian còn lại */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -150,95 +123,28 @@
   margin: 0;
 }
 
-/* --- CÁC STYLE CŨ KHÁC (GIỮ NGUYÊN TỪ CODE GỐC) --- */
+/* --- CÁC STYLE CŨ CÒN LẠI --- */
 .sale-off { padding: 12px 0; margin-bottom: 12px; }
 .sale-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin: 0 32px; }
-.sale-card { border-radius: 8px; padding: 24px; color: white; position: relative; overflow: hidden; min-height: 120px; display: flex; flex-direction: column; justify-content: center; cursor: pointer; transition: transform 0.2s; }
+.sale-card { border-radius: 8px; padding: 24px; color: white; position: relative; overflow: hidden; min-height: 120px; display: flex; flex-direction: column; justify-content: center; cursor: pointer; transition: transform 0.2s; text-decoration: none; }
 .sale-card:hover { transform: translateY(-2px); }
-.image-card { background-size: cover; background-position: center; background-repeat: no-repeat; color: #fee9ff; text-decoration: none; }
+.image-card { background-size: cover; background-position: center; background-repeat: no-repeat; color: #fee9ff; }
 .image-card:hover { filter: brightness(1.1); }
 .sale-title { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
 .sale-subtitle { font-size: 14px; opacity: 0.9; }
-.category-section {
-  padding: 12px 0 32px 0;
-}
 
-.category-grid-container {
-  /* --- A: Container để giới hạn chiều cao và bật thanh trượt DỌC --- */
-  /* Chiều cao này tương đương với 2 hàng item + khoảng cách giữa chúng */
-  max-height: 216px; /* (min-height 100px * 2) + (gap 16px) */
-  overflow-y: auto;   /* Bật thanh trượt DỌC khi nội dung tràn */
-  padding-right: 8px; /* Thêm padding để thanh trượt không đè lên nội dung */
-  margin: 32px;
-}
+.category-section { padding: 12px 0 32px 0; }
+.category-grid-container { max-height: 216px; overflow-y: auto; padding-right: 8px; margin: 32px; }
+.category-grid-container::-webkit-scrollbar { width: 6px; }
+.category-grid-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+.category-grid-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+.category-grid-container::-webkit-scrollbar-thumb:hover { background: #aaa; }
+.category-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.category-card { background: linear-gradient(135deg, #bf6a02, #ff0102); color: white; border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s; min-height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-decoration: none; }
+.category-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
+.category-title { font-weight: bold; font-size: 14px; line-height: 1.4; word-break: break-word; }
 
-/* Tùy chỉnh thanh trượt dọc cho đẹp hơn */
-.category-grid-container::-webkit-scrollbar {
-  width: 6px;
-}
-.category-grid-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
-}
-.category-grid-container::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 3px;
-}
-.category-grid-container::-webkit-scrollbar-thumb:hover {
-  background: #aaa;
-}
-
-.category-grid {
-  /* --- B: Dùng Grid 4 cột đơn giản, tự động xuống hàng --- */
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-
-.category-card {
-  /* --- C: Chỉ cần định nghĩa chiều cao, chiều rộng sẽ tự động theo grid --- */
-  background: linear-gradient(135deg, #bf6a02, #ff0102);
-  color: white;
-  border-radius: 8px;
-  padding: 16px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-height: 100px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-decoration: none;
-}
-
-.category-card:hover { 
-  transform: translateY(-2px); 
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
-}
-
-.category-title {
-  font-weight: bold;
-  font-size: 14px;
-  line-height: 1.4;
-  word-break: break-word; /* Giữ lại để xử lý tên quá dài */
-}
-/* Responsive Design (giữ nguyên từ code gốc) */
-@media (max-width: 1024px) {
-  .features-grid, .homepage-product-grid { grid-template-columns: repeat(3, 1fr); }
-  .category-grid { grid-template-columns: repeat(3, 1fr); }
-}
-@media (max-width: 768px) {
-  .features-grid, .homepage-product-grid, .sale-grid, .category-grid { grid-template-columns: repeat(2, 1fr); }
-  .category-tabs { gap: 8px; }
-  .tab-button { padding: 8px 16px; font-size: 12px; }
-  .section-title { font-size: 20px; }
-}
-@media (max-width: 480px) {
-  .features-grid, .homepage-product-grid, .sale-grid, .category-grid { grid-template-columns: 1fr; }
-  .category-tabs { flex-direction: column; align-items: center; }
-  .tab-button { width: 200px; text-align: center; }
-  .container { padding: 0 12px; }
-  .products, .category-section { padding: 32px 0; }
-  .features, .sale-off { padding: 24px 0; }
-}
+/* Responsive Design */
+@media (max-width: 1024px) { .features-grid, .homepage-product-grid, .category-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px) { .features-grid, .homepage-product-grid, .sale-grid, .category-grid { grid-template-columns: repeat(2, 1fr); } .section-title { font-size: 20px; } }
+@media (max-width: 480px) { .features-grid, .homepage-product-grid, .sale-grid, .category-grid { grid-template-columns: 1fr; } .container { padding: 0 12px; } }
