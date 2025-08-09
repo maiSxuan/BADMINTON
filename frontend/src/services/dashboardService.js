@@ -62,7 +62,7 @@ const dashboardService = {
     }
   },
 
-  getLowStockAlerts: async (threshold = 10) => {
+  getLowStockAlerts: async (threshold = 30) => {
     const params = new URLSearchParams({ threshold });
     const url = `${BASE_URL}/stats/low-stock?${params.toString()}`;
 

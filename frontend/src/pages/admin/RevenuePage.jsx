@@ -203,27 +203,33 @@ const RevenuePage = () => {
               <table className="best-selling-table">
                   <thead>
                       <tr>
+                          <th style={{ width: '50px', textAlign: 'center' }}>STT</th>
                           <th>Sản phẩm</th>
                           <th>Đã bán</th>
                           <th>Doanh thu</th>
                       </tr>
                   </thead>
                   <tbody>
-                      {topProducts.map((product, index) => (
+                      {topProducts.map((product, index) => ( // Sử dụng `index` từ hàm map
                           <tr key={product.sku || index}>
-                              <td>
-                                  <div className="product-cell">
-                                      <img src={product.thumbnail || 'https://via.placeholder.com/40'} alt={product.name}/>
+                              {/* Cột 1: Hiển thị STT */}
+                              <td style={{ textAlign: 'center', fontWeight: 'bold' }}>{index + 1}</td>
+                              
+                              {/* Cột 2: Thông tin sản phẩm */}
+                              <td style={{ textAlign: 'left'}}>
                                       <div>
                                           <p className="product-name">{product.name}</p>
-                                          <p className="product-sub">SKU: {product.sku}</p>
                                       </div>
-                                  </div>
+
                               </td>
-                              <td>{product.totalQuantitySold}</td>
+
+                              {/* Cột 3: Số lượng đã bán */}
+                              <td style={{ textAlign: 'center' }}>{product.totalQuantitySold}</td>
+                              
+                              {/* Cột 4: Doanh thu */}
                               <td>{formatCurrency(product.totalRevenue)}</td>
                           </tr>
-                      ))}
+                      ))}                      
                   </tbody>
               </table>
           </div>
@@ -245,7 +251,6 @@ const RevenuePage = () => {
                               <td>
                                 {/* Không có ảnh nên chỉ hiển thị tên */}
                                 <p className="product-name">{item.productName}</p>
-                                <p className="product-sub">SKU: {item.sku}</p>
                               </td>
                               <td>{`${item.variantName} - ${item.optionValue}`}</td>
                               <td>
