@@ -52,7 +52,9 @@ const createOrder = async (req, res) => {
         option_id: new mongoose.Types.ObjectId(item.option_id),
         sku_code: option.sku_code,   
         quantity: item.quantity,
-        priceAtTime: item.priceAtTime
+        priceAtTime: item.priceAtTime,
+        name: product.name,
+        thumbnail_url: variant.images?.[0] || product.thumbnail_url 
       });
     }
 
