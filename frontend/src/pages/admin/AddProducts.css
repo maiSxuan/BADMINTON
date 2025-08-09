@@ -1,238 +1,377 @@
-.add-product-form {
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+}
+
+:root {
+  --color-primary: #EA599B;
+  --color-primary-light-bg: #FEF6F9;
+  --color-primary-border: #F5C6D9;
+  --color-text-dark: #333333;
+  --color-text-light: #888888;
+  --color-border-default: #EAEAEA;
+  --color-background-main: #FFFFFF;
+  --color-background-tab-inactive: #FFFFFF;
+  --color-background-footer: #FDFDFD;
+  --border-radius-main: 8px;
+  --border-radius-small: 6px;
+}
+
+.add-product-container {
+  background-color: var(--color-background-main);
+  min-height: 100vh;
+}
+
+.add-product-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 25px;
+  background-color: var(--color-background-main);
+  border-bottom: 1px solid var(--color-border-default);
 }
-.tab-wrapper {
-  margin-bottom: 10px;
-}
-.tab-container {
-  display: flex;
-  width: fit-content;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid #fbcfe8;
-}
-.tab-button {
-  padding: 12px 24px;
-  font-size: 14px;
-  font-weight: 500;
+
+.add-product-tab {
+  flex: 1;
+  padding: 16px 24px;
   border: none;
-  background-color: white;
-  color: #8c2f6d;
+  background-color: var(--color-background-tab-inactive);
+  color: var(--color-text-light);
+  font-size: 15px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  border-right: 1px solid #fbcfe8;
+  text-align: center;
+  position: relative;
+  border-radius: 0;
+  border-right: 1px solid var(--color-border-default);
 }
-.tab-button:last-child {
+
+.add-product-tab:last-child {
   border-right: none;
 }
-.tab-button.active {
-  background-color: #fdf2f8;
-  color: #be185d;
+
+.add-product-tab:hover {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light-bg);
 }
-.form-row {
+
+.add-product-tab.active {
+  background-color: var(--color-background-main);
+  color: var(--color-primary);
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-primary);
+  margin-bottom: -1px;
+}
+
+.add-product-content {
+  padding: 32px 24px 24px 24px;
+  background-color: var(--color-background-main);
+}
+
+.product-field-group {
+  margin-bottom: 28px;
   display: flex;
   align-items: flex-start;
-  gap: 20px;
+  gap: 24px;
 }
-.form-label {
-  flex-basis: 150px;
+
+.product-field-label {
+  width: 150px;
   flex-shrink: 0;
-  text-align: right;
-  padding-top: 10px;
   font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: var(--color-text-dark);
+  padding-top: 12px;
+  text-align: right;
+  padding-right: 16px;
 }
-.form-control {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  max-width: 600px; /* Thêm giới hạn chiều rộng ở đây */
-  width: 100%;
+
+.product-field-label.required::after {
+  content: " *";
+  color: var(--color-primary);
+  font-weight: 600;
 }
-.form-input, .form-textarea {
+
+.product-field-content {
+  flex: 1;
+  max-width: 100%;
+}
+
+.product-input,
+.product-textarea {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #fbcfe8;
-  border-radius: 6px;
+  padding: 12px 16px;
+  border: 1px solid var(--color-primary-border);
+  border-radius: var(--border-radius-small);
   font-size: 14px;
-  background-color: #fdf2f8;
-  color: #555;
-  box-sizing: border-box; /* Quan trọng */
+  background-color: var(--color-primary-light-bg);
+  color: var(--color-text-dark);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: inherit;
+  box-sizing: border-box;
 }
-.form-input:focus, .form-textarea:focus {
+
+.product-input::placeholder,
+.product-textarea::placeholder {
+  color: var(--color-text-light);
+}
+
+.product-input:focus,
+.product-textarea:focus {
   outline: none;
-  border-color: #ec4899;
-  box-shadow: 0 0 0 2px #fbcfe8;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(234, 89, 155, 0.1);
 }
-.form-textarea {
+
+.product-textarea {
   resize: vertical;
   min-height: 120px;
-}
-.form-submit-row {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #f3e8f0;
-}
-.final-save-btn {
-  padding: 12px 30px;
-  font-size: 16px;
-  font-weight: bold;
-  color: white;
-  background-color: #7b1a4b;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.final-save-btn:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+  line-height: 1.5;
 }
 
-/* === BẮT ĐẦU SỬA LỖI DROPDOWN === */
-
-.autocomplete-wrapper {
-  position: relative;
-  width: 100%; /* Đảm bảo wrapper chiếm toàn bộ chiều rộng của .form-control */
-}
-
-.autocomplete-suggestions {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0; /* right: 0 sẽ làm nó tự động co giãn theo chiều rộng của cha */
-  background-color: white;
-  border: 1px solid #ddd;
-  border-top: none;
-  border-radius: 0 0 6px 6px;
-  list-style: none;
-  margin: 0;
-  padding: 4px;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.autocomplete-suggestions li {
-  padding: 10px 12px;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.autocomplete-suggestions li:hover {
-  background-color: #fdf2f8;
-}
-
-.autocomplete-suggestions .add-new {
-  color: #be185d;
-  font-style: italic;
-  font-weight: 500;
-}
-
-/* === KẾT THÚC SỬA LỖI DROPDOWN === */
-
-.cover-image-uploader {
+.product-image-upload {
   width: 120px;
   height: 120px;
-  border: 2px dashed #fbcfe8;
-  border-radius: 8px;
+  border: 2px dashed var(--color-primary);
+  border-radius: var(--border-radius-main);
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  background-color: #fdf2f8;
+  background-color: var(--color-primary-light-bg);
   transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
-.cover-image-uploader:hover {
-  border-color: #ec4899;
-  background-color: #fce7f3;
+
+.product-image-upload:hover {
+  background-color: #FCF0F5;
+  border-color: #E04A8B;
 }
-.image-upload-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  color: #ec4899;
-}
-.image-upload-placeholder svg {
-  width: 32px;
-  height: 32px;
-}
-.image-upload-placeholder span {
+
+.product-upload-placeholder-text {
   font-size: 14px;
   font-weight: 500;
+  color: var(--color-primary);
 }
-.image-preview-container {
-  width: 100%;
-  height: 100%;
-  position: relative;
+
+.product-image-upload.has-image {
+  border-style: solid;
+  border-color: var(--color-border-default);
+  background-color: var(--color-background-main);
+  padding: 4px;
 }
-.uploaded-image {
+
+.product-uploaded-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: calc(var(--border-radius-main) - 4px);
 }
-.remove-image-btn {
+
+.product-remove-image {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  background-color: rgba(0, 0, 0, 0.5);
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  background-color: rgba(0, 0, 0, 0.7);
   color: white;
   border: none;
   border-radius: 50%;
-  width: 22px;
-  height: 22px;
-  font-size: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
   line-height: 1;
-  padding: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 10;
 }
 
-  .error-message {
-    color: #d93025;
+.product-image-upload.has-image:hover .product-remove-image {
+  opacity: 1;
+}
+
+.product-remove-image:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.product-autocomplete {
+  position: relative;
+}
+
+.product-autocomplete-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: var(--color-background-main);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-small);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.product-autocomplete-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-text-dark);
+  border-bottom: 1px solid #F5F5F5;
+}
+
+.product-autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.product-autocomplete-item:hover {
+  background-color: var(--color-primary-light-bg);
+  color: var(--color-primary);
+}
+
+.product-autocomplete-item.product-autocomplete-add-new {
+  background-color: #F0F8FF;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.product-autocomplete-item.product-autocomplete-add-new:hover {
+  background-color: var(--color-primary-light-bg);
+}
+
+.product-submit-section {
+  padding: 24px;
+  border-top: 1px solid var(--color-border-default);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: var(--color-background-main);
+  gap: 16px;
+}
+
+.product-submit-button {
+  padding: 12px 32px;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+}
+
+.product-submit-button:hover {
+  background-color: #D64A8D;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(234, 89, 155, 0.3);
+}
+
+.product-submit-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(234, 89, 155, 0.2);
+}
+
+.product-submit-button:disabled {
+  background-color: #CCCCCC;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.product-error-message {
+  color: #D93025;
+  font-size: 12px;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.product-submit-error {
+  color: #D93025;
+  font-size: 14px;
+  font-weight: 500;
+  margin-right: auto;
+  padding: 8px 16px;
+  background-color: #FFF0F0;
+  border: 1px solid #FFB3B3;
+  border-radius: var(--border-radius-small);
+}
+
+.product-input.error, 
+.product-textarea.error {
+  border-color: #D93025 !important;
+  background-color: #FFF5F5 !important;
+}
+
+.product-loading {
+  padding: 80px 24px;
+  text-align: center;
+  font-size: 16px;
+  color: var(--color-text-light);
+  background-color: var(--color-background-main);
+  min-height: 100vh;
+}
+
+.product-classification-wrapper {
+}
+
+@media (max-width: 768px) {
+  .add-product-tab {
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+  .add-product-content {
+    padding: 24px 16px;
+  }
+  .product-submit-section {
+    padding: 20px 16px;
+    flex-direction: column-reverse;
+    gap: 16px;
+  }
+  .product-field-group {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .product-field-label {
+    width: 100%;
+    text-align: left;
+    padding-right: 0;
+    padding-top: 0;
+    margin-bottom: 4px;
+  }
+  .product-submit-button {
+    width: 100%;
+    min-width: auto;
+  }
+  .product-submit-error {
+    margin-right: 0;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-product-tab {
+    padding: 12px 8px;
     font-size: 13px;
-    margin-top: 6px;
-  } 
-
-  .input-error {
-    border-color: #d93025 !important;
   }
-
-  .input-error:focus {
-    box-shadow: 0 0 0 2px rgba(217, 48, 37, 0.2);
+  .add-product-content {
+    padding: 20px 12px;
   }
-
-  /* Style cho thông báo lỗi của từng trường input */
-.error-message {
-  color: #d93025; /* Màu đỏ của Google */
-  font-size: 13px;
-  margin-top: 6px;
-}
-
-/* Style cho khung input bị lỗi */
-.input-error {
-  border-color: #d93025 !important;
-}
-
-.input-error:focus {
-  border-color: #d93025 !important;
-  box-shadow: 0 0 0 2px rgba(217, 48, 37, 0.2);
-}
-
-/* Style cho thông báo lỗi chung ở trên nút submit */
-.submit-error-message {
-  color: #d93025;
-  text-align: right;
-  margin-bottom: 10px;
-  width: 100%;
+  .product-submit-section {
+    padding: 16px 12px;
+  }
+  .product-field-group {
+    margin-bottom: 20px;
+  }
+  .product-image-upload {
+    width: 100px;
+    height: 100px;
+  }
 }
