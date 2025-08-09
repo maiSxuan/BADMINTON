@@ -69,9 +69,29 @@
   border-radius: 4px;
 }
 
-
 .submenu li a.active {
   background-color: #e9ecef;
   font-weight: 500;
   color: #000;
+}
+
+.admin-section-header.direct-link {
+    display: block; 
+    text-decoration: none; 
+    color: inherit; 
+}
+
+.admin-section-header.direct-link .arrow {
+    display: none;
+}
+
+
+.admin-section-header.direct-link.active {
+    background-color: #f0f0f0; 
+    color: var(--primary-color);
+}
+
+
+.admin-section-header.direct-link .admin-section-title {
+    text-decoration: none;
 }

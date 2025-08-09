@@ -29,22 +29,14 @@ import './AdminSidebar.css';
         { label: 'Thêm sản phẩm', path: '/admin/add-product' },
       ],
     },
-    {
-      id: 'finance',
-      title: 'Tài chính',
-      subItems: [
-        { label: 'Doanh thu', path: '/admin/revenue' },
-        { label: 'Số dư tài khoản', path: '/admin/balance' },
-      ],
-    },
-    {
+        {
       id: 'promotions',
       title: 'Khuyến mãi',
       subItems: [
         {label: 'Tạo chiến dịch', path:'/admin/add-promotion'},
         {label: 'Quản lí khuyến mãi', path:'/admin/manage-promotion'}
       ]
-    }
+    },
   ];
 
 const AdminSidebar = () => {
@@ -61,30 +53,45 @@ const AdminSidebar = () => {
     });
   };
 
-  return (
+   return (
     <aside className="admin-sidebar">
       {menuItems.map((section) => {
-  
-        const isOpen = openSectionIds.includes(section.id);
-
-        return (
-          <div key={section.id} className="sidebar-section">
-            <div className="admin-section-header" onClick={() => handleToggle(section.id)}>
-              <h3 className="admin-section-title">{section.title}</h3>
-              <span className={`arrow ${isOpen ? 'down' : 'up'}`}></span>
+        // Kiểm tra xem mục có menu con hay không
+        const hasSubItems = section.subItems && section.subItems.length > 0;
+        
+        if (hasSubItems) {
+          // NẾU CÓ MENU CON, RENDER NHƯ CŨ
+          const isOpen = openSectionIds.includes(section.id);
+          return (
+            <div key={section.id} className="sidebar-section">
+              <div className="admin-section-header" onClick={() => handleToggle(section.id)}>
+                <h3 className="admin-section-title">{section.title}</h3>
+                <span className={`arrow ${isOpen ? 'down' : 'up'}`}></span>
+              </div>
+              <div className={`submenu ${isOpen ? 'open' : ''}`}>
+                <ul>
+                  {section.subItems.map((item, index) => (
+                    <li key={index}>
+                      <NavLink to={item.path}>{item.label}</NavLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-
-            <div className={`submenu ${isOpen ? 'open' : ''}`}>
-              <ul>
-                {section.subItems.map((item, index) => (
-                  <li key={index}>
-                    <NavLink to={item.path}>{item.label}</NavLink>
-                  </li>
-                ))}
-              </ul>
+          );
+        } else {
+          // NẾU KHÔNG CÓ MENU CON, RENDER NHƯ MỘT LIÊN KẾT TRỰC TIẾP
+          return (
+            <div key={section.id} className="sidebar-section">
+              <NavLink 
+                to={section.path} 
+                className="admin-section-header direct-link" // Thêm class để dễ dàng style riêng
+              >
+                <h3 className="admin-section-title">{section.title}</h3>
+              </NavLink>
             </div>
-          </div>
-        );
+          );
+        }
       })}
     </aside>
   );

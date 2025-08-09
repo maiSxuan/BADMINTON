@@ -4,14 +4,16 @@ const Order = require('../models/Order');
 
 // POST /ratings - Viết đánh giá
 exports.createRating = async (req, res) => {
+  console.log('--- Received request to create rating ---');
+  console.log('Request Body:', req.body);
   try {
     const { orderId, productId, rating, comment, userId } = req.body;
 
     // 1. Kiểm tra order tồn tại, thuộc user, và đã giao
     const order = await Order.findOne({
       _id: orderId,
-      user: userId,
-      status: 'delivered'
+      user_id: userId,
+      status: { $in: ['Đã giao', 'Hoàn thành'] }
     });
 
     if (!order) {
@@ -19,7 +21,7 @@ exports.createRating = async (req, res) => {
     }
 
     // 2. Kiểm tra sản phẩm có trong đơn hàng
-    const productExists = order.items.some(item => String(item.product_item) === productId);
+    const productExists = order.items.some(item => String(item.product) === productId);
     if (!productExists) {
       return res.status(400).json({ message: 'Sản phẩm không tồn tại trong đơn hàng.' });
     }
@@ -54,6 +56,8 @@ exports.createRating = async (req, res) => {
 // GET /ratings/product/:productId - Lấy đánh giá theo sản phẩm
 exports.getRatingsByProduct = async (req, res) => {
   try {
+    console.log('API ĐANG TÌM KIẾM ĐÁNH GIÁ CHO PRODUCT ID:', req.params.productId);
+
     const productId = req.params.productId;
     const limit = req.query.limit ? parseInt(req.query.limit) : null;
 
