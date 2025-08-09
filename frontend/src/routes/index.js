@@ -8,7 +8,7 @@ import HeaderFooterLayout from "../layouts/HeaderFooterLayout";
 import AdminLayout from "../layouts/AdminLayout";
 
 // Thêm các trang vào đây
-import AdminHome from "../pages/admin/AdminHome";
+import AdminHome from "../pages/admin/RevenuePage";
 import HomePage from "../pages/customer/Home";
 import About from "../pages/customer/About";
 import Contact from "../pages/customer/Contact"
@@ -23,7 +23,6 @@ import ProductPage from "../pages/customer/ProductPage";
 import UserListPage from "../pages/admin/UserList";
 import AddPromotionPage from "../pages/admin/AddPromotion";
 import RevenuePage from "../pages/admin/RevenuePage";
-import BalancePage from "../pages/admin/BalancePage";
 import PromotionListPage from "../pages/admin/PromotionList";
 import FranchisePolicy from "../pages/customer/FranchisePolicy";
 import AllOrdersPage from "../pages/admin/AllOrdersPage";
@@ -281,28 +280,6 @@ const publicRoutes = [
     layout: AdminLayout,
      allowedRoles: ["ADMIN"]
   },
-
-  // Tài chính
-  { path: "/admin/revenue", component: RevenuePage, allowedRoles: ["ADMIN"], layout: (props) => (
-  <AdminLayout
-    {...props}
-    breadcrumbItems={[
-      { label: "Trang chủ", path: "/admin" },
-      { label: "Tài chính", path: "/admin" },
-      { label: "Doanh thu", path: "/admin/revenue" },
-    ]}
-  />
-  ) },
-  { path: "/admin/balance", component: BalancePage, allowedRoles: ["ADMIN"], layout: (props) => (
-  <AdminLayout
-    {...props}
-    breadcrumbItems={[
-      { label: "Trang chủ", path: "/admin" },
-      { label: "Tài chính", path: "/admin" },
-      { label: "Số dư tài khoản", path: "/admin/balance" },
-    ]}
-  />
-  ) },
 
   //Khuyến Mãi
   { path: "/admin/add-promotion", component: AddPromotionPage,allowedRoles: ["ADMIN"], layout: (props) =>(

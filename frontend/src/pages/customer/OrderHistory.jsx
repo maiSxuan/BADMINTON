@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import "./OrderHistory.css" // Import the CSS file
-import { updateOrderStatus, getOrdersByUserId, requestReturnOrCancellation } from "../../services/orderService"
-// ReasonDialog component for collecting cancellation/return reasons
+import "./OrderHistory.css"
+// Thêm createRating từ service
+import { updateOrderStatus, getOrdersByUserId, requestReturnOrCancellation} from "../../services/orderService"
+import { createRating } from "../../services/ratingService"
 function ReasonDialog({ isOpen, onClose, onSubmit, title, description, placeholder, submitButtonText }) {
   const [reason, setReason] = useState("")
 
@@ -51,24 +52,162 @@ function ReasonDialog({ isOpen, onClose, onSubmit, title, description, placehold
   )
 }
 
+const StarRating = ({ rating, onRatingChange }) => {
+  return (
+    <div className="star-rating">
+      {[...Array(5)].map((_, index) => {
+        const starValue = index + 1;
+        return (
+          <button
+            type="button"
+            key={starValue}
+            className={starValue <= rating ? "star-button on" : "star-button off"}
+            onClick={() => onRatingChange(starValue)}
+          >
+            &#9733; {/* Mã Unicode cho ngôi sao */}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
+// ===================================================================
+// BƯỚC 3.2: TẠO COMPONENT REVIEW DIALOG
+// ===================================================================
+function ReviewDialog({ isOpen, onClose, order, userId }) {
+  const [reviews, setReviews] = useState({}); // { productId: { rating: 0, comment: '' } }
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Hàm cập nhật state khi người dùng thay đổi rating hoặc comment
+  const handleReviewChange = (productId, field, value) => {
+    setReviews(prev => ({
+      ...prev,
+      [productId]: {
+        ...prev[productId],
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    const reviewPromises = [];
+
+    for (const productId in reviews) {
+      const review = reviews[productId];
+      // Chỉ gửi đánh giá nếu người dùng đã chọn số sao
+      if (review.rating > 0 && review.comment?.trim()) {
+        reviewPromises.push(
+          createRating({
+            orderId: order._id,
+            productId: productId,
+            userId: userId,
+            rating: review.rating,
+            comment: review.comment,
+          })
+        );
+      }
+    }
+
+    if (reviewPromises.length === 0) {
+      alert("Vui lòng đánh giá và viết bình luận cho ít nhất một sản phẩm.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      await Promise.all(reviewPromises);
+      alert("Cảm ơn bạn đã đánh giá sản phẩm!");
+      onClose();
+    } catch (error) {
+      console.error("Lỗi khi gửi đánh giá:", error);
+      alert(error.message || "Có lỗi xảy ra khi gửi đánh giá.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="dialog-overlay">
+      <div className="dialog-content review-dialog">
+        <div className="dialog-header">
+          <h2 className="dialog-title">Đánh giá sản phẩm</h2>
+          <p className="dialog-description">
+            Chia sẻ cảm nhận của bạn về các sản phẩm trong đơn hàng #{order._id.slice(-8)}
+          </p>
+        </div>
+        <div className="dialog-body">
+          {order.items.map(item => (
+            <div key={item.productId} className="review-item">
+              <img src={item.image} alt={item.name} className="review-item-image" />
+              <div className="review-item-details">
+                <h4 className="review-item-name">{item.name}</h4>
+                <p className="review-item-variant">
+                  Phân loại: {item.color}, {item.size}
+                </p>
+                <div className="review-inputs">
+                  <StarRating
+                    rating={reviews[item.productId]?.rating || 0}
+                    onRatingChange={(rating) => handleReviewChange(item.productId, 'rating', rating)}
+                  />
+                  <textarea
+                    placeholder="Hãy chia sẻ cảm nhận của bạn về sản phẩm này nhé..."
+                    value={reviews[item.productId]?.comment || ""}
+                    onChange={(e) => handleReviewChange(item.productId, 'comment', e.target.value)}
+                    className="dialog-textarea review-textarea"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="dialog-footer">
+          <button type="button" className="dialog-button dialog-button-outline" onClick={onClose}>
+            Để sau
+          </button>
+          <button
+            type="button"
+            className="dialog-button dialog-button-primary"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Đang gửi..." : "Hoàn tất"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 const OrderHistory = () => {
   const [orders, setOrders] = useState([])
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [loading, setLoading] = useState(true)
   const [showOrderDetail, setShowOrderDetail] = useState(false)
   const [userIdNotFound, setUserIdNotFound] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null); // <-- State để lưu thông tin user
 
-  // States for the reason dialog
+  // ... (states cho reason dialog giữ nguyên)
   const [showReasonDialog, setShowReasonDialog] = useState(false)
-  const [dialogType, setDialogType] = useState(null) // 'return' or 'cancel'
+  const [dialogType, setDialogType] = useState(null)
   const [currentOrderForAction, setCurrentOrderForAction] = useState(null)
+  
+
+  const [showReviewDialog, setShowReviewDialog] = useState(false);
+  const [orderToReview, setOrderToReview] = useState(null);
+
 
   useEffect(() => {
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}")
       if (user && user.userID) {
-        const userId = user.userID
-        setUserOrdersList(userId)
+        setCurrentUser(user); // <-- Lưu thông tin user
+        setUserOrdersList(user.userID)
       } else {
         setLoading(false)
         setUserIdNotFound(true)
@@ -80,6 +219,7 @@ const OrderHistory = () => {
     }
   }, [])
 
+  // ... (hàm setUserOrdersList, formatPrice, formatDate, getStatusClass, handleOrderClick giữ nguyên)
   const setUserOrdersList = async (userId) => {
     try {
       setLoading(true)
@@ -122,6 +262,7 @@ const OrderHistory = () => {
     setShowOrderDetail(true)
   }
 
+
   const handleReturnRefund = (order) => {
     setCurrentOrderForAction(order)
     setDialogType("return")
@@ -134,28 +275,32 @@ const OrderHistory = () => {
     setShowReasonDialog(true)
   }
 
-const handleConfirmReceived = async (order) => {
-  try {
-    await updateOrderStatus(order._id, "Hoàn thành")
-    setOrders((prev) =>
-      prev.map((o) => (o._id === order._id ? { ...o, status: "Hoàn thành" } : o))
-    )
-    alert("Đã xác nhận nhận hàng thành công!")
-  } catch (error) {
-    console.error("Lỗi xác nhận nhận hàng:", error)
-    alert("Có lỗi xảy ra khi xác nhận nhận hàng.")
+  const handleConfirmReceived = async (order) => {
+    try {
+      await updateOrderStatus(order._id, "Hoàn thành")
+      setOrders((prev) =>
+        prev.map((o) => (o._id === order._id ? { ...o, status: "Hoàn thành" } : o))
+      )
+      alert("Đã xác nhận nhận hàng thành công!")
+    } catch (error) {
+      console.error("Lỗi xác nhận nhận hàng:", error)
+      alert("Có lỗi xảy ra khi xác nhận nhận hàng.")
+    }
   }
-  }
-
+  
+  // ===================================================================
+  // BƯỚC 3.4: CẬP NHẬT HÀM `handleWriteReview`
+  // ===================================================================
   const handleWriteReview = (order) => {
-    console.log("Viết đánh giá cho đơn hàng:", order._id)
-    alert("Chuyển đến trang đánh giá sản phẩm")
+    setOrderToReview(order);
+    setShowReviewDialog(true);
   }
 
   const calculateOrderTotal = (items) => {
     return items.reduce((total, item) => total + item.price * item.quantity, 0);
   };
-
+  
+  // ... (hàm handleReasonSubmit và phần render loading, not found giữ nguyên)
   const handleReasonSubmit = async (reason) => {
     if (!currentOrderForAction || !dialogType) return
     try {
@@ -202,10 +347,12 @@ const handleConfirmReceived = async (order) => {
     return <OrderDetail order={selectedOrder} onBack={() => setShowOrderDetail(false)} />
   }
 
+
   return (
     <div className="order-history-container">
       <h1 className="page-title">Lịch sử mua hàng</h1>
-      {orders.length === 0 ? (
+      {/* ... (phần render danh sách đơn hàng giữ nguyên) ... */}
+            {orders.length === 0 ? (
         <div className="empty-orders">
           <p>Bạn chưa có đơn hàng nào</p>
         </div>
@@ -281,8 +428,7 @@ const handleConfirmReceived = async (order) => {
           ))}
         </div>
       )}
-
-      {/* Reason Dialog */}
+      {/* ... (render ReasonDialog giữ nguyên) ... */}
       {showReasonDialog && dialogType && (
         <ReasonDialog
           isOpen={showReasonDialog}
@@ -302,9 +448,22 @@ const handleConfirmReceived = async (order) => {
           submitButtonText={dialogType === "return" ? "Gửi yêu cầu trả hàng" : "Gửi yêu cầu hủy"}
         />
       )}
+      {/* =================================================================== */}
+      {/* BƯỚC 3.5: RENDER REVIEW DIALOG                                     */}
+      {/* =================================================================== */}
+      {showReviewDialog && orderToReview && (
+        <ReviewDialog
+          isOpen={showReviewDialog}
+          onClose={() => setShowReviewDialog(false)}
+          order={orderToReview}
+          userId={currentUser?.userID} // Sử dụng userID từ currentUser
+        />
+      )}
     </div>
   )
 }
+
+// ... (component OrderDetail giữ nguyên)
 
 const OrderDetail = ({ order, onBack }) => {
   const calculateOrderTotal = (items) => {

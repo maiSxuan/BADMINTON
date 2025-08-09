@@ -7,7 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
-import ratingService from '../../services/ratingService';
+import { getRatingsByProduct} from '../../services/ratingService';
 
 const StarRating = ({ rating }) => {
     const totalStars = 5;
@@ -74,7 +74,7 @@ const ProductDetailPage = () => {
 
             try {
                 setReviewsLoading(true);
-                const data = await ratingService.getRatingsByProduct(product._id);
+                const data = await getRatingsByProduct(product._id);
                 setReviews(data.reviews || []);
             } catch (err) {
                 console.error("Lỗi khi tải đánh giá:", err);

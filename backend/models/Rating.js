@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const ratingSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  user: { type: String, required: true },
   order: { type: mongoose.Schema.Types.ObjectId, ref: 'Order', required: true },
   product_item: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
   rating: { type: Number, min: 1, max: 5, required: true },
