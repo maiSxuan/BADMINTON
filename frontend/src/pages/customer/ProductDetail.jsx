@@ -34,7 +34,6 @@ const ProductDetailPage = () => {
     const [reviewsLoading, setReviewsLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
 
-
     useEffect(() => {
         const loadProductData = async () => {
             if (!slug) {
@@ -50,10 +49,10 @@ const ProductDetailPage = () => {
                 if (data?.variants?.length > 0) {
                     const initialVariant = data.variants[0];
                     setSelectedVariant(initialVariant);
-                    
+
                     // Ưu tiên ảnh bìa chính, nếu không có thì lấy ảnh đầu tiên của variant
                     setMainImage(data.thumbnail_url || initialVariant?.images?.[0] || '');
-                    
+
                     // Tự động chọn option đầu tiên còn hàng
                     const firstAvailableOption = initialVariant.options.find(opt => opt.stock_quantity > 0);
                     setSelectedOption(firstAvailableOption || initialVariant.options?.[0] || null);
@@ -91,7 +90,7 @@ const ProductDetailPage = () => {
         setSelectedVariant(variantToSelect);
         // Khi đổi màu, luôn hiển thị ảnh đầu tiên của màu đó
         setMainImage(variantToSelect?.images?.[0] || '');
-        
+
         // Reset và chọn lại option cho màu mới
         const firstAvailableOption = variantToSelect.options.find(opt => opt.stock_quantity > 0);
         setSelectedOption(firstAvailableOption || variantToSelect.options?.[0] || null);
@@ -141,7 +140,7 @@ const ProductDetailPage = () => {
             state: { selectedItems: [selectedItem] }
         });
     };
-    
+
     const handleAddToCart = async () => {
         if (!product || !selectedVariant || !selectedOption) {
             toast.error("Vui lòng chọn đầy đủ thông tin sản phẩm");
@@ -162,6 +161,7 @@ const ProductDetailPage = () => {
                 optionId: selectedOption._id,
                 quantity,
             });
+            window.dispatchEvent(new Event("cartUpdated"));
             toast.success('Thêm sản phẩm vào giỏ hàng thành công');
             setQuantity(1);
         } catch (err) {
@@ -170,10 +170,29 @@ const ProductDetailPage = () => {
             setIsAdding(false)
         }
     }
-    
+
     // Lấy giá bán và giá gốc (nếu có) từ option được chọn
-    const displayPrice = useMemo(() => selectedOption?.price || 0, [selectedOption]);
-    const listPrice = useMemo(() => selectedOption?.list_price || 0, [selectedOption]);
+    // const displayPrice = useMemo(() => selectedOption?.price || 0, [selectedOption]);
+    // const listPrice = useMemo(() => selectedOption?.list_price || 0, [selectedOption]);
+    const displayPrice = useMemo(() => {
+        const basePrice = (selectedOption?.price ?? product?.price) ?? 0; // fallback về 0 nếu null/undefined
+        const salePrice = product?.sale_price ?? 0;
+
+        if (product?.sale && salePrice > 0 && salePrice < basePrice) {
+            return salePrice;
+        }
+        return basePrice;
+    }, [product, selectedOption]);
+
+    const listPrice = useMemo(() => {
+        const basePrice = (selectedOption?.price ?? product?.price) ?? 0;
+        const salePrice = product?.sale_price ?? 0;
+
+        if (product?.sale && salePrice > 0 && salePrice < basePrice) {
+            return basePrice;
+        }
+        return 0;
+    }, [product, selectedOption]);
 
     // Lấy tên phân loại một cách linh động
     const primaryLabel = product?.classification_config?.[0]?.name || 'Phân loại 1';
@@ -182,7 +201,7 @@ const ProductDetailPage = () => {
     if (loading) return <div className="status-message">Đang tải sản phẩm...</div>;
     if (error) return <div className="status-message error">Lỗi: {error}</div>;
     if (!product || !selectedVariant) return <div className="status-message">Không tìm thấy sản phẩm.</div>;
-    
+
     // Kiểm tra xem tất cả các option của màu hiện tại có hết hàng không
     const isVariantOutOfStock = !selectedVariant.options.some(o => o.stock_quantity > 0);
 
@@ -211,11 +230,21 @@ const ProductDetailPage = () => {
                         </span>
                     </div>
                     <h1 className="product-name">{product.name}</h1>
-                    
+
                     <div className="price-container">
-                        <span className="current-price">{displayPrice.toLocaleString('vi-VN')}₫</span>
+                        {/* <span className="current-price">{displayPrice.toLocaleString('vi-VN')}₫</span>
                         {listPrice > displayPrice && (
                             <span className="list-price">{listPrice.toLocaleString('vi-VN')}₫</span>
+                        )} */}
+                        {listPrice > 0 && listPrice > displayPrice ? (
+                            <>
+                                <span className="current-price">{displayPrice.toLocaleString('vi-VN')} ₫</span>
+                                <span className="original-price" style={{ textDecoration: 'line-through', color: '#888', marginLeft: '8px' }}>
+                                    {listPrice.toLocaleString('vi-VN')} ₫
+                                </span>
+                            </>
+                        ) : (
+                            <span className="current-price">{displayPrice.toLocaleString('vi-VN')} ₫</span>
                         )}
                     </div>
 
@@ -226,7 +255,13 @@ const ProductDetailPage = () => {
                                 <img src={variant.images?.[0]} alt={variant.name} />
                                 <div className="variant-info">
                                     <span>{variant.name}</span>
-                                    <span>{(variant.options?.[0]?.price || 0).toLocaleString('vi-VN')}₫</span>
+                                    {/* <span>{(variant.options?.[0]?.price || 0).toLocaleString('vi-VN')}₫</span> */}
+                                    <span>
+                                        {product.sale && product.sale_price > 0
+                                            ? product.sale_price.toLocaleString('vi-VN') + '₫'
+                                            : (variant.options?.[0]?.price || 0).toLocaleString('vi-VN') + '₫'
+                                        }
+                                    </span>
                                 </div>
                             </button>
                         ))}
@@ -240,7 +275,7 @@ const ProductDetailPage = () => {
                             </button>
                         ))}
                     </div>
-                    
+
                     {selectedOption && (
                         <p className="stock-info">
                             {selectedOption.stock_quantity > 0 ? `Còn ${selectedOption.stock_quantity} sản phẩm` : 'Sản phẩm này đã hết hàng'}
@@ -259,11 +294,11 @@ const ProductDetailPage = () => {
                             className="action-btn buy-now-btn"
                             disabled={!selectedOption || selectedOption.stock_quantity === 0}
                             onClick={handleBuyNow}
-                            >
+                        >
                             Mua ngay
                         </button>
-                        <button 
-                            className="action-btn add-to-cart-btn" 
+                        <button
+                            className="action-btn add-to-cart-btn"
                             disabled={!selectedOption || selectedOption.stock_quantity === 0}
                             onClick={handleAddToCart}
                         >
@@ -272,7 +307,7 @@ const ProductDetailPage = () => {
                     </div>
                 </div>
             </div>
-            
+
             {product.description && (
                 <div className="product-description-section">
                     <h2 className="description-title">Mô tả sản phẩm</h2>

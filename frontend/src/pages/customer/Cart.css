@@ -73,6 +73,29 @@ body {
   font-size: 1rem;
 }
 
+.clear-cart-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #fee2e2;
+  color: #dc2626;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  min-width: 60px;
+  margin-left: auto;
+}
+
+.clear-cart-btn:hover {
+  background-color: #fecaca;
+  transform: scale(1.05);
+}
+
 .selected-info {
   color: #FFE2F6;
   font-weight: 600;

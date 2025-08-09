@@ -1,9 +1,10 @@
 const Product = require('../models/Product');
-const Brand = require('../models/Brand'); 
-const Category = require('../models/Category'); 
+const Brand = require('../models/Brand');
+const Category = require('../models/Category');
+const Promotion = require('../models/Promotion');
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const cloudinary = require('../config/cloudinary'); 
+const cloudinary = require('../config/cloudinary');
 
 const PRICE_RANGES = { 'range1': { min: 0, max: 500000 }, 'range2': { min: 500000, max: 1000000 }, 'range3': { min: 1000000, max: 2000000 }, 'range4': { min: 2000000, max: 3000000 }, 'range5': { min: 3000000, max: Infinity } };
 const DEFAULT_PAGE_LIMIT = 9;
@@ -57,13 +58,35 @@ exports.getAllProducts = async (req, res) => {
             Product.find(filterCriteria).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit))
                 .populate('brand').populate('category_ids').lean()
         ]);
+
+        const now = new Date();
+        const promotions = await Promotion.find({
+            isActive: true,
+            startDate: { $lte: now },
+            endDate: { $gte: now }
+        }).lean();
+
+        const discountMap = new Map();
+        promotions.forEach(promo => {
+            promo.productDiscounts.forEach(pd => {
+                const promoCode = promo.listCode.find(c => c.code === pd.code && c.isActive);
+                if (promoCode) {
+                    discountMap.set(pd.productId.toString(), {
+                        discountType: promoCode.discountType,
+                        discountValue: promoCode.discountValue
+                    });
+                } 
+            });
+        });
+
         const formattedProducts = productDocs.map(p => {
             const totalStock = (p.variants || []).reduce((t, v) => t + (v.options || []).reduce((s, o) => s + o.stock_quantity, 0), 0);
+            const discountInfo = discountMap.get(p._id.toString()) || {discountType: null, discountValue: 0};
             return {
-                id: p._id, slug: p.slug, name: p.name, price: p.price,
+                id: p._id, slug: p.slug, name: p.name, price: p.price, sale: p.sale, sale_price: p.sale_price,
                 brand: p.brand?.name || 'N/A', prod: p.category_ids?.[0]?.name || 'N/A',
                 imageUrl: p.thumbnail_url, description: p.description, variants: p.variants,
-                stock: totalStock, is_published: p.is_published,
+                stock: totalStock, is_published: p.is_published, discountType: discountInfo.discountType, discountValue: discountInfo.discountValue
             };
         });
         res.status(200).json({ data: formattedProducts, pagination: { currentPage: Number(page), totalPages: Math.ceil(totalProducts / limit), totalProducts } });
@@ -77,7 +100,7 @@ exports.getProductBySlug = async (req, res) => {
     try {
         const { view = 'public' } = req.query;
         const filter = { slug: req.params.slug };
-        
+
         if (view === 'public') {
             filter.is_published = true;
         }
@@ -86,7 +109,7 @@ exports.getProductBySlug = async (req, res) => {
         const product = await Product.findOne(filter)
             .populate('brand', 'name slug _id')
             .populate('category_ids', 'name slug _id');
-        
+
         if (!product) {
             return res.status(404).json({ message: 'Không tìm thấy sản phẩm hoặc sản phẩm đã bị ẩn.' });
         }
@@ -106,7 +129,7 @@ exports.updateProductBySlug = async (req, res) => {
         if (!productToUpdate) {
             return res.status(404).json({ message: 'Không tìm thấy sản phẩm.' });
         }
-        
+
         if (productData.name && productData.name !== productToUpdate.name) {
             productData.slug = slugify(productData.name, { lower: true, strict: true, locale: 'vi' });
             const existing = await Product.findOne({ slug: productData.slug, _id: { $ne: productToUpdate._id } });
@@ -114,18 +137,18 @@ exports.updateProductBySlug = async (req, res) => {
                 return res.status(409).json({ message: `Tên sản phẩm "${productData.name}" đã tồn tại.` });
             }
         }
-        
+
         let lowestPrice = Infinity;
-        (productData.variants || []).forEach(v => (v.options || []).forEach(o => { 
+        (productData.variants || []).forEach(v => (v.options || []).forEach(o => {
             const price = Number(o.price);
             if (!isNaN(price) && price < lowestPrice) {
                 lowestPrice = price;
             }
         }));
         productData.price = lowestPrice === Infinity ? (productToUpdate.price || 0) : lowestPrice;
-        
+
         const updatedProduct = await Product.findByIdAndUpdate(productToUpdate._id, productData, { new: true });
-        
+
         res.status(200).json(updatedProduct);
     } catch (error) {
         console.error("Lỗi server khi cập nhật:", error);
@@ -154,7 +177,7 @@ exports.deleteProductBySlug = async (req, res) => {
         const publicIds = new Set();
         const getPublicId = (url) => {
             try {
-                if(!url) return null;
+                if (!url) return null;
                 const parts = url.split('/'); const uploadIndex = parts.indexOf('upload');
                 if (uploadIndex === -1 || uploadIndex + 2 > parts.length) return null;
                 const publicIdWithVersion = parts.slice(uploadIndex + 2).join('/');
@@ -169,5 +192,62 @@ exports.deleteProductBySlug = async (req, res) => {
         res.status(200).json({ message: 'Xóa sản phẩm vĩnh viễn thành công.' });
     } catch (error) {
         res.status(500).json({ message: "Lỗi server khi xóa.", error: error.message });
+    }
+};
+
+exports.getSaleProductsGrouped = async (req, res) => {
+    try {
+        const now = new Date();
+
+        const promotions = await Promotion.find({
+            isActive: true,
+            startDate: { $lte: now },
+            endDate: { $gte: now }
+        })
+            .populate({
+                path: 'productDiscounts.productId',
+                match: { sale: true, is_published: true },
+                select: 'name slug thumbnail_url price sale_price sale appliedCode'
+            })
+            .lean();
+
+        const result = promotions
+            .map(promo => {
+                const productsWithDiscount = promo.productDiscounts
+                    .map(pd => {
+                        const product = pd.productId;
+                        if (!product) return null;
+
+                        const promoCode = promo.listCode.find(c => c.code === pd.code && c.isActive)
+                        if (!promoCode) return product;
+
+                        return {
+                            ...product,
+                            discountType: promoCode.discountType,
+                            discountValue: promoCode.discountValue
+                        };
+                    })
+                    .filter(Boolean);
+
+                return {
+                    promotion_id: promo._id,
+                    promotion_name: promo.name,
+                    description: promo.description,
+                    start_date: promo.startDate,
+                    end_date: promo.endDate,
+                    products: productsWithDiscount
+                } 
+            })
+            .filter(Boolean);
+
+        if (!result.length) {
+            return res.status(404).json({ message: 'Không tìm thấy sản phẩm giảm giá.' });
+        }
+
+        res.json(result);
+
+    } catch (err) {
+        console.error('Error fetching sale products grouped:', err);
+        res.status(500).json({ message: 'Lỗi server.' });
     }
 };

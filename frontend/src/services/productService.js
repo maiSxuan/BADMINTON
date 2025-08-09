@@ -80,3 +80,15 @@ export const editProduct = async (slug, updatedData) => {
     }
     return await res.json();
 };
+
+export const fetchSaleProducts = async () => {
+    const res = await fetch('http://localhost:4000/api/products/sale-off', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json'}
+    });
+
+    if (!res.ok)
+        throw new Error('Không thể lấy danh sách sản phẩm giảm giá')
+
+    return await res.json();
+}

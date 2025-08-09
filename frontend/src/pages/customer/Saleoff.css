@@ -1,7 +1,4 @@
-/* Trong file Outline.css hoặc file CSS tương ứng của bạn */
-
-/* --- Layout chung --- */
-.product-page-layout {
+/* .product-page-layout {
     display: flex;
     gap: 20px;
 }
@@ -13,7 +10,6 @@
     flex-grow: 1;
 }
 
-/* --- Nhóm bộ lọc trong Sidebar --- */
 .filter-group {
     margin-bottom: 25px;
 }
@@ -40,7 +36,6 @@
     margin-right: 8px;
 }
 
-/* --- Thẻ sản phẩm Sale Off --- */
 .product-card.sale-card {
     position: relative;
     overflow: hidden;
@@ -69,17 +64,447 @@
 .sale-price {
     font-size: 1.1em;
     font-weight: bold;
-    color: #e74c3c; /* Màu đỏ cho giá sale */
+    color: #e74c3c;
 }
 
 .original-price {
     font-size: 0.9em;
     color: #888;
-    text-decoration: line-through; /* Gạch ngang giá gốc */
+    text-decoration: line-through;
 }
 
 .branch-info {
     font-size: 0.9em;
     color: #555;
     margin-top: 6px;
+} */
+
+body {
+    font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+    margin: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.sale-off-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 15px;
+}
+
+.sale-off-layout {
+    display: flex;
+    gap: 30px;
+}
+
+.saleoff-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
+    /* height: fit-content; */
+    /* position: sticky; */
+    /* top: 20px; */
+    align-self: flex-start;
+    border: 1px solid #eee;
+}
+
+.saleoff-filter-section {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* .saleoff-filter-group {
+    margin-bottom: 25px;
+} */
+
+.saleoff-filter-group h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.saleoff-filter-group ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.saleoff-filter-group li {
+    margin-bottom: 12px;
+}
+
+.saleoff-filter-group label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.saleoff-filter-group input[type="checkbox"] {
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #eb9ce3;
+}
+
+.saleoff-main-content {
+    flex-grow: 1;
+}
+
+.saleoff-promotions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.saleoff-promotion-group {
+    background: #fff;
+    text-align: center;
+    /* border-radius: 12px; */
+    /* padding: 30px; */
+    /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); */
+}
+
+.saleoff-promotion-title {
+    display: flex;
+    justify-content: center;
+    width: 400px;
+    font-size: 25px;
+    font-weight: 700;
+    /* margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto; */
+    margin: 0 auto 20px;
+    border-radius: 20px;
+    border: 1px solid #eee;
+    padding: 8px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    color: #ec4899;
+}
+
+.saleoff-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+
+.saleoff-product-card {
+    /* position: relative;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid #f0f0f0; */
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    text-align: center;
+    padding: 15px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+}
+
+.saleoff-product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.saleoff-discount-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 20px;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+/* .saleoff-product-image {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    background: #f8f9fa;
+} */
+
+.saleoff-product-image img {
+    width: 100%;
+    height: 250;
+    object-fit: contain;
+    margin-bottom: 15px;
+}
+
+/* .saleoff-product-card:hover .saleoff-product-image img {
+    transform: scale(1.05);
+} */
+
+.saleoff-product-info {
+    padding: 20px;
+}
+
+.saleoff-product-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 5px 0 10px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 20px;
+    height: 40px;
+}
+
+.saleoff-price-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.saleoff-sale-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+.saleoff-original-price {
+    font-size: 14px;
+    color: #888;
+    text-decoration: line-through;
+}
+
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 20px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #e74c3c;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-container p {
+    font-size: 16px;
+    color: #666;
+}
+
+.error-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.empty-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+.empty-container p {
+    color: #666;
+    font-size: 18px;
+}
+
+
+.saleoff-no-products {
+    text-align: center;
+    padding: 60px 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.saleoff-no-products p {
+    color: #ec4899;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+
+.saleoff-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 40px;
+    padding: 20px;
+}
+
+.saleoff-page-button {
+    width: 45px;
+    height: 45px;
+    border: 2px solid #ddd;
+    background: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.saleoff-page-button:hover {
+    border-color: #ec4899;
+    /* color: #e112d7; */
+    /* transform: translateY(-2px); */
+}
+
+.saleoff-page-button.active {
+    background: #ec4899;
+    border-color: #ec4899;
+    color: white;
+    /* transform: translateY(-2px); */
+    /* box-shadow: 0 4px 12px rgba(225, 60, 231, 0.3); */
+}
+
+
+@media (max-width: 1024px) {
+    .sale-off-container {
+        padding: 15px;
+    }
+    
+    .sale-off-layout {
+        gap: 20px;
+    }
+    
+    .saleoff-sidebar {
+        width: 250px;
+    }
+    
+    .saleoff-products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sale-off-layout {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .saleoff-sidebar {
+        width: 100%;
+        position: static;
+    }
+    
+    .saleoff-filter-section {
+        flex-direction: row;
+        gap: 20px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+    
+    .saleoff-filter-group {
+        min-width: 200px;
+        flex-shrink: 0;
+    }
+    
+    .saleoff-products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    
+    .saleoff-promotion-group {
+        padding: 20px;
+    }
+    
+    .saleoff-promotion-title {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sale-off-container {
+        padding: 10px;
+    }
+    
+    .saleoff-products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
+    }
+    
+    .saleoff-product-card {
+        border-radius: 8px;
+    }
+    
+    .saleoff-product-image {
+        height: 160px;
+    }
+    
+    .saleoff-product-info {
+        padding: 15px;
+    }
+    
+    .saleoff-product-name {
+        font-size: 14px;
+        min-height: 36px;
+    }
+    
+    .saleoff-sale-price {
+        font-size: 16px;
+    }
+    
+    .saleoff-original-price {
+        font-size: 12px;
+    }
+    
+    .saleoff-discount-badge {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+    
+    .saleoff-sidebar {
+        padding: 20px;
+    }
+    
+    .saleoff-filter-section {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .saleoff-filter-group {
+        min-width: auto;
+    }
 }

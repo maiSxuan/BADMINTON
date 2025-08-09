@@ -6,28 +6,28 @@ import { getAllBrands, getAllCategories, getProductsOnQuery } from '../../servic
 
 // Dữ liệu tĩnh cho bộ lọc giá
 const priceRanges = {
-    'range1': { label: "Dưới 500,000đ" },
-    'range2': { label: "500,000đ - 1,000,000đ" },
-    'range3': { label: "1,000,000đ - 2,000,000đ" },
-    'range4': { label: "2,000,000đ - 3,000,000đ" },
-    'range5': { label: "Trên 3,000,000đ" }
+    'range1': { label: "Dưới 500,000đ", min: 0, max: 499999 },
+    'range2': { label: "500,000đ - 1,000,000đ", min: 500000, max: 1000000 },
+    'range3': { label: "1,000,000đ - 2,000,000đ", min: 1000001, max: 2000000 },
+    'range4': { label: "2,000,000đ - 3,000,000đ", min: 2000001, max: 3000000 },
+    'range5': { label: "Trên 3,000,000đ", min: 3000001, max: Number.MAX_SAFE_INTEGER }
 };
 
 function ProductPage() {
     const location = useLocation();
     const navigate = useNavigate();
-    
+
     // State cho dữ liệu
     const [products, setProducts] = useState([]);
     const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1 });
     const [brands, setBrands] = useState([]);
     const [categories, setCategories] = useState([]);
-    
+
     // State cho trạng thái UI
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isFiltersLoading, setIsFiltersLoading] = useState(true);
-    
+
     // State cho bộ lọc và phân trang
     const [filters, setFilters] = useState(() => {
         const params = new URLSearchParams(location.search);
@@ -37,7 +37,7 @@ function ProductPage() {
         return { price: urlPrice, brands: urlBrands, categories: urlCategories };
     });
     const [currentPage, setCurrentPage] = useState(1);
-    
+
     // Effect này sẽ đồng bộ state filters khi URL thay đổi
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -49,7 +49,7 @@ function ProductPage() {
         setFilters({ price: urlPrice, brands: urlBrands, categories: urlCategories });
         setCurrentPage(urlPage);
     }, [location.search]);
-    
+
     // Effect để tải dữ liệu cho các bộ lọc (brands, categories)
     useEffect(() => {
         const fetchFilterData = async () => {
@@ -74,25 +74,32 @@ function ProductPage() {
     // Effect để tải danh sách sản phẩm khi bộ lọc hoặc trang thay đổi
     const fetchProducts = useCallback(async () => {
         setIsLoading(true);
-        setError(null); 
-        
+        setError(null);
+
         // --- BẮT ĐẦU CHỈNH SỬA ---
         // 1. Tạo một object JavaScript thuần túy chứa các bộ lọc
-        const queryParams = { 
-            page: currentPage, 
+        const queryParams = {
+            page: currentPage,
         };
-        
+
         // 2. Thêm các bộ lọc vào object nếu chúng tồn tại
         if (filters.price) {
             queryParams.price = filters.price;
         }
+        // if (filters.price) {
+        //     const range = priceRanges[filters.price];
+        //     if (range) {
+        //         queryParams.priceMin = range.min;
+        //         queryParams.priceMax = range.max;
+        //     }
+        // }
         if (filters.brands.length > 0) {
             queryParams.brands = filters.brands.join(',');
         }
         if (filters.categories.length > 0) {
             queryParams.categories = filters.categories.join(',');
         }
-        
+
         try {
             // 3. Truyền object thuần túy đó vào hàm service getProductsOnQuery
             // Service sẽ tự động thêm `view=public` và tạo chuỗi query string.
@@ -100,22 +107,22 @@ function ProductPage() {
 
             setProducts(result.data);
             setPagination(result.pagination);
-        } catch (err) { 
-            setError(err.message); 
-        } finally { 
-            setIsLoading(false); 
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
         }
         // --- KẾT THÚC CHỈNH SỬA ---
     }, [currentPage, filters]);
 
-    useEffect(() => { 
-        fetchProducts(); 
+    useEffect(() => {
+        fetchProducts();
     }, [fetchProducts]);
 
     // Hàm xử lý khi người dùng thay đổi bộ lọc
     const handleFilterChange = (filterType, value) => {
         const params = new URLSearchParams(location.search);
-        
+
         if (filterType === 'price') {
             if (params.get('price') === value) {
                 params.delete('price');
@@ -167,6 +174,15 @@ function ProductPage() {
         </div>
     );
 
+    function LoadingSpinner() {
+        return (
+            <div className="loading-container">
+                <div className="spinner"></div>
+                <p>Đang tải dữ liệu...</p>
+            </div>
+        );
+    }
+
     return (
         <div className="container">
             <main className="product-page-layout">
@@ -177,13 +193,13 @@ function ProductPage() {
                             {Object.entries(priceRanges).map(([key, { label }]) => (
                                 <li key={key}>
                                     <label>
-                                        <input 
-                                            type="radio" 
-                                            name="price" 
-                                            value={key} 
+                                        <input
+                                            type="radio"
+                                            name="price"
+                                            value={key}
                                             onClick={() => handleFilterChange('price', key)}
                                             checked={filters.price === key}
-                                            onChange={() => {}}
+                                            onChange={() => { }}
                                         /> {label}
                                     </label>
                                 </li>
@@ -199,35 +215,73 @@ function ProductPage() {
                 </aside>
 
                 <section className="product-content">
-                    {isLoading ? <p>Đang tải sản phẩm...</p> : 
-                     error ? <p className="no-products">{error}</p> : 
-                     (
-                        <>
-                            <div className="product-grid">
-                                {products.length > 0 ? (
-                                    products.map(product => (
-                                        <Link to={`/products/${product.slug}`} key={product.id} className="product-card">
-                                            <img src={product.imageUrl || 'https://via.placeholder.com/250?text=No+Image'} alt={product.name} />
-                                            <h4>{product.name}</h4>
-                                            <p className="price">{product.price.toLocaleString('vi-VN')} ₫</p>
-                                        </Link>
-                                    ))
-                                ) : ( <p className="no-products">Không tìm thấy sản phẩm phù hợp.</p> )}
-                            </div>
-                            <nav className="pagination">
-                                {pagination.totalPages > 1 &&
-                                    Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(pageNumber => (
-                                        <button 
-                                            key={pageNumber} 
-                                            className={currentPage === pageNumber ? 'active' : ''} 
-                                            onClick={() => handlePageChange(pageNumber)}
-                                        >
-                                            {pageNumber}
-                                        </button>
-                                    ))}
-                            </nav>
-                        </>
-                    )}
+                    {isLoading ? <LoadingSpinner /> :
+                        error ? <p className="no-products">{error}</p> :
+                            (
+                                <>
+                                    <div className="product-grid">
+                                        {products.length > 0 ? (
+                                            products.map(product => {
+                                                console.log(product);
+                                                const isOnSale = product.sale === true || product.sale === 'true';
+                                                const validSalePrice = product.sale_price && product.sale_price < product.price;
+
+                                                return (
+                                                    <Link to={`/products/${product.slug}`} key={product.id} className="product-card">
+                                                        {/* {(product.discountType && product.discountValue) && (
+                                                            <div className='pp-discount-badge'>
+                                                                {product.discountType === 'percentage'
+                                                                    ? `${product.discountValue}%`
+                                                                    : `${product.discountValue.toLocaleString('vi-VN')}₫`}
+                                                            </div>
+                                                        )} */}
+                                                        {product.discountType === 'percentage' && (
+                                                            <div className="pp-badge pp-discount-percentage">
+                                                               Giảm {product.discountValue}%
+                                                            </div>
+                                                        )}
+                                                        {product.discountType === 'fixed' && (
+                                                            <div className="pp-badge pp-discount-fixed">
+                                                                Giảm {product.discountValue.toLocaleString('vi-VN')} ₫
+                                                            </div>
+                                                        )}
+                                                        <img src={product.imageUrl || 'https://via.placeholder.com/250?text=No+Image'} alt={product.name} />
+                                                        <h4>{product.name}</h4>
+                                                        {/* <p className="price">{product.price.toLocaleString('vi-VN')} ₫</p> */}
+
+                                                        <p className="pp-price">
+                                                            {isOnSale && validSalePrice ? (
+                                                                <>
+                                                                    <span className="pp-sale-price" style={{ color: 'red', fontWeight: 'bold' }}>
+                                                                        {product.sale_price.toLocaleString('vi-VN')} ₫
+                                                                    </span>
+                                                                    <span className="pp-original-price" style={{ textDecoration: 'line-through', color: 'gray', marginRight: 8 }}>
+                                                                        {product.price.toLocaleString('vi-VN')} ₫
+                                                                    </span>
+                                                                </>
+                                                            ) : (
+                                                                <span>{product.price.toLocaleString('vi-VN')} ₫</span>
+                                                            )}
+                                                        </p>
+                                                    </Link>
+                                                );
+                                            })
+                                        ) : (<p className="no-products">Không tìm thấy sản phẩm phù hợp.</p>)}
+                                    </div>
+                                    <nav className="pagination">
+                                        {pagination.totalPages > 1 &&
+                                            Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(pageNumber => (
+                                                <button
+                                                    key={pageNumber}
+                                                    className={currentPage === pageNumber ? 'active' : ''}
+                                                    onClick={() => handlePageChange(pageNumber)}
+                                                >
+                                                    {pageNumber}
+                                                </button>
+                                            ))}
+                                    </nav>
+                                </>
+                            )}
                 </section>
             </main>
         </div>

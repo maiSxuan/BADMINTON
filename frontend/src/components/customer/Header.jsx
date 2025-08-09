@@ -5,6 +5,7 @@ import DropdownMenu from "../customer/DropdownMenu";
 import DropdownHeader from "./DropdownHeader";
 import Breadcrumb from "../common/breadcrumb"; 
 import { useLocation } from "react-router-dom";
+import { fetchCart } from "../../services";
 
 // Import các component/ảnh
 import Logo from "../common/logo";
@@ -14,36 +15,68 @@ const Header = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null); 
   //const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [cartItemCount, setcartItemCount] = useState(0);
 
   const location = useLocation();
 
-const breadcrumbMap = {
-  "/account/profile": [
-    { label: "Tài khoản", path: "/account/profile" },
-    { label: "Tài khoản của tôi" }
-  ],
-  "/order-history": [
-    { label: "Tra cứu", path: "/order-history" },
-    { label: "Lịch sử mua hàng" }
-  ],
-  "/cart": [
-    { label: "Giỏ hàng", path: "/cart" },
-    { label: "Giỏ hàng của bạn" }
-  ]
-};
+  const breadcrumbMap = {
+    "/account/profile": [
+      { label: "Tài khoản", path: "/account/profile" },
+      { label: "Tài khoản của tôi" }
+    ],
+    "/order-history": [
+      { label: "Tra cứu", path: "/order-history" },
+      { label: "Lịch sử mua hàng" }
+    ],
+    "/cart": [
+      { label: "Giỏ hàng", path: "/cart" },
+      { label: "Giỏ hàng của bạn" }
+    ]
+  };
 
-const breadcrumbItems = breadcrumbMap[location.pathname] || [];
+  const breadcrumbItems = breadcrumbMap[location.pathname] || [];
 
- useEffect(() => {
-    const checkLogin = () => {
+  // useEffect(() => {
+  //   const checkLogin = () => {
+  //     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  //     const storedUser = localStorage.getItem("user");
+  //     setUser(token && storedUser ? JSON.parse(storedUser) : null);
+  //   };
+
+  //   checkLogin();
+  //   window.addEventListener("loginStatusChanged", checkLogin);
+  //   return () => window.removeEventListener("loginStatusChanged", checkLogin);
+  // }, []);
+
+  useEffect(() => {
+    const loadUserAndCart = async () => {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
       const storedUser = localStorage.getItem("user");
-      setUser(token && storedUser ? JSON.parse(storedUser) : null);
+      const parsedUser = token && storedUser ? JSON.parse(storedUser) : null;
+      setUser(parsedUser);
+
+      if (parsedUser) {
+        try {
+          const cartData = await fetchCart();
+          setcartItemCount(cartData.items?.length || 0); 
+        } catch (err) {
+          console.error("Failed to fetch cart total", err);
+          setcartItemCount(0);
+        }
+      } else {
+        setcartItemCount(0);
+      }
     };
 
-    checkLogin();
-    window.addEventListener("loginStatusChanged", checkLogin);
-    return () => window.removeEventListener("loginStatusChanged", checkLogin);
+    loadUserAndCart();
+
+    window.addEventListener("loginStatusChanged", loadUserAndCart);
+    window.addEventListener("cartUpdated", loadUserAndCart); 
+
+    return () => {
+      window.removeEventListener("loginStatusChanged", loadUserAndCart);
+      window.removeEventListener("cartUpdated", loadUserAndCart);
+    };
   }, []);
 
   
@@ -111,7 +144,7 @@ const breadcrumbItems = breadcrumbMap[location.pathname] || [];
           <NavLink to="/cart" className="action-item cart">
             <ShoppingCart/>
             <span>GIỎ HÀNG</span>
-            <span className="badge">0</span>
+            <span className="badge">{cartItemCount > 0 ? cartItemCount : 0}</span>
           </NavLink>
         </div>
       </div>
