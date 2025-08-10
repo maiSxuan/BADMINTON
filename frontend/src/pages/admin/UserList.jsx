@@ -1,4 +1,4 @@
-  import React, { useState, useEffect } from 'react';
+  import { useState, useEffect } from 'react';
   import "./UserList.css"
   import  Pagination  from '../../components/common/Pagination';
   import { Trash, SquarePen,Lock,LockOpen } from 'lucide-react';
