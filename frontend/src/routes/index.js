@@ -254,7 +254,7 @@ const publicRoutes = [
     breadcrumbItems={[
       { label: "Trang chủ", path: "/admin" },
       { label: "Quản lý sản phẩm ", path: "/admin" },
-      { label: "Sửa đơn hàng", path: "/admin/edit-product/:slug" },
+      { label: "Sửa sản phẩm", path: "/admin/edit-product/:slug" },
     ]}
   />)},
   { path: "/admin/add-product", component: AddProducts, layout: (props) => (
