@@ -427,3 +427,169 @@
     color: #777;
     padding: 20px 0;
 }
+.breadcrumb-wrapper {
+  width: 100vw;
+  background-color: #ffffff;
+  padding: 2px 10px;
+  border-bottom: 1px solid #d0cece;
+  box-sizing: border-box;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+.product-detail-layout {
+    display: flex;
+    gap: 30px; /* Khoảng cách giữa sidebar và nội dung */
+    align-items: flex-start;
+    padding: 20px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.product-main-content {
+    flex: 1; /* Để nội dung chính chiếm hết không gian còn lại */
+    min-width: 0; /* Fix lỗi flexbox co giãn không đúng */
+}
+
+/* 2. CSS cho Sidebar Danh mục */
+.product-sidebar {
+    width: 250px;
+    flex-shrink: 0; /* Ngăn sidebar bị co lại */
+    padding: 20px;
+    background-color: #ffffff; /* Màu nền trắng */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    color: #333;
+}
+
+.sidebar-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 5px;
+    cursor: pointer;
+    border-bottom: 1px solid #f5f5f5;
+    transition: background-color 0.2s, color 0.2s;
+    font-size: 0.9rem;
+}
+
+.category-item:hover {
+    background-color: #f7f7f7;
+    color: #e67e22; /* Màu nhấn khi hover */
+}
+
+.category-item span:last-child {
+    font-size: 1.1rem;
+    font-weight: 300;
+}
+
+/* 3. CSS cho Mục ưu đãi */
+.product-offers-container {
+    border: 1px solid rgba(230, 126, 34, 0.2);
+    background-color: #fff9f2;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+.offers-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #d35400; /* Màu cam đậm */
+}
+
+.offers-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.offers-list li {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.offers-list li i {
+    margin-right: 10px;
+    color: #27ae60; /* Màu xanh lá cây */
+    font-size: 1rem;
+}
+
+.product-offers-box {
+    margin-top: 25px; /* Khoảng cách với phần chọn size ở trên */
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 1px dashed #e74c3c; /* Viền đứt màu đỏ cam */
+    border-radius: 8px;
+    background-color: #fff8f7; /* Nền hồng rất nhạt */
+}
+
+.product-offers-box .offer-group {
+    margin-bottom: 10px;
+}
+.product-offers-box .offer-group:last-child {
+    margin-bottom: 0;
+}
+
+.product-offers-box .offer-group.premium-offer {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #fce8e6;
+}
+
+.product-offers-box .offer-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #c0392b; /* Màu đỏ đậm cho tiêu đề */
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+}
+
+.product-offers-box .offer-icon-main {
+    margin-right: 6px;
+}
+
+.product-offers-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.product-offers-box ul li {
+    display: flex;
+    align-items: flex-start; /* Để icon và text căn trên cùng */
+    gap: 8px;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.product-offers-box ul li:last-child {
+    margin-bottom: 0;
+}
+
+.product-offers-box .offer-icon {
+    flex-shrink: 0; /* Ngăn icon bị co lại */
+    margin-top: 2px; /* Căn chỉnh icon với dòng text */
+    color: #27ae60; /* Màu xanh lá cho icon tick */
+}

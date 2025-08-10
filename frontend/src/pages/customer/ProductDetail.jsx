@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, Fragment } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import './ProductDetail.css'; // File CSS của bạn
-import { addItemToCart, getProductBySlug } from '../../services';
+import { addItemToCart, getProductBySlug,getAllCategories,getRatingsByProduct } from '../../services';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-
-import { getRatingsByProduct} from '../../services/ratingService';
+import Breadcrumb from '../../components/common/breadcrumb';
+import { CheckCircle2, Gift, ShieldCheck } from 'lucide-react';
 
 const StarRating = ({ rating }) => {
     const totalStars = 5;
@@ -33,8 +32,21 @@ const ProductDetailPage = () => {
     const [reviews, setReviews] = useState([]);
     const [reviewsLoading, setReviewsLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
-
-
+    const [categories,setCategories] = useState([]);
+    useEffect(() => {
+        const loadCategories = async () => {
+            try {
+                const data = await getAllCategories();
+                setCategories(data);
+            } catch (err) {
+                console.error("Không thể tải danh mục sản phẩm", err);
+            }
+        };
+        loadCategories(); // Gọi đúng hàm
+    }, []);
+    const handleCategoryClick = (categorySlug) => {
+        navigate(`/products?categories=${categorySlug}`);
+    };
     useEffect(() => {
         const loadProductData = async () => {
             if (!slug) {
@@ -125,7 +137,7 @@ const ProductDetailPage = () => {
         }
 
         const selectedItem = {
-            _id: product._id, // ID sản phẩm chính
+            _id: product._id, 
             name: product.name || 'Không rõ tên',
             productId: product._id,
             variantId: selectedVariant._id,
@@ -135,6 +147,7 @@ const ProductDetailPage = () => {
             color: selectedVariant.name || 'Không xác định',
             size: selectedOption.value || 'Không xác định',
             image: selectedVariant.image || product.thumbnail_url || "/placeholder.svg",
+            categories_id: product.categories_id
         };
 
         navigate("/purchase", {
@@ -185,8 +198,20 @@ const ProductDetailPage = () => {
     
     // Kiểm tra xem tất cả các option của màu hiện tại có hết hàng không
     const isVariantOutOfStock = !selectedVariant.options.some(o => o.stock_quantity > 0);
-
+    const breadcrumbItems = [
+        { label: 'Trang chủ', path: '/' },
+        { label: 'Sản phẩm', path: '/products' },
+        { label: product.name || 'Chi tiết sản phẩm' } 
+    ];
+    const isRacket = product.category_ids?.some(
+    category => category.slug?.trim().toLowerCase() === "vot-cau-long"
+    );
     return (
+        <Fragment>
+        <div className="breadcrumb-wrapper">
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
+        <div className="product-detail-layout">
         <div className="page-container">
             <div className="product-detail-container">
                 <div className="product-gallery-section">
@@ -246,7 +271,47 @@ const ProductDetailPage = () => {
                             {selectedOption.stock_quantity > 0 ? `Còn ${selectedOption.stock_quantity} sản phẩm` : 'Sản phẩm này đã hết hàng'}
                         </p>
                     )}
-
+                    <div className="product-offers-box">
+                    <div className="offer-group">
+                        <h5 className="offer-title">
+                            <Gift size={16} className="offer-icon-main" /> ƯU ĐÃI
+                        </h5>
+                        <ul>
+                            {isRacket && (
+                            <li
+                                onClick={() =>
+                                navigate("/products/quan-can-vai-taro-tr025-og02-chinh-hang")
+                                }
+                                style={{ cursor: "pointer" }}
+                            >
+                                <CheckCircle2 size={14} className="offer-icon" />
+                                <span>
+                                Tặng Quấn cán vợt cầu lông <strong>Taro</strong>
+                                </span>
+                            </li>
+                            )}
+                            <li><CheckCircle2 size={14} className="offer-icon" /> <span>Sản phẩm cam kết chính hãng</span></li>
+                            <li><ShieldCheck size={14} className="offer-icon" /> <span>Bảo hành chính hãng theo nhà sản xuất</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div className="offer-group premium-offer">
+                        <h5 className="offer-title">
+                            Ưu đãi thêm khi mua sản phẩm tại SCD Premium
+                        </h5>
+                        <ul>
+                            {isRacket && (
+                                <Fragment>
+                                    <li><CheckCircle2 size={14} className="offer-icon" /> <span>Sơn logo mặt vợt miễn phí</span></li>
+                                    <li><CheckCircle2 size={14} className="offer-icon" /> <span>Bảo hành lưới đan trong 72 giờ</span></li>
+                                    <li><CheckCircle2 size={14} className="offer-icon" /> <span>Thay gen vợt miễn phí trọn đời</span></li>
+                                </Fragment>
+                            )}
+                            <li><CheckCircle2 size={14} className="offer-icon" /> <span>Tích luỹ điểm thành viên Premium</span></li>
+                            <li><CheckCircle2 size={14} className="offer-icon" /> <span>Voucher giảm giá cho lần mua hàng tiếp theo</span></li>
+                        </ul>
+                    </div>
+                </div>
                     <p className="selector-label">Số lượng:</p>
                     <div className="quantity-selector">
                         <button type="button" className="quantity-btn" onClick={() => handleQuantityChange(-1)} disabled={!selectedOption || selectedOption.stock_quantity === 0}>-</button>
@@ -304,8 +369,21 @@ const ProductDetailPage = () => {
                     <p className="no-reviews">Chưa có đánh giá nào cho sản phẩm này.</p>
                 )}
             </div>
+        </div>
+        <aside className="product-sidebar">
+                    <h3 className="sidebar-title">Danh mục sản phẩm</h3>
+                    <ul className="category-list">
+                        {categories.map(category => (
+                            <li key={category._id} className="category-item" onClick={() => handleCategoryClick(category.slug)}>
+                                <span>{category.name}</span>
+                                <span>+</span>
+                            </li>
+                        ))}
+                    </ul>
+                </aside>
             <ToastContainer position='top-right' autoClose={3000} />
         </div>
+        </Fragment>
     );
 };
 
