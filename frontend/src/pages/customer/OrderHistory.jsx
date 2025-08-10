@@ -204,7 +204,10 @@ const handleConfirmReceived = async (order) => {
 
   return (
     <div className="order-history-container">
-      <h1 className="page-title">Lịch sử mua hàng</h1>
+      <div className="cart-header">
+          <h1 className="cart-title">LỊCH SỬ MUA HÀNG</h1>
+          <p className="cart-subtitle">({orders.length} đơn hàng)</p>
+      </div>
       {orders.length === 0 ? (
         <div className="empty-orders">
           <p>Bạn chưa có đơn hàng nào</p>

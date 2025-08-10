@@ -7,9 +7,12 @@ import { createOrder } from "../../services/orderService"
 import { removeItemFromCart } from "../../services/cartService"
 import { updateOrderStatus } from "../../services/orderService"
 import axios from "axios";
+import {usePopup } from "../../components/common/popupContext";
+
 const PurchasePage = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const { showPopup } = usePopup()
   const selectedItems = location.state?.selectedItems || [];
   const [cities, setCities] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -33,8 +36,8 @@ const PurchasePage = () => {
   const [deliveryMethod, setDeliveryMethod] = useState("nhanh")
   const [orderId, setOrderId] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [showToast, setShowToast] = useState(false)
-  const [toastMessage, setToastMessage] = useState("")
+  // const [showToast, setShowToast] = useState(false)
+  // const [toastMessage, setToastMessage] = useState("")
 
   useEffect(() => {
       axios.get("https://provinces.open-api.vn/api/?depth=3")
@@ -102,11 +105,9 @@ const PurchasePage = () => {
   const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
   // Toast notification
-  const showToastMessage = (message) => {
-    setToastMessage(message)
-    setShowToast(true)
-    setTimeout(() => setShowToast(false), 3000)
-  }
+  // const showMessage = (message) => {
+  //   showPopup("Lỗi xác nhận thông tin", message, "OK")
+  // }
 
   // Cập nhật địa chỉ đầy đủ
   useEffect(() => {
@@ -134,7 +135,7 @@ const PurchasePage = () => {
     if (!shippingInfo.ward) errors.push("Vui lòng chọn phường/xã")
 
     if (errors.length > 0) {
-      showToastMessage(errors[0])
+      showPopup("Lỗi", errors[0], "OK")
       return false
     }
     return true
@@ -147,12 +148,12 @@ const PurchasePage = () => {
       const userId = user?.userID;
 
       if (!userId) {
-        showToastMessage("Bạn cần đăng nhập để đặt hàng");
+        showPopup("Đã xảy ra lỗi khi mua hàng", "Bạn cần đăng nhập để đặt hàng", "OK");
         return;
       }
 
       if (!shippingInfo.phone || !shippingInfo.address) {
-        showToastMessage("Vui lòng nhập đầy đủ thông tin giao hàng");
+        showPopup("Đã xảy ra lỗi khi mua hàng", "Vui lòng nhập đầy đủ thông tin giao hàng", "OK");
         return;
       }
 
@@ -186,11 +187,11 @@ const PurchasePage = () => {
 
       setOrderId(data.orderId);
       setCurrentStep("tracking");
-      showToastMessage("Đặt hàng thành công");
+      showPopup("Đặt hàng thành công", "Cảm ơn bạn đã mua hàng!", "OK");
 
     } catch (error) {
       console.error('Lỗi gửi đơn hàng:', error);
-      showToastMessage(error.message || "Có lỗi xảy ra, vui lòng thử lại");
+      showPopup("Đã xảy ra lỗi khi mua hàng", "Có lỗi xảy ra, vui lòng thử lại", "OK");
     } finally {
       setIsLoading(false);
     }
@@ -198,7 +199,7 @@ const PurchasePage = () => {
 
   const copyOrderId = () => {
     navigator.clipboard.writeText(orderId)
-    showToastMessage("Đã sao chép mã đơn hàng")
+    showPopup("Sao chép thành công", "Đã sao chép mã đơn hàng", "OK");
   }
 
   const closeModal = () => {
@@ -228,8 +229,6 @@ const PurchasePage = () => {
   return (
     <div className="purchase-page">
       {/* Toast Notification */}
-      {showToast && <div className="toast">{toastMessage}</div>}
-
       <div className="container">
 
         {/* Danh sách sản phẩm đã chọn */}
@@ -571,7 +570,7 @@ const PurchasePage = () => {
                           </p>
                           <p className="text-gray">{shippingInfo.address}</p>
                         </div>
-                        <button className="btn btn-outline btn-small">Cập nhật</button>
+                        {/* <button className="btn btn-outline btn-small">Cập nhật</button> */}
                       </div>
                     </div>
                   </div>
