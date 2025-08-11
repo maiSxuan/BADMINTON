@@ -1,31 +1,29 @@
 import React, { createContext, useState, useContext, useCallback } from 'react';
 import Popup from './popup'; // Giả sử bạn đã đặt Popup.js và Popup.css trong src/components/
 
-// 1. Tạo Context
 const PopupContext = createContext();
 
-// 2. Tạo Provider Component
 export const PopupProvider = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [popupContent, setPopupContent] = useState({
     title: '',
     message: '',
     buttonText: '',
-    onConfirm: null, // Hàm callback tùy chọn
+    onConfirm: null,
+    blurIntensity: 4,
   });
 
-  // Hàm để hiển thị popup, có thể nhận thêm một hàm callback
-  const showPopup = useCallback((title, message, buttonText, onConfirmCallback = null) => {
+  const showPopup = useCallback((title, message, buttonText, onConfirmCallback = null, blurValue) => {
     setPopupContent({
       title,
       message,
       buttonText,
       onConfirm: onConfirmCallback,
+      blurIntensity: blurValue,
     });
     setIsOpen(true);
   }, []);
 
-  // Hàm để đóng popup
   const hidePopup = () => {
     // Nếu có hàm callback, thực thi nó trước khi đóng
     if (popupContent.onConfirm && typeof popupContent.onConfirm === 'function') {
@@ -48,7 +46,6 @@ export const PopupProvider = ({ children }) => {
   );
 };
 
-// 3. Tạo custom Hook để dễ dàng sử dụng
 export const usePopup = () => {
   const context = useContext(PopupContext);
   if (context === undefined) {
