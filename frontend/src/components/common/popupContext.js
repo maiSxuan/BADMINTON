@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useCallback } from 'react';
+import { createContext, useState, useContext, useCallback } from 'react';
 import Popup from './popup'; // Giả sử bạn đã đặt Popup.js và Popup.css trong src/components/
 
 const PopupContext = createContext();

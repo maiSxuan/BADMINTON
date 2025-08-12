@@ -1,6 +1,6 @@
 // src/components/AdminHeader/AdminHeader.jsx
 
-import React from "react";
+import { usePopup } from '../../components/common/popupContext';
 import { Link, useNavigate } from "react-router-dom";
 import "./AdminHeader.css";
 
@@ -14,13 +14,20 @@ const AdminHeader = ({user}) => {
     navigate("/admin");
   };
 
-   const handleLogout = () => {
-    if (window.confirm("Bạn có chắc chắn muốn đăng xuất?")) {
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
-      sessionStorage.removeItem("token");
-      navigate("/login");
-    }
+  const { showPopup } = usePopup();
+  const handleLogout = () => {
+    showPopup(
+      "Xác nhận đăng xuất",                    // title
+      "Bạn có chắc chắn muốn đăng xuất?",     // message
+      "Đăng xuất",                            // buttonText (confirm)
+      async () => {                           // onConfirm callback
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
+        showPopup("Thành công", "Bạn đã đăng xuất", "Đóng");
+        navigate("/login");
+      }
+    );
   };
   
   return (
