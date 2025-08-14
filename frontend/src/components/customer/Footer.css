@@ -1,50 +1,56 @@
-.footer-container { 
-  max-width:100%;
-  margin: auto;
-  padding: 0 15px; 
-  box-sizing: border-box;
-}
-
-ul {
-  list-style: none;
-  padding: 0; 
-}
-
+/* --- CÀI ĐẶT CHUNG CHO FOOTER --- */
 .footer {
-  margin-top: auto;
-  font-family: Montserrat, Arial, Helvetica, sans-serif;
+  width: 100%;
+  background-color: #ffffff; /* Màu nền trắng cho phần mid-footer */
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
   font-size: 15px;
+  color: #333; /* Màu chữ mặc định */
+  border-top: 1px solid #e5e7eb; /* Thêm đường viền nhẹ ở trên cùng */
 }
 
-.mid-footer {
-  background-color: #ffffff; 
+/* Container chính bên trong footer để căn giữa nội dung */
+.footer-container { 
+  max-width: 1200px; /* Chiều rộng tối đa của nội dung */
+  margin: 0 auto; /* Căn giữa */
+  padding: 40px 15px; /* Khoảng cách trên/dưới và trái/phải */
 }
 
-.row {
+/* --- PHẦN NỘI DUNG CHÍNH (MID-FOOTER) --- */
+/* .row là flex container chính cho các cột */
+.footer .row {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  flex-wrap: wrap; /* Cho phép các cột tự động xuống hàng */
+  gap: 30px; /* Khoảng cách giữa các cột */
 }
 
+/* --- CÁC CỘT NỘI DUNG (SỬA LỖI Ở ĐÂY) --- */
+/* Cột đầu tiên (giới thiệu + logo) */
+.footer-col.footer-intro {
+  /* Cho phép cột này chiếm nhiều không gian hơn */
+  flex: 2; 
+  min-width: 250px; /* Chiều rộng tối thiểu */
+  padding-right: 30px; /* Thêm khoảng cách với các cột khác */
+}
+
+/* Các cột thông tin còn lại */
 .footer-col {
-  flex: 1 1 220px;
-  padding: 20px; 
-  min-width: 200px;
+  /* Cho phép mỗi cột chiếm 1 phần không gian */
+  flex: 1; 
+  min-width: 200px; /* Chiều rộng tối thiểu */
 }
 
-.logo-col {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-grow: 0;
+.footer-intro img {
+    max-width: 150px; /* Giới hạn kích thước logo */
+    margin-bottom: 20px;
 }
 
 .footer-col h4 {
   font-size: 18px;
-  color: #000000; 
-  text-transform: capitalize;
+  color: #111827; /* Màu đen đậm */
+  text-transform: uppercase; /* In hoa */
+  margin-top: 0;
   margin-bottom: 25px; 
-  font-weight: bold;
+  font-weight: 600;
   position: relative;
 }
 
@@ -52,64 +58,66 @@ ul {
   content: '';
   position: absolute;
   left: 0;
-  bottom: -10px;
+  bottom: -8px;
   height: 2px;
-  box-sizing: border-box;
-  width: 50px;
-  background-color: #000000; 
+  width: 40px;
+  background-color: #e83d3d; /* Màu đỏ nổi bật */
 }
 
-.footer-col span {
-  display: block;
-  color: #000000; 
-  margin-bottom: 10px;
+.footer-col p, .footer-col div {
+  margin-bottom: 12px;
+  line-height: 1.6;
 }
 
-.footer-col ul li:not(:last-child) {
+.footer-col ul {
+  list-style: none;
+  padding: 0; 
+  margin: 0;
+}
+
+.footer-col ul li {
   margin-bottom: 10px;
 }
 
 .footer-col ul li a {
-  font-size: 15px;
-  color: #000000; 
+  color: #4b5563; /* Màu xám */
   text-decoration: none;
-  display: block;
   transition: all 0.3s ease;
 }
 
 .footer-col ul li a:hover {
-  color: #555555; 
+  color: #e83d3d; 
   padding-left: 5px;
 }
 
+/* --- PHẦN COPYRIGHT (BOTTOM-FOOTER) --- */
 .bottom-footer {
   background-color: #FFE2F6; 
   width: 100%;
   padding: 15px 0;
-  box-sizing: border-box;
   text-align: center; 
 }
 
-.bottom-footer .container {
-  color: rgb(0,0,0);
+.bottom-footer p {
+  margin: 0;
+  color: #333;
   font-size: 14px;
 }
 
 
-.footer-col .footer-contact-info div {
-  margin-bottom: 10px; 
-}
-
-
-
+/* --- RESPONSIVE DESIGN --- */
 @media (max-width: 992px) {
-  .row {
-    gap: 30px 0; 
+  /* Trên tablet, các cột sẽ tự sắp xếp lại */
+  .footer-col.footer-intro {
+    flex-basis: 100%; /* Cột giới thiệu chiếm cả hàng */
+    padding-right: 0;
   }
 }
 
 @media (max-width: 767px) {
-  .footer-col {
+  .footer .row {
+    flex-direction: column; /* Chuyển thành layout dọc trên mobile */
+    align-items: center; /* Căn giữa các cột */
     text-align: center;
   }
   
@@ -117,26 +125,4 @@ ul {
     left: 50%;
     transform: translateX(-50%);
   }
-  
-  .logo-col {
-    width: 100%;
-    justify-content: center;
-  }
 }
-
-.mid-footer .row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 30px; 
-}
-
-.mid-footer .row .footer-intro {
-  flex-grow: 1; 
-  flex-basis: 300px; 
-}
-
-.mid-footer .row .footer-col {
-  flex-grow: 0;
-  flex-basis: 150px; 
-}
-

@@ -54,9 +54,32 @@ const userSchema = new mongoose.Schema({
     default: 'USER',
   },
 
+  // Xác minh đăng ký
+  isVerified: {
+    type: Number,
+    default: 0, // 0 = chưa xác minh, 1 = đã xác minh
+  },
+  verifyEmailToken: String,
+  verifyEmailExpires: Date,
+
   resetPasswordToken: String,
   resetPasswordExpires: Date,
 }, { timestamps: { createdAt: 'create_at', updatedAt: 'update_at' } });
+
+// Tạo mã OTP xác minh email khi đăng ký
+userSchema.methods.createVerifyEmailToken = function () {
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  this.verifyEmailToken = crypto
+    .createHash('sha256')
+    .update(otp)
+    .digest('hex');
+
+  this.verifyEmailExpires = Date.now() + 60 * 1000; // OTP hiệu lực 60 giây
+
+  return otp;
+};
+
 
 userSchema.methods.createResetPasswordToken = function() {
   const resetToken = Math.floor(100000 + Math.random() * 900000).toString();

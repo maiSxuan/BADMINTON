@@ -8,7 +8,7 @@ import HeaderFooterLayout from "../layouts/HeaderFooterLayout";
 import AdminLayout from "../layouts/AdminLayout";
 
 // Thêm các trang vào đây
-import AdminHome from "../pages/admin/AdminHome";
+import AdminHome from "../pages/admin/RevenuePage";
 import HomePage from "../pages/customer/Home";
 import About from "../pages/customer/About";
 import Contact from "../pages/customer/Contact"
@@ -23,7 +23,6 @@ import ProductPage from "../pages/customer/ProductPage";
 import UserListPage from "../pages/admin/UserList";
 import AddPromotionPage from "../pages/admin/AddPromotion";
 import RevenuePage from "../pages/admin/RevenuePage";
-import BalancePage from "../pages/admin/BalancePage";
 import PromotionListPage from "../pages/admin/PromotionList";
 import FranchisePolicy from "../pages/customer/FranchisePolicy";
 import AllOrdersPage from "../pages/admin/AllOrdersPage";
@@ -42,16 +41,14 @@ import CartPage from "../pages/customer/Cart";
 import OrderHistoryPage from "../pages/customer/OrderHistory";
 import ProductDetailPage from "../pages/customer/ProductDetail";
 import PurchasePage from "../pages/customer/Purchase";
+import ReturnPolicyPage from "../pages/customer/ReturnPolicyPage";
+import WarrantyPolicyPage from "../pages/customer/WarrantyPolicyPage";
+import SearchResultPage from "../pages/customer/SearchResultPage";
 // Tạo các component giữ chỗ cho các trang public khác, tạo trang nào thì mình xóa dòng đó rồi import ở bên trên
 const ProductsPage = ProductPage
 const FranchisePage = FranchisePolicy;
 const AboutPage = About;
 const ContactPage = Contact;
-const ReturnPolicyPage = () => <h1>Trang Chính Sách Đổi Trả</h1>;
-const WarrantyPolicyPage = () => <h1>Trang Chính Sách Bảo Hành</h1>;
-const HowToBuyPage = () => <h1>Trang Hướng Dẫn Mua Hàng</h1>;
-const PaymentPage = () => <h1>Trang Hướng Dẫn Thanh Toán</h1>;
-
 // Tạo các component giữ chỗ cho các trang admin khác
 const LockAccountPage = () => <h1>Trang Khóa Tài Khoản</h1>;
 const ResetPasswordPage = () => <h1>Trang Reset Mật Khẩu</h1>;
@@ -64,7 +61,7 @@ const ReviewManagementPage = () => <h1>Trang Quản Lý Đánh Giá</h1>;
 const publicRoutes = [
   // --- Public Routes với DefaultLayout ---
   { path: "/", component: HomePage, layout: DefaultLayout },
-
+  {path: "/search",component:SearchResultPage,layout:DefaultLayout},
   {
     path: "/products",
     component: ProductsPage,
@@ -141,10 +138,8 @@ const publicRoutes = [
   { path: "/account/profile", component: ProfilePage, layout: DefaultLayout},
   { path: "/return", component: ReturnPolicyPage, layout: DefaultLayout },
   { path: "/warranty", component: WarrantyPolicyPage, layout: DefaultLayout },
-  { path: "/how-to-buy", component: HowToBuyPage, layout: DefaultLayout },
   { path: "/purchase", component: PurchasePage, layout: DefaultLayout},
 
-  { path: "/payment", component: PaymentPage, layout: DefaultLayout },
   { path: "/return-refund", 
     component: ReturnRefundForm, 
     layout: (props) => (
@@ -285,28 +280,6 @@ const publicRoutes = [
     layout: AdminLayout,
      allowedRoles: ["ADMIN"]
   },
-
-  // Tài chính
-  { path: "/admin/revenue", component: RevenuePage, allowedRoles: ["ADMIN"], layout: (props) => (
-  <AdminLayout
-    {...props}
-    breadcrumbItems={[
-      { label: "Trang chủ", path: "/admin" },
-      { label: "Tài chính", path: "/admin" },
-      { label: "Doanh thu", path: "/admin/revenue" },
-    ]}
-  />
-  ) },
-  { path: "/admin/balance", component: BalancePage, allowedRoles: ["ADMIN"], layout: (props) => (
-  <AdminLayout
-    {...props}
-    breadcrumbItems={[
-      { label: "Trang chủ", path: "/admin" },
-      { label: "Tài chính", path: "/admin" },
-      { label: "Số dư tài khoản", path: "/admin/balance" },
-    ]}
-  />
-  ) },
 
   //Khuyến Mãi
   { path: "/admin/add-promotion", component: AddPromotionPage,allowedRoles: ["ADMIN"], layout: (props) =>(

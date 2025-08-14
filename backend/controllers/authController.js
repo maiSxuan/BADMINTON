@@ -15,6 +15,32 @@ const createToken = (user) => {
   });
 };
 
+const sendEmail = async (to, subject, text) => {
+  try {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      throw new Error("EMAIL_USER hoặc EMAIL_PASS chưa được cấu hình");
+    }
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"Support" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      text,
+    });
+  } catch (err) {
+    console.error("Send email error:", err.message);
+    throw new Error("Không thể gửi email");
+  }
+};
+
 // Đăng ký
 exports.register = async (req, res) => {
   try {
@@ -47,20 +73,70 @@ exports.register = async (req, res) => {
       user_type: role
     });
 
-    const token = createToken(newUser);
-    res.status(201).json({
+  //   const token = createToken(newUser);
+  //   res.status(201).json({
+  //     token,
+  //     user: {
+  //       userID: newUser.userID,
+  //       email: newUser.email,
+  //       phone: newUser.phone,
+  //       name: newUser.name,
+  //       user_type: newUser.user_type,
+  //     },
+  //   });
+  // } catch (err) {
+  //   console.error("REGISTER ERROR:", err);  // In lỗi chi tiết
+  //   res.status(500).json({ message: "Lỗi máy chủ, thử lại sau.", error: err.message });
+  // }
+    const otp = newUser.createVerifyEmailToken(); // Tạo mã OTP
+    await newUser.save({ validateBeforeSave: false });
+
+    const message = `Mã xác minh tài khoản của bạn là: ${otp}. Mã có hiệu lực trong 1 phút.`;
+    await sendEmail(email, "Xác minh đăng ký tài khoản", message);
+
+    res.status(201).json({ message: "Mã xác minh đã được gửi qua email" });
+  } catch (err) {
+    console.error("REGISTER ERROR:", err);
+    res.status(500).json({ message: "Lỗi máy chủ, thử lại sau.", error: err.message });
+  }
+};
+
+// Xác minh mã OTP sau đăng ký
+exports.verifyRegisterOtp = async (req, res) => {
+  const { email, otp } = req.body;
+  try {
+    const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
+
+    const user = await User.findOne({
+      email,
+      verifyEmailToken: hashedOtp,
+      verifyEmailExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Mã không hợp lệ hoặc đã hết hạn" });
+    }
+
+    user.isVerified = 1;
+    user.verifyEmailToken = undefined;
+    user.verifyEmailExpires = undefined;
+    await user.save();
+
+    const token = createToken(user);
+    res.status(200).json({
+      message: "Xác minh thành công",
       token,
       user: {
-        userID: newUser.userID,
-        email: newUser.email,
-        phone: newUser.phone,
-        name: newUser.name,
-        user_type: newUser.user_type,
+        userID: user.userID,
+        email: user.email,
+        phone: user.phone,
+        name: user.name,
+        user_type: user.user_type,
       },
     });
   } catch (err) {
-    console.error("REGISTER ERROR:", err);  // In lỗi chi tiết
-    res.status(500).json({ message: "Lỗi máy chủ, thử lại sau.", error: err.message });
+    console.error("VERIFY OTP ERROR:", err);
+    res.status(500).json({ message: "Lỗi xác minh", error: err.message });
   }
 };
 
@@ -105,31 +181,6 @@ exports.login = async (req, res) => {
   }
 };
 
-const sendEmail = async (to, subject, text) => {
-  try {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      throw new Error("EMAIL_USER hoặc EMAIL_PASS chưa được cấu hình");
-    }
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    await transporter.sendMail({
-      from: `"Support" <${process.env.EMAIL_USER}>`,
-      to,
-      subject,
-      text,
-    });
-  } catch (err) {
-    console.error("Send email error:", err.message);
-    throw new Error("Không thể gửi email");
-  }
-};
 
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;

@@ -182,10 +182,10 @@ exports.removeCodesFromPromotion = async (req, res) => {
         await promotion.save();
         const updatedPromotion = await Promotion.findById(promotionId).populate('productDiscounts.productId')
 
-        return res.status(200).json({ 
-            message: `Xóa ${removeCnt} mã và ${productsToRemove.length} sản phẩm liên quan thành công`, 
+        return res.status(200).json({
+            message: `Xóa ${removeCnt} mã và ${productsToRemove.length} sản phẩm liên quan thành công`,
             updatedPromotion,
-            updatedCodes: promotion.listCode 
+            updatedCodes: promotion.listCode
         });
     } catch (err) {
         console.error('Remove codes error:', err);
@@ -312,6 +312,39 @@ exports.togglePromotion = async (req, res) => {
         const promotion = await Promotion.findById(id);
         if (!promotion)
             return res.status(404).json({ message: 'Promotion not found' });
+
+        const now = new Date();
+
+        const toLocalDayStart = (dateLike) => {
+            if (!dateLike) return null;
+            const d = new Date(dateLike);
+            const y = d.getUTCFullYear();
+            const m = d.getUTCMonth();
+            const day = d.getUTCDate();
+            return new Date(y, m, day, 0, 0, 0, 0); 
+        };
+
+        const toLocalDayEnd = (dateLike) => {
+            const start = toLocalDayStart(dateLike);
+            if (!start) return null;
+            return new Date(start.getFullYear(), start.getMonth(), start.getDate(), 23, 59, 59, 999); 
+        };
+
+        const startLocal = toLocalDayStart(promotion.startDate);
+        const endLocal = toLocalDayEnd(promotion.endDate);
+
+        if (endLocal && now > endLocal) {
+            if (promotion.isActive) {
+                promotion.isActive = false;
+                await promotion.save();
+            }
+            return res.status(400).json({ message: 'Chiến dịch đã hết hạn', promotion });
+        }
+
+        // Nếu chưa tới startLocal thì không cho bật
+        if (!promotion.isActive && startLocal && now < startLocal) {
+            return res.status(400).json({ message: 'Chiến dịch chưa đến thời gian bắt đầu' });
+        }
 
         promotion.isActive = !promotion.isActive;
         await promotion.save();

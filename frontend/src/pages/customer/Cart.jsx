@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import "./Cart.css"
 import { fetchCart, updateCartItemQuantity, removeItemFromCart, clearAllCart, removeSelectedItemsFromCart } from "../../services/index"
 import { ToastContainer, toast } from 'react-toastify';
@@ -208,7 +208,6 @@ const CartPage = () => {
 
         {cartItems.length > 0 ? (
           <>
-            {/* Header với checkbox chọn tất cả */}
             <div className="cart-header-controls">
               <div className="select-all-section">
                 <input
@@ -221,7 +220,9 @@ const CartPage = () => {
                 <label htmlFor="select-all" className="select-all-label">
                   Chọn tất cả ({cartItems.length} sản phẩm)
                 </label>
+              </div>
 
+              <div className="cart-remove-button-section">
                 <button onClick={handleRemoveSelectedItem} className="clear-cart-btn">
                   Xoá tất cả đã chọn
                 </button>
@@ -230,7 +231,6 @@ const CartPage = () => {
                   Xoá tất cả
                 </button>
               </div>
-              <div className="selected-info">Đã chọn: {selectedCount} sản phẩm</div>
             </div>
 
             <div className="cart-items-list">
@@ -245,15 +245,17 @@ const CartPage = () => {
                     />
                   </div>
 
-                  <div className="item-image-container">
-                    <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
-                  </div>
+                  <Link to={`/products/${item.slug}`} key={item._id} className={`cart-item-link`}>
+                    <div className="item-image-container">
+                      <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
+                    </div>
 
-                  <div className="item-details">
-                    <h3 className="item-name">{item.name}</h3>
-                    <p className="item-variant">{item.color} - {item.size}</p>
-                    <p className="item-unit-price">Đơn giá: {formatCurrency(item.price)}</p>
-                  </div>
+                    <div className="item-details">
+                      <h3 className="item-name">{item.name}</h3>
+                      <p className="item-variant">{item.color} - {item.size}</p>
+                      <p className="item-unit-price">Đơn giá: {formatCurrency(item.price)}</p>
+                    </div>
+                  </Link>
 
                   <div className="item-quantity-control">
                     <button

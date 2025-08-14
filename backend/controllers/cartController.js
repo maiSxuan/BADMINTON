@@ -15,10 +15,11 @@ exports.getCart = async (req, res) => {
 
         // cart.recalculateTotals();
         const now = new Date();
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const activePromotions = await Promotion.find({
             isActive: true,
             startDate: { $lte: now },
-            endDate: { $gte: now }
+            endDate: { $gte: todayStart }
         }).lean();
 
         let hasChanged = false;
@@ -135,10 +136,11 @@ exports.addToCart = async (req, res) => {
             return res.status(400).json({ message: 'Not enough stock available' });
 
         const now = new Date();
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const activePromotions = await Promotion.find({
             isActive: true,
             startDate: { $lte: now },
-            endDate: { $gte: now }
+            endDate: { $gte: todayStart }
         }).lean();
 
         let discountPrice = option.price || product.price;

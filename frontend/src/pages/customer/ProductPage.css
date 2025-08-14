@@ -66,6 +66,7 @@ body {
     margin-right: 10px;
     width: 16px;
     height: 16px;
+    accent-color: #eb9ce3;
 }
 
 /* --- KHU VỰC SẢN PHẨM (BÊN PHẢI) --- */
@@ -151,8 +152,8 @@ body {
 .pp-discount-fixed {
     /* background-color: #43a047;
     border: 1px solid #2e7d32; */
-    background: linear-gradient(135deg, #43a047, #2e7d32);
-    box-shadow: 0 2px 8px rgba(67, 160, 71, 0.3);
+    background: linear-gradient(135deg, #27ae60, #219150);
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
 }
 
 /* .product-card .price { */

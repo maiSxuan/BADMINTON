@@ -76,7 +76,8 @@ export const addItemToCart = async ({ productId, variantId, optionId, quantity }
   });
 
   if (!res.ok) {
-    throw new Error(`Add to cart failed. Status: ${res.status}`);
+    const errorData = await res.json();
+    throw new Error(errorData.message || `Add to cart failed. Status: ${res.status}`);
   }
 
   return await res.json(); 

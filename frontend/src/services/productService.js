@@ -1,9 +1,11 @@
-export const getProductBySlug = async (slug) => {
+export const getProductBySlug = async (slug, view = 'public') => {
     if (!slug) throw new Error("Slug không được để trống.");
     
-    const response = await fetch(`http://localhost:4000/api/products/${slug}`);
+    const response = await fetch(`http://localhost:4000/api/products/${slug}?view=${view}`); 
+    
     if (!response.ok) {
-        throw new Error("Sản phẩm không tồn tại hoặc có lỗi xảy ra.");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Sản phẩm không tồn tại hoặc có lỗi xảy ra.");
     }
     
     return await response.json();

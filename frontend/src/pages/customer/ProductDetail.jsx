@@ -7,7 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
-import ratingService from '../../services/ratingService';
+import { getRatingsByProduct } from '../../services/ratingService';
 
 const StarRating = ({ rating }) => {
     const totalStars = 5;
@@ -50,10 +50,8 @@ const ProductDetailPage = () => {
                     const initialVariant = data.variants[0];
                     setSelectedVariant(initialVariant);
 
-                    // Ưu tiên ảnh bìa chính, nếu không có thì lấy ảnh đầu tiên của variant
                     setMainImage(data.thumbnail_url || initialVariant?.images?.[0] || '');
 
-                    // Tự động chọn option đầu tiên còn hàng
                     const firstAvailableOption = initialVariant.options.find(opt => opt.stock_quantity > 0);
                     setSelectedOption(firstAvailableOption || initialVariant.options?.[0] || null);
                 }
@@ -69,15 +67,14 @@ const ProductDetailPage = () => {
 
     useEffect(() => {
         const loadReviews = async () => {
-            if (!product?._id) return; // Chỉ chạy khi có product ID
+            if (!product?._id) return;
 
             try {
                 setReviewsLoading(true);
-                const data = await ratingService.getRatingsByProduct(product._id);
+                const data = await getRatingsByProduct(product._id);
                 setReviews(data.reviews || []);
             } catch (err) {
                 console.error("Lỗi khi tải đánh giá:", err);
-                // Không set lỗi chung để tránh ảnh hưởng cả trang
             } finally {
                 setReviewsLoading(false);
             }
@@ -88,10 +85,8 @@ const ProductDetailPage = () => {
 
     const handleVariantSelect = (variantToSelect) => {
         setSelectedVariant(variantToSelect);
-        // Khi đổi màu, luôn hiển thị ảnh đầu tiên của màu đó
         setMainImage(variantToSelect?.images?.[0] || '');
 
-        // Reset và chọn lại option cho màu mới
         const firstAvailableOption = variantToSelect.options.find(opt => opt.stock_quantity > 0);
         setSelectedOption(firstAvailableOption || variantToSelect.options?.[0] || null);
         setQuantity(1);
@@ -124,7 +119,7 @@ const ProductDetailPage = () => {
         }
 
         const selectedItem = {
-            _id: product._id, // ID sản phẩm chính
+            _id: product._id, 
             name: product.name || 'Không rõ tên',
             productId: product._id,
             variantId: selectedVariant._id,
@@ -149,6 +144,12 @@ const ProductDetailPage = () => {
 
         if (selectedOption.stock_quantity < quantity) {
             toast.error("Số lượng vượt quá tồn kho");
+            return;
+        }
+
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if (!token) {
+            toast.error("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng");
             return;
         }
 
@@ -232,10 +233,6 @@ const ProductDetailPage = () => {
                     <h1 className="product-name">{product.name}</h1>
 
                     <div className="price-container">
-                        {/* <span className="current-price">{displayPrice.toLocaleString('vi-VN')}₫</span>
-                        {listPrice > displayPrice && (
-                            <span className="list-price">{listPrice.toLocaleString('vi-VN')}₫</span>
-                        )} */}
                         {listPrice > 0 && listPrice > displayPrice ? (
                             <>
                                 <span className="current-price">{displayPrice.toLocaleString('vi-VN')} ₫</span>
@@ -255,7 +252,6 @@ const ProductDetailPage = () => {
                                 <img src={variant.images?.[0]} alt={variant.name} />
                                 <div className="variant-info">
                                     <span>{variant.name}</span>
-                                    {/* <span>{(variant.options?.[0]?.price || 0).toLocaleString('vi-VN')}₫</span> */}
                                     <span>
                                         {product.sale && product.sale_price > 0
                                             ? product.sale_price.toLocaleString('vi-VN') + '₫'
