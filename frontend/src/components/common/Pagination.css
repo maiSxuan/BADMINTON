@@ -27,7 +27,7 @@
 }
 
 .pagination-button.active {
-    background-color: #e83d3d; /* Màu đỏ */
+    background-color: #f582bc; /* Màu đỏ */
     color: #fff;
     border-color: #e83d3d;
     font-weight: bold;

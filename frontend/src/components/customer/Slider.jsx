@@ -5,8 +5,8 @@ import "slick-carousel/slick/slick-theme.css";
 import "./Slider.css"; 
 import test_img from '../../assets/images/Slider/test.png' //import vào đây cho nhanhz
 import slide1 from '../../assets/images/Slider/slide1.png'
-import slide2 from '../../assets/images/Slider/slide2.png'
-import slide3 from '../../assets/images/Slider/slide3.png'
+import slide2 from '../../assets/images/Slider/slider2.png'
+import slide3 from '../../assets/images/Slider/slider3.png'
 import slide4 from '../../assets/images/Slider/slide4.png'
 const ImageSlider = () => {
   const images = [

@@ -24,24 +24,6 @@ exports.getCart = async (req, res) => {
 
         let hasChanged = false;
 
-        // const transformedItems = cart.items.map((item) => {
-        //     const product = item.product;
-        //     const variant = product.variants.id(item.variant_id);
-        //     const option = variant.options.id(item.option_id);
-        //     return {
-        //         _id: item._id,
-        //         productId: product._id,
-        //         variantId: item.variant_id,
-        //         optionId: item.option_id,
-        //         name: product.name,
-        //         image: variant?.images?.[0] || product.thumbnail_url || '/placeholder.svg',
-        //         quantity: item.quantity,
-        //         price: item.priceAtTime,
-        //         sku_code: item.sku_code,
-        //         color: variant?.name || 'Không xác định',
-        //         size: option?.value || 'Không xác định',
-        //     };
-        // });
         const updatedItems = cart.items.map(item => {
             const product = item.product;
             const variant = product.variants.id(item.variant_id);
@@ -68,7 +50,6 @@ exports.getCart = async (req, res) => {
 
             discountPrice = Math.round(discountPrice);
 
-            // Nếu giá trong cart khác với giá giảm hiện tại thì cập nhật
             if (item.priceAtTime !== discountPrice) {
                 item.priceAtTime = discountPrice;
                 item.appliedCode = appliedPromoCode;
@@ -81,6 +62,7 @@ exports.getCart = async (req, res) => {
                 variantId: item.variant_id,
                 optionId: item.option_id,
                 name: product.name,
+                slug: product.slug,
                 image: variant?.images?.[0] || product.thumbnail_url || '/placeholder.svg',
                 quantity: item.quantity,
                 price: item.priceAtTime,
@@ -90,16 +72,12 @@ exports.getCart = async (req, res) => {
             };
         });
 
-        // await cart.save();
         if (hasChanged) {
             cart.recalculateTotals();
             await cart.save();
         }
 
         res.status(200).json({
-            // items: transformedItems,
-            // totalQuantity: cart.totalQuantity,
-            // totalPrice: cart.totalPrice
             items: updatedItems,
             totalQuantity: cart.totalQuantity,
             totalPrice: cart.totalPrice

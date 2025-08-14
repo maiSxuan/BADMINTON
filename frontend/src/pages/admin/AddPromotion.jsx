@@ -2,8 +2,7 @@
 import { useState } from 'react';
 import './AddPromotion.css';
 import { createPromotion } from '../../services/index';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { usePopup } from '../../components/common/popupContext';
 
 const AddPromotionPage = () => {
   // const [step, setStep] = useState(1);
@@ -16,6 +15,7 @@ const AddPromotionPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { showPopup } = usePopup()
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,7 +33,15 @@ const AddPromotionPage = () => {
     try {
       await createPromotion(promotionData);
       // setStep(2);
-      toast.success("Tạo chiến dịch thành công");
+      // toast.success("Tạo chiến dịch thành công");
+      showPopup(
+        'Thông báo',
+        'Tạo chiến dịch thành công',
+        null,
+        null,
+        4,
+        1
+      )
 
       setPromotionData({
         name: '',
@@ -42,9 +50,17 @@ const AddPromotionPage = () => {
         description: ''
       });
 
-    } catch (error) {
-      console.error("Lỗi khi tạo chiến dịch:", error);
-      setError(error.message);
+    } catch (err) {
+      console.error("Lỗi khi tạo chiến dịch:", err);
+      setError(err.message);
+      showPopup(
+        'Lỗi',
+        err.message || 'Tạo chiến dịch thất bại',
+        null,
+        null,
+        4,
+        1
+      )
     } finally {
       setLoading(false);
     }
@@ -111,7 +127,6 @@ const AddPromotionPage = () => {
         </div>
 
       </form>
-      <ToastContainer position='top-right' autoClose={3000} />
     </div>
   );
 };

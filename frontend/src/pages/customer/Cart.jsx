@@ -2,8 +2,7 @@ import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import "./Cart.css"
 import { fetchCart, updateCartItemQuantity, removeItemFromCart, clearAllCart, removeSelectedItemsFromCart } from "../../services/index"
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { usePopup } from "../../components/common/popupContext";
 
 const CartPage = () => {
   const navigate = useNavigate()
@@ -12,6 +11,8 @@ const CartPage = () => {
   const [selectedCount, setSelectedCount] = useState(0)
   const [selectAll, setSelectAll] = useState(false)
   const [loading, setLoading] = useState(true)
+
+  const { showPopup } = usePopup();
 
   useEffect(() => {
     const selectedItems = cartItems.filter((item) => item.selected)
@@ -29,13 +30,14 @@ const CartPage = () => {
         const cartWithSelected = data.items.map(item => ({
           _id: item._id,
           name: item.name || 'Không rõ tên',
-          productId: item.productId, 
+          productId: item.productId,
           variantId: item.variantId,
           optionId: item.optionId,
+          slug: item.slug,
           quantity: item.quantity,
           price: item.price,
           selected: false,
-          color: item.color || "Không xác định", 
+          color: item.color || "Không xác định",
           size: item.size || "Không xác định",
           image: item.image || "/placeholder.svg"
         }));
@@ -43,13 +45,21 @@ const CartPage = () => {
         setCartItems(cartWithSelected)
       } catch (err) {
         console.error('Failed to fetch cart:', err)
+        showPopup(
+          'Lỗi',
+          err.message || 'Tải giỏ hàng thất bại',
+          null,
+          null,
+          4,
+          1
+        )
       } finally {
         setLoading(false)
       }
     }
 
     fetchCartData()
-  }, [])
+  }, [showPopup])
 
   const handleQuantityChange = async (item, amount) => {
     if (![1, -1].includes(amount)) return
@@ -66,89 +76,144 @@ const CartPage = () => {
       setCartItems(prev =>
         prev.map(newItem =>
           newItem.productId === item.productId &&
-          newItem.variantId === item.variantId &&
-          newItem.optionId === item.optionId
+            newItem.variantId === item.variantId &&
+            newItem.optionId === item.optionId
             ? { ...newItem, quantity: newItem.quantity + amount }
             : newItem
         )
       )
     } catch (err) {
       console.error('Error updating quantity:', err);
-    } 
+    }
   };
 
   const handleRemoveItem = async (item) => {
-    if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?")) return;
+    showPopup(
+      'Xác nhận xóa',
+      'Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng không?',
+      'Xóa',
+      async () => {
+        try {
+          await removeItemFromCart(item.variantId, {
+            product: item.productId,
+            variant_id: item.variantId,
+            option_id: item.optionId
+          });
 
-    try {
-      await removeItemFromCart(item.variantId, {
-        product: item.productId,
-        variant_id: item.variantId,
-        option_id: item.optionId
-      });
+          setCartItems((prevItems) =>
+            prevItems.filter(i =>
+              !(i.productId === item.productId &&
+                i.variantId === item.variantId &&
+                i.optionId === item.optionId
+              )
+            )
+          );
 
-      setCartItems((prevItems) =>
-        prevItems.filter(i =>
-            !(i.productId === item.productId &&
-              i.variantId === item.variantId &&
-              i.optionId === item.optionId)
-        )
-      )
-
-      window.dispatchEvent(new Event("cartUpdated"));
-    } catch (err) {
-      console.error("Failed to remove item:", err)
-    }
+          window.dispatchEvent(new Event("cartUpdated"));
+        } catch (err) {
+          console.error("Failed to remove item:", err)
+        }
+      },
+      6
+    )
   }
 
   const handleRemoveSelectedItem = async () => {
     const itemsToRemove = cartItems.filter(item => item.selected);
 
     if (itemsToRemove.length === 0) {
-      alert("Bạn chưa chọn sản phẩm để xóa")
+      showPopup(
+        'Thông báo',
+        'Bạn chưa chọn sản phẩm để xóa',
+        'Đóng',
+        null,
+        4
+      )
       return
     }
 
-    try {
-      await removeSelectedItemsFromCart(
-        itemsToRemove.map(item => ({
-          product: item.productId,
-          variant_id: item.variantId,
-          option_id: item.optionId
-        }))
-      );
+    showPopup(
+      'Xác nhận xóa',
+      'Bạn có chắc chắn xóa những sản phẩm được chọn khỏi giỏ hàng không?',
+      'Xóa',
+      async () => {
+        try {
+          await removeSelectedItemsFromCart(
+            itemsToRemove.map(item => ({
+              product: item.productId,
+              variant_id: item.variantId,
+              option_id: item.optionId
+            }))
+          );
 
-      setCartItems(prevItems =>
-        prevItems.filter(
-          item => !itemsToRemove.some(toRemove =>
-            toRemove.productId === item.productId &&
-            toRemove.variantId === item.variantId &&
-            toRemove.optionId === item.optionId
+          setCartItems(prevItems =>
+            prevItems.filter(item =>
+              !itemsToRemove.some(toRemove =>
+                toRemove.productId === item.productId &&
+                toRemove.variantId === item.variantId &&
+                toRemove.optionId === item.optionId
+              )
+            ).map(item => ({ ...item, selected: false }))
+          );
+
+          setSelectAll(false);
+          window.dispatchEvent(new Event("cartUpdated"));
+          showPopup(
+            'Thông báo',
+            'Xóa các sản phẩm đã chọn thành công',
+            null,
+            null,
+            4,
+            1
           )
-        )
-        .map(item => ({ ...item, selected: false}))
-      );
-
-      setSelectAll(false);
-      window.dispatchEvent(new Event("cartUpdated"));
-    } catch (err) {
-      console.error("Lỗi khi xóa các sản phẩm được chọn: ", err);
-    }
+        } catch (err) {
+          console.error("Lỗi khi xóa các sản phẩm được chọn: ", err);
+          showPopup(
+            'Lỗi',
+            err.message || 'Xóa các sản phẩm đã chọn thất bại',
+            null,
+            null,
+            4,
+            1
+          )
+        }
+      },
+      6
+    )
   };
 
   const handleClearCart = async () => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa toàn bộ giỏ hàng không"))
-      return;
-
-    try {
-      await clearAllCart();
-      setCartItems([]);
-      window.dispatchEvent(new Event("cartUpdated"));
-      toast.success("Đã xóa toàn bộ giỏ hàng");
-    } catch (err) {
-      toast.error("Xóa giỏ hàng thất bại");
-      console.error("Clear cart error: ", err);
-    }
+    showPopup(
+      'Xác nhận xóa',
+      'Bạn có chắc chắn xóa toàn bộ giỏ hàng không?',
+      'Xóa',
+      async () => {
+        try {
+          await clearAllCart();
+          setCartItems([]);
+          window.dispatchEvent(new Event("cartUpdated"));
+          showPopup(
+            'Thông báo',
+            'Đã xóa toàn bộ giỏ hàng',
+            null,
+            null,
+            4,
+            1
+          )
+        } catch (err) {
+          console.error("Clear cart error: ", err);
+          showPopup(
+            'Lỗi',
+            err.message || 'Xóa toàn bộ sản phẩm trong giỏ hàng thất bại',
+            null,
+            null,
+            4,
+            1
+          )
+        }
+      },
+      6
+    )
   }
 
   const handleSelectItem = (item) => {
@@ -175,13 +240,13 @@ const CartPage = () => {
     const mappedItems = selectedItems.map(item => ({
       _id: item._id,
       name: item.name || 'Không rõ tên',
-      productId: item.productId, 
+      productId: item.productId,
       variantId: item.variantId,
       optionId: item.optionId,
       quantity: item.quantity,
       price: item.price,
       selected: false,
-      color: item.color || "Không xác định", 
+      color: item.color || "Không xác định",
       size: item.size || "Không xác định",
       image: item.image || "/placeholder.svg"
     }));
@@ -193,10 +258,16 @@ const CartPage = () => {
 
   const formatCurrency = (amount) =>
     new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount)
-  
-  if (loading) {
-    return <div className="text-center py-10 text-gray-500">Đang tải giỏ hàng...</div>;
+
+  function LoadingSpinner() {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Đang tải dữ liệu...</p>
+      </div>
+    );
   }
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div className="cart-page-container">
@@ -266,8 +337,8 @@ const CartPage = () => {
                       -
                     </button>
                     <input type="text" value={item.quantity} readOnly className="quantity-input" />
-                    <button 
-                      className="quantity-btn" 
+                    <button
+                      className="quantity-btn"
                       onClick={() => handleQuantityChange(item, 1)}
                     >
                       +
@@ -316,7 +387,6 @@ const CartPage = () => {
           </div>
         )}
       </div>
-      <ToastContainer position='top-right' autoClose={3000} />
     </div>
   )
 }

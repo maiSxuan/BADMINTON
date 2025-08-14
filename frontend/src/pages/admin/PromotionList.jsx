@@ -4,8 +4,7 @@ import Pagination from '../../components/common/Pagination';
 import { Trash, SquarePen } from 'lucide-react';
 import { deletePromotion, getAllPromotions, getPromotionById, addCodeToPromotion, addProductToPromotion, removeCodeFromPromotion, removeProductFromPromotion, updatePromotion, togglePromotionStatus } from '../../services/index';
 import { getProductsOnQuery } from '../../services/index';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { usePopup } from '../../components/common/popupContext';
 
 const PromotionListPage = () => {
   const [promotions, setPromotions] = useState([]);
@@ -25,6 +24,7 @@ const PromotionListPage = () => {
   const [allProducts, setAllProducts] = useState([]);
 
   const [editMode, setEditMode] = useState(false);
+  const { showPopup } = usePopup()
 
   useEffect(() => {
     const displayPromotions = async () => {
@@ -36,13 +36,21 @@ const PromotionListPage = () => {
         setPromotions(res.promotions || []);
       } catch (err) {
         console.error('Lỗi khi lấy danh sách chiến dịch khuyến mãi:', err);
-        setError(err.message || 'Không thể tải danh sách chiến dịch khuyến mãi');
+        // setError(err.message || 'Không thể tải danh sách chiến dịch khuyến mãi');
+        showPopup(
+          'Lỗi',
+          err.message || 'Không thể tải danh sách chiến dịch khuyến mãi',
+          null,
+          null,
+          4,
+          1
+        )
       } finally {
         setLoading(false)
       }
     };
     displayPromotions();
-  }, []);
+  }, [showPopup]);
 
   const reloadPrommotions = async () => {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -63,25 +71,60 @@ const PromotionListPage = () => {
       setShowDetail(true);
     } catch (err) {
       console.error('Lỗi khi xem chi tiết chiến dịch khuyến mãi:', err.message);
+      showPopup(
+        'Thông báo',
+        'Lỗi khi xem chi tiết chiến dịch. Vui lòng thử lại sau!',
+        null,
+        null,
+        4,
+        1
+      )
     }
   };
 
   const handleDeletePromotion = async (promotionId) => {
-    const confirm = window.confirm("Bạn có chắc chắn muốn xóa chiến dịch này?")
-    if (!confirm) return;
-
-    try {
-      await deletePromotion(promotionId);
-      // setPromotions(prev => prev.filter(p => p._id !== promotionId));
-      await reloadPrommotions();
-    } catch (err) {
-      console.error('Lỗi khi xóa chiến dịch:', err.message)
-    }
+    showPopup(
+      'Xác nhận xóa',
+      'Bạn có chắc muốn xóa chiến dịch giảm giá này',
+      'Xóa',
+      async () => {
+        try {
+          await deletePromotion(promotionId);
+          await reloadPrommotions();
+          showPopup(
+            'Thông báo',
+            'Xóa chiến dịch khuyến mãi thành công',
+            null,
+            null,
+            4,
+            1
+          )
+        } catch (err) {
+          console.error('Lỗi khi xóa chiến dịch:', err.message)
+          showPopup(
+            'Lỗi',
+            err.message || 'Xóa chiến dịch khuyến mãi thất bại',
+            null,
+            null,
+            4,
+            1
+          )
+        }
+      },
+      6
+    )
   };
 
   const handleAddDiscountCode = async () => {
     if (!newCode || !discountType || !discountValue) {
-      toast.warning('Vui lòng nhập đầy đủ thông tin mã giảm giá');
+      showPopup(
+        'Thông báo',
+        'Vui lòng nhập đầy đủ thông tin mã giảm giá',
+        null,
+        null,
+        4,
+        1
+      )
       return;
     }
 
@@ -97,26 +140,64 @@ const PromotionListPage = () => {
       setNewCode('');
       setDiscountType('percentage');
       setDiscountValue('');
-      toast.success("Thêm mã giảm giá thành công")
+      showPopup(
+        'Thông báo',
+        'Thêm mã giảm giá thành công',
+        null,
+        null,
+        4,
+        1
+      )
     } catch (err) {
       console.error("Lỗi khi thêm mã:", err.message);
+      showPopup(
+        'Lỗi',
+        'Thêm mã giảm giá thất bại',
+        null,
+        null,
+        4,
+        1
+      )
     }
   };
 
   const handleDeleteDiscountCode = async (code) => {
     if (!selectedPromotion?._id) return;
 
-    try {
-      const res = await removeCodeFromPromotion(selectedPromotion._id, [code]);
-      setSelectedPromotion((prev) => ({
-        ...prev,
-        listCode: res.updatedCodes,
-        productDiscounts: res.updatedPromotion?.productDiscounts || [],
-      }));
-      toast.success('Xóa mã giảm giá thành công');
-    } catch (err) {
-      toast.error('Xóa mã thất bại');
-    }
+    showPopup(
+      'Xác nhận xóa',
+      'Bạn chắc chắn xóa mã giảm giá được chọn?',
+      'Xóa',
+      async () => {
+        try {
+          const res = await removeCodeFromPromotion(selectedPromotion._id, [code]);
+          setSelectedPromotion((prev) => ({
+            ...prev,
+            listCode: res.updatedCodes,
+            productDiscounts: res.updatedPromotion?.productDiscounts || [],
+          }));
+          showPopup(
+            'Thành công',
+            'Xóa mã giảm giá thành công!',
+            null,
+            null,
+            4,
+            1
+          );
+        } catch (err) {
+          console.error('Xóa mã giảm giá thất bại', err.message)
+          showPopup(
+            'Lỗi',
+            'Xóa mã giảm giá thất bại. Vui lòng thử lại.',
+            null,
+            null,
+            4,
+            1
+          );
+        }
+      },
+      6
+    )
   };
 
   useEffect(() => {
@@ -129,7 +210,14 @@ const PromotionListPage = () => {
 
   const handleAddProductToPromotion = async () => {
     if (!selectedProductId || !selectedCode) {
-      toast.warning("Vui lòng chọn sản phẩm và mã");
+      showPopup(
+        'Thông báo',
+        'Vui lòng nhập đầy đủ thông tin mã giảm giá',
+        null,
+        null,
+        4,
+        1
+      )
       return;
     }
 
@@ -143,24 +231,59 @@ const PromotionListPage = () => {
       setSelectedPromotion(res.updatedPromotion);
       setSelectedProductId('');
       setSelectedCode('');
-      toast.success("Áp dụng mã khuyến mãi thành công");
-
+      showPopup(
+        'Thông báo',
+        'Áp dụng mã khuyến mãi thành công',
+        null,
+        null,
+        4,
+        1
+      )
     } catch (err) {
       console.error(err.message || "Lỗi không xác định khi áp dụng mã");
+      showPopup(
+        'Lỗi',
+        'Áp dụng mã không thành công. Vui lòng thử lại sau!',
+        null,
+        null,
+        4,
+        1
+      )
     }
   };
 
   const handleDeleteProductFromPromotion = async (productId) => {
     if (!selectedPromotion?._id) return;
+    showPopup(
+      'Xác nhận xóa',
+      'Bạn muốn xóa sản phẩm này khỏi chiến dịch giảm giá?',
+      'Xóa',
+      async () => {
+        try {
+          const res = await removeProductFromPromotion(selectedPromotion._id, productId._id);
 
-    try {
-      const res = await removeProductFromPromotion(selectedPromotion._id, productId._id);
-
-      setSelectedPromotion(res.updatedPromotion);
-      toast.success('Xóa sản phẩm thành công');
-    } catch (err) {
-      toast.error('Xóa sản phẩm thất bại');
-    }
+          setSelectedPromotion(res.updatedPromotion);
+          showPopup(
+            'Thông báo',
+            'Xóa sản phẩm thành công',
+            null,
+            null,
+            4,
+            1
+          )
+        } catch (err) {
+          console.error('Xóa sản phẩm thất bại', err.message)
+          showPopup(
+            'Lỗi',
+            err.message || 'Xóa sản phẩm không thành công',
+            null,
+            null,
+            4,
+            1
+          )
+        }
+      }
+    )
   };
 
   const handleUpdatePromotion = async (e) => {
@@ -175,14 +298,28 @@ const PromotionListPage = () => {
 
     try {
       await updatePromotion(selectedPromotion._id, updatedData);
-      // setSelectedPromotion(res.promotion);
       setSelectedPromotion(null);
       setEditMode(false);
       setStep(null);
-      toast.success('Cập nhật thông tin thành công');
+      showPopup(
+        'Thông báo',
+        'Cập nhật thông tin thành công',
+        null,
+        null,
+        4,
+        1
+      )
       await reloadPrommotions();
     } catch (err) {
-      toast.error('Cập nhật thất bại');
+      console.error('Lỗi khi cập nhật thông tin', err.message)
+      showPopup(
+        'Lỗi',
+        err.message || 'Cập nhật thông tin thất bại',
+        null,
+        null,
+        4,
+        1
+      )
     }
   }
 
@@ -202,7 +339,14 @@ const PromotionListPage = () => {
         )
       );
     } catch (err) {
-      toast.error(err.message || 'Cập nhật trạng thái thất bại');
+      showPopup(
+        'Lỗi',
+        err.message || 'Cập nhật trạng thái thất bại',
+        null,
+        null,
+        4,
+        1
+      )
     }
   }
 
@@ -458,15 +602,6 @@ const PromotionListPage = () => {
                       </td>
                       <td>
                         <div className='promotion-status-cell'>
-                          {/* <span className={promotion.isActive ? 'promo-status-active' : 'promo-status-inactive'}>
-                          {promotion.isActive ? 'Đang hoạt động' : 'Không hoạt động'}
-                        </span>
-                        <button 
-                          className={`toggle-btn ${promotion.isActive ? 'toggled' : ''}`} 
-                          onClick={() => handlePromotionStatus(promotion._id)}
-                        >
-                          <div className='thumb'></div>
-                        </button> */}
                           {(() => {
                             const now = new Date();
 
@@ -509,7 +644,6 @@ const PromotionListPage = () => {
         </div>
       )}
       <Pagination itemsPerPage={promotionsPerPage} totalItems={promotions.length} paginate={paginate} currentPage={currentPage} className="promotion-pagination" />
-      <ToastContainer position='top-right' autoClose={3000} />
     </div>
   );
 };

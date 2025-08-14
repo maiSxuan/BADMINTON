@@ -1,33 +1,42 @@
-import React, { createContext, useState, useContext, useCallback } from 'react';
+import { createContext, useState, useContext, useCallback } from 'react';
 import Popup from './popup'; // Giả sử bạn đã đặt Popup.js và Popup.css trong src/components/
 
-// 1. Tạo Context
 const PopupContext = createContext();
 
-// 2. Tạo Provider Component
 export const PopupProvider = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [popupContent, setPopupContent] = useState({
     title: '',
     message: '',
     buttonText: '',
-    onConfirm: null, // Hàm callback tùy chọn
+    onConfirm: null,
+    blurIntensity: 4,
+    autoCloseSeconds: null,
   });
 
-  // Hàm để hiển thị popup, có thể nhận thêm một hàm callback
-  const showPopup = useCallback((title, message, buttonText, onConfirmCallback = null) => {
+  const showPopup = useCallback((title, message, buttonText, onConfirmCallback = null, blurValue, autoCloseSeconds = null) => {
     setPopupContent({
       title,
       message,
       buttonText,
       onConfirm: onConfirmCallback,
+      blurIntensity: blurValue,
+      autoCloseSeconds,
     });
     setIsOpen(true);
+
+    if (autoCloseSeconds && autoCloseSeconds > 0) {
+      setTimeout(() => {
+        setIsOpen(false);
+      }, autoCloseSeconds * 1000);
+    }
   }, []);
 
-  // Hàm để đóng popup
   const hidePopup = () => {
-    // Nếu có hàm callback, thực thi nó trước khi đóng
+    setIsOpen(false);
+  };
+
+  const confirmPopup = () => {
     if (popupContent.onConfirm && typeof popupContent.onConfirm === 'function') {
       popupContent.onConfirm();
     }
@@ -43,12 +52,13 @@ export const PopupProvider = ({ children }) => {
         message={popupContent.message}
         buttonText={popupContent.buttonText}
         onClose={hidePopup}
+        onConfirm={confirmPopup}
+        blurIntensity={popupContent.blurIntensity}
       />
     </PopupContext.Provider>
   );
 };
 
-// 3. Tạo custom Hook để dễ dàng sử dụng
 export const usePopup = () => {
   const context = useContext(PopupContext);
   if (context === undefined) {

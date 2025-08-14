@@ -73,7 +73,7 @@ function AppContent() {
         const message = "Bạn không có quyền truy cập trang này.";
         const navigateToHome = () => navigate("/", { replace: true });
         
-        showPopup("Truy cập bị từ chối", message, "Về Trang Chủ", navigateToHome);
+        showPopup("Truy cập bị từ chối", message, "Về Trang Chủ", navigateToHome, 10);
         
       }
       if (user && user.user_type === "ADMIN" && window.location.pathname === "/") {
@@ -82,7 +82,7 @@ function AppContent() {
     }
   }, [user, loading, navigate, showPopup]);
 
-  if (loading) return <div className="loading">Đang tải...</div>;
+  // if (loading) return <div className="loading">Đang tải...</div>;
   return (
     <div className="App">
       <ToastContainer position="top-center" autoClose={3000} />
