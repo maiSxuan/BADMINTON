@@ -1,16 +1,20 @@
 import React from "react";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import "./Slider.css"; 
-import test_img from '../../assets/images/Slider/test.png' //import vào đây cho nhanhz
-import slide1 from '../../assets/images/Slider/slide1.png'
-import slide2 from '../../assets/images/Slider/slider2.png'
-import slide3 from '../../assets/images/Slider/slider3.png'
-import slide4 from '../../assets/images/Slider/slide4.png'
+import "./Slider.css";
+import slide1 from "../../assets/images/Slider/slide1.png"; //import vào đây cho nhanhz
+import slide2 from "../../assets/images/Slider/slider2.png";
+import slide3 from "../../assets/images/Slider/slider3.png";
+import slide4 from "../../assets/images/Slider/slide4.png";
+import slide5 from "../../assets/images/Slider/slide5.png";
 const ImageSlider = () => {
   const images = [
-    test_img, slide1, slide2, slide3, slide4  //chỉnh 5 hình ở đây
+    slide1,
+    slide2,
+    slide3,
+    slide4,
+    slide5, //chỉnh 5 hình ở đây
   ];
 
   const settings = {
@@ -46,4 +50,3 @@ const ImageSlider = () => {
 };
 
 export default ImageSlider;
-
