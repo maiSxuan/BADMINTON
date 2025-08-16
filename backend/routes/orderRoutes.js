@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const orderController = require('../controllers/orderController')
-const { authenticate } = require('../middleware/authMiddleware')
-// router.use(authenticate);
+const { authenticate, authorizeRole } = require('../middleware/authMiddleware');
+router.use(authenticate, authorizeRole("USER"));
 
 router.post('/', orderController.createOrder)
 router.get('/', orderController.getAllOrders)

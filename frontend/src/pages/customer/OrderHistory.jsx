@@ -2,15 +2,16 @@
 
 import { useState, useEffect } from "react"
 import "./OrderHistory.css"
-// Thêm createRating từ service
-import { updateOrderStatus, getOrdersByUserId, requestReturnOrCancellation} from "../../services/orderService"
+import { updateOrderStatus, getOrdersByUserId, requestReturnOrCancellation } from "../../services/orderService"
 import { createRating } from "../../services/ratingService"
+import Pagination from "../../components/common/Pagination" // điều chỉnh path nếu khác
+
 function ReasonDialog({ isOpen, onClose, onSubmit, title, description, placeholder, submitButtonText }) {
   const [reason, setReason] = useState("")
 
   const handleSubmit = () => {
     onSubmit(reason)
-    setReason("") // Clear input after submission
+    setReason("")
   }
 
   if (!isOpen) return null
@@ -56,7 +57,7 @@ const StarRating = ({ rating, onRatingChange }) => {
   return (
     <div className="star-rating">
       {[...Array(5)].map((_, index) => {
-        const starValue = index + 1;
+        const starValue = index + 1
         return (
           <button
             type="button"
@@ -64,39 +65,37 @@ const StarRating = ({ rating, onRatingChange }) => {
             className={starValue <= rating ? "star-button on" : "star-button off"}
             onClick={() => onRatingChange(starValue)}
           >
-            &#9733; {/* Mã Unicode cho ngôi sao */}
+            &#9733;
           </button>
-        );
+        )
       })}
     </div>
-  );
-};
+  )
+}
 
 // ===================================================================
 // BƯỚC 3.2: TẠO COMPONENT REVIEW DIALOG
 // ===================================================================
 function ReviewDialog({ isOpen, onClose, order, userId }) {
-  const [reviews, setReviews] = useState({}); // { productId: { rating: 0, comment: '' } }
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reviews, setReviews] = useState({}) // { productId: { rating: 0, comment: '' } }
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Hàm cập nhật state khi người dùng thay đổi rating hoặc comment
   const handleReviewChange = (productId, field, value) => {
-    setReviews(prev => ({
+    setReviews((prev) => ({
       ...prev,
       [productId]: {
         ...prev[productId],
         [field]: value,
       },
-    }));
-  };
+    }))
+  }
 
   const handleSubmit = async () => {
-    setIsSubmitting(true);
-    const reviewPromises = [];
+    setIsSubmitting(true)
+    const reviewPromises = []
 
     for (const productId in reviews) {
-      const review = reviews[productId];
-      // Chỉ gửi đánh giá nếu người dùng đã chọn số sao
+      const review = reviews[productId]
       if (review.rating > 0 && review.comment?.trim()) {
         reviewPromises.push(
           createRating({
@@ -106,30 +105,29 @@ function ReviewDialog({ isOpen, onClose, order, userId }) {
             rating: review.rating,
             comment: review.comment,
           })
-        );
+        )
       }
     }
 
     if (reviewPromises.length === 0) {
-      alert("Vui lòng đánh giá và viết bình luận cho ít nhất một sản phẩm.");
-      setIsSubmitting(false);
-      return;
+      alert("Vui lòng đánh giá và viết bình luận cho ít nhất một sản phẩm.")
+      setIsSubmitting(false)
+      return
     }
 
     try {
-      await Promise.all(reviewPromises);
-      alert("Cảm ơn bạn đã đánh giá sản phẩm!");
-      onClose();
+      await Promise.all(reviewPromises)
+      alert("Cảm ơn bạn đã đánh giá sản phẩm!")
+      onClose()
     } catch (error) {
-      console.error("Lỗi khi gửi đánh giá:", error);
-      alert(error.message || "Có lỗi xảy ra khi gửi đánh giá.");
+      console.error("Lỗi khi gửi đánh giá:", error)
+      alert(error.message || "Có lỗi xảy ra khi gửi đánh giá.")
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
-
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <div className="dialog-overlay">
@@ -141,7 +139,7 @@ function ReviewDialog({ isOpen, onClose, order, userId }) {
           </p>
         </div>
         <div className="dialog-body">
-          {order.items.map(item => (
+          {order.items.map((item) => (
             <div key={item.productId} className="review-item">
               <img src={item.image} alt={item.name} className="review-item-image" />
               <div className="review-item-details">
@@ -152,12 +150,12 @@ function ReviewDialog({ isOpen, onClose, order, userId }) {
                 <div className="review-inputs">
                   <StarRating
                     rating={reviews[item.productId]?.rating || 0}
-                    onRatingChange={(rating) => handleReviewChange(item.productId, 'rating', rating)}
+                    onRatingChange={(rating) => handleReviewChange(item.productId, "rating", rating)}
                   />
                   <textarea
                     placeholder="Hãy chia sẻ cảm nhận của bạn về sản phẩm này nhé..."
                     value={reviews[item.productId]?.comment || ""}
-                    onChange={(e) => handleReviewChange(item.productId, 'comment', e.target.value)}
+                    onChange={(e) => handleReviewChange(item.productId, "comment", e.target.value)}
                     className="dialog-textarea review-textarea"
                   />
                 </div>
@@ -180,9 +178,8 @@ function ReviewDialog({ isOpen, onClose, order, userId }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
-
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([])
@@ -190,23 +187,26 @@ const OrderHistory = () => {
   const [loading, setLoading] = useState(true)
   const [showOrderDetail, setShowOrderDetail] = useState(false)
   const [userIdNotFound, setUserIdNotFound] = useState(false)
-  const [currentUser, setCurrentUser] = useState(null); // <-- State để lưu thông tin user
+  const [currentUser, setCurrentUser] = useState(null)
 
-  // ... (states cho reason dialog giữ nguyên)
+  // ===== PHÂN TRANG =====
+  const ORDERS_PER_PAGE = 15
+  const [currentPage, setCurrentPage] = useState(1)
+
+  // Reason dialog
   const [showReasonDialog, setShowReasonDialog] = useState(false)
   const [dialogType, setDialogType] = useState(null)
   const [currentOrderForAction, setCurrentOrderForAction] = useState(null)
-  
 
-  const [showReviewDialog, setShowReviewDialog] = useState(false);
-  const [orderToReview, setOrderToReview] = useState(null);
-
+  // Review dialog
+  const [showReviewDialog, setShowReviewDialog] = useState(false)
+  const [orderToReview, setOrderToReview] = useState(null)
 
   useEffect(() => {
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}")
       if (user && user.userID) {
-        setCurrentUser(user); // <-- Lưu thông tin user
+        setCurrentUser(user)
         setUserOrdersList(user.userID)
       } else {
         setLoading(false)
@@ -219,7 +219,11 @@ const OrderHistory = () => {
     }
   }, [])
 
-  // ... (hàm setUserOrdersList, formatPrice, formatDate, getStatusClass, handleOrderClick giữ nguyên)
+  // Reset về trang 1 khi số lượng đơn thay đổi
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [orders.length])
+
   const setUserOrdersList = async (userId) => {
     try {
       setLoading(true)
@@ -262,7 +266,6 @@ const OrderHistory = () => {
     setShowOrderDetail(true)
   }
 
-
   const handleReturnRefund = (order) => {
     setCurrentOrderForAction(order)
     setDialogType("return")
@@ -278,41 +281,29 @@ const OrderHistory = () => {
   const handleConfirmReceived = async (order) => {
     try {
       await updateOrderStatus(order._id, "Hoàn thành")
-      setOrders((prev) =>
-        prev.map((o) => (o._id === order._id ? { ...o, status: "Hoàn thành" } : o))
-      )
+      setOrders((prev) => prev.map((o) => (o._id === order._id ? { ...o, status: "Hoàn thành" } : o)))
       alert("Đã xác nhận nhận hàng thành công!")
     } catch (error) {
       console.error("Lỗi xác nhận nhận hàng:", error)
       alert("Có lỗi xảy ra khi xác nhận nhận hàng.")
     }
   }
-  
-  // ===================================================================
-  // BƯỚC 3.4: CẬP NHẬT HÀM `handleWriteReview`
-  // ===================================================================
+
   const handleWriteReview = (order) => {
-    setOrderToReview(order);
-    setShowReviewDialog(true);
+    setOrderToReview(order)
+    setShowReviewDialog(true)
   }
 
   const calculateOrderTotal = (items) => {
-    return items.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
-  
-  // ... (hàm handleReasonSubmit và phần render loading, not found giữ nguyên)
+    return items.reduce((total, item) => total + item.price * item.quantity, 0)
+  }
+
   const handleReasonSubmit = async (reason) => {
     if (!currentOrderForAction || !dialogType) return
     try {
-      const data = await requestReturnOrCancellation(
-        currentOrderForAction._id,
-        dialogType,
-        reason
-      )
+      const data = await requestReturnOrCancellation(currentOrderForAction._id, dialogType, reason)
       setOrders((prev) =>
-        prev.map((o) =>
-          o._id === currentOrderForAction._id ? { ...o, status: data.data.status } : o
-        )
+        prev.map((o) => (o._id === currentOrderForAction._id ? { ...o, status: data.data.status } : o))
       )
       alert(data.message)
     } catch (error) {
@@ -323,6 +314,17 @@ const OrderHistory = () => {
       setCurrentOrderForAction(null)
       setDialogType(null)
     }
+  }
+
+  // ====== TÍNH TOÁN PHÂN TRANG ======
+  const totalPages = Math.ceil(orders.length / ORDERS_PER_PAGE) || 1
+  const indexOfLast = currentPage * ORDERS_PER_PAGE
+  const indexOfFirst = indexOfLast - ORDERS_PER_PAGE
+  const currentOrders = orders.slice(indexOfFirst, indexOfLast)
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
   if (loading) {
@@ -347,88 +349,96 @@ const OrderHistory = () => {
     return <OrderDetail order={selectedOrder} onBack={() => setShowOrderDetail(false)} />
   }
 
-
   return (
     <div className="order-history-container">
       <h1 className="page-title">Lịch sử mua hàng</h1>
-      {/* ... (phần render danh sách đơn hàng giữ nguyên) ... */}
-            {orders.length === 0 ? (
+
+      {orders.length === 0 ? (
         <div className="empty-orders">
           <p>Bạn chưa có đơn hàng nào</p>
         </div>
       ) : (
-        <div className="orders-list">
-          {orders.map((order) => (
-            <div key={order._id} className="order-card">
-              {/* Header đơn hàng */}
-              <div className="order-header">
-                <div className="order-info">
-                  <span className="order-id">Mã đơn hàng: {order._id.slice(-8)}</span>
-                  <span className="order-date">Ngày đặt: {formatDate(order.created_at)}</span>
+        <>
+          <div className="orders-list">
+            {currentOrders.map((order) => (
+              <div key={order._id} className="order-card">
+                {/* Header đơn hàng */}
+                <div className="order-header">
+                  <div className="order-info">
+                    <span className="order-id">Mã đơn hàng: {order._id.slice(-8)}</span>
+                    <span className="order-date">Ngày đặt: {formatDate(order.created_at)}</span>
+                  </div>
+                  <span className={`order-status ${getStatusClass(order.status)}`}>{order.status}</span>
                 </div>
-                <span className={`order-status ${getStatusClass(order.status)}`}>{order.status}</span>
-              </div>
-              {/* Danh sách sản phẩm */}
-              <div className="history-order-items">
-                {order.items.map((item, index) => (
-                  <div key={index} className="history-order-item">
-                    <img
-                      src={item.thumbnail_url || item.image || "/placeholder.svg?height=80&width=80&text=Product"}
-                      alt={item.name}
-                      className="item-image"
-                    />
-                    <div className="item-details">
-                      <h3 className="item-name">{item.name}</h3>
-                      <p className="item-variant">Phân loại hàng: {item.variant_name || item.sku_code || "Mặc định"}</p>
-                      <div className="item-price-info">
-                        <span className="item-quantity">x{item.quantity}</span>
-                        <span className="item-price">{formatPrice(calculateOrderTotal(order.items))}</span>
+
+                {/* Danh sách sản phẩm */}
+                <div className="history-order-items">
+                  {order.items.map((item, index) => (
+                    <div key={index} className="history-order-item">
+                      <img
+                        src={item.thumbnail_url || item.image || "/placeholder.svg?height=80&width=80&text=Product"}
+                        alt={item.name}
+                        className="item-image"
+                      />
+                      <div className="item-details">
+                        <h3 className="item-name">{item.name}</h3>
+                        <p className="item-variant">Phân loại hàng: {item.variant_name || item.sku_code || "Mặc định"}</p>
+                        <div className="item-price-info">
+                          <span className="item-quantity">x{item.quantity}</span>
+                          {/* Giữ nguyên logic cũ: hiển thị tổng đơn ở mỗi item */}
+                          <span className="item-price">{formatPrice(calculateOrderTotal(order.items))}</span>
+                        </div>
                       </div>
                     </div>
+                  ))}
+                </div>
+
+                {/* Footer */}
+                <div className="order-footer">
+                  <div className="total-amount">
+                    <span className="total-label">Thành tiền:</span>
+                    <span className="total-price">{formatPrice(calculateOrderTotal(order.items))}</span>
                   </div>
-                ))}
-              </div>
-              {/* Footer */}
-              <div className="order-footer">
-                <div className="total-amount">
-                  <span className="total-label">Thành tiền:</span>
-                  <span className="total-price">{formatPrice(calculateOrderTotal(order.items))}</span>
-                </div>
-                <div className="order-actions">
-                  {order.status === "Chờ xác nhận" && (
-                    <>
-                      <button onClick={() => handleCancellation(order)} className="history-btn history-btn-primary">
-                        Hủy đơn hàng
-                      </button>
-                    </>
-                  )}
-                  {order.status === "Đã giao" && (
-                    <>
-                      <button onClick={() => handleConfirmReceived(order)} className="history-btn history-btn-primary">
-                        Đã nhận được hàng
-                      </button>
-                      <button onClick={() => handleReturnRefund(order)} className="history-btn history-btn-secondary">
-                        Trả hàng/hoàn tiền
-                      </button>
-                    </>
-                  )}
-                  {order.status === "Hoàn thành" && (
-                    <>
-                      <button onClick={() => handleWriteReview(order)} className="history-btn history-btn-primary">
-                        Đánh giá
-                      </button>
-                    </>
-                  )}
-                  <button onClick={() => handleOrderClick(order)} className="history-btn history-btn-secondary">
-                    Xem chi tiết
-                  </button>
+                  <div className="order-actions">
+                    {order.status === "Chờ xác nhận" && (
+                      <>
+                        <button onClick={() => handleCancellation(order)} className="history-btn history-btn-primary">
+                          Hủy đơn hàng
+                        </button>
+                      </>
+                    )}
+                    {order.status === "Đã giao" && (
+                      <>
+                        <button onClick={() => handleConfirmReceived(order)} className="history-btn history-btn-primary">
+                          Đã nhận được hàng
+                        </button>
+                        <button onClick={() => handleReturnRefund(order)} className="history-btn history-btn-secondary">
+                          Trả hàng/hoàn tiền
+                        </button>
+                      </>
+                    )}
+                    {order.status === "Hoàn thành" && (
+                      <>
+                        <button onClick={() => handleWriteReview(order)} className="history-btn history-btn-primary">
+                          Đánh giá
+                        </button>
+                      </>
+                    )}
+                    <button onClick={() => handleOrderClick(order)} className="history-btn history-btn-secondary">
+                      Xem chi tiết
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+
+          {/* PHÂN TRANG */}
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+        </>
       )}
-      {/* ... (render ReasonDialog giữ nguyên) ... */}
+
+      {/* Reason Dialog */}
       {showReasonDialog && dialogType && (
         <ReasonDialog
           isOpen={showReasonDialog}
@@ -448,15 +458,14 @@ const OrderHistory = () => {
           submitButtonText={dialogType === "return" ? "Gửi yêu cầu trả hàng" : "Gửi yêu cầu hủy"}
         />
       )}
-      {/* =================================================================== */}
-      {/* BƯỚC 3.5: RENDER REVIEW DIALOG                                     */}
-      {/* =================================================================== */}
+
+      {/* Review Dialog */}
       {showReviewDialog && orderToReview && (
         <ReviewDialog
           isOpen={showReviewDialog}
           onClose={() => setShowReviewDialog(false)}
           order={orderToReview}
-          userId={currentUser?.userID} // Sử dụng userID từ currentUser
+          userId={currentUser?.userID}
         />
       )}
     </div>
@@ -467,8 +476,8 @@ const OrderHistory = () => {
 
 const OrderDetail = ({ order, onBack }) => {
   const calculateOrderTotal = (items) => {
-    return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  };
+    return items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  }
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN").format(price) + "đ"
   }
@@ -495,7 +504,7 @@ const OrderDetail = ({ order, onBack }) => {
       "Yêu cầu trả hàng/hoàn tiền": "status-returned-request",
       "Yêu cầu hủy": "status-cancelled-request",
     }
-    return statusClasses[status] || "status-default"
+  return statusClasses[status] || "status-default"
   }
 
   return (
@@ -552,46 +561,44 @@ const OrderDetail = ({ order, onBack }) => {
                 )}
                 <p>
                   <span className="info-label">Địa chỉ:</span>{" "}
-                  {[
-                    order.shippingInfo.address
-                  ]
-                    .filter(Boolean)
-                    .join(", ")}
+                  {[order.shippingInfo.address].filter(Boolean).join(", ")}
                 </p>
               </div>
             </div>
           </div>
         </div>
+
         {/* Danh sách sản phẩm */}
         <div className="detail-section">
           <h3 className="section-title">Sản phẩm đã đặt</h3>
           <div className="history-order-items">
-                {order.items.map((item, index) => (
-                  <div key={index} className="history-order-item">
-                    <img
-                      src={item.thumbnail_url || item.image || "/placeholder.svg?height=80&width=80&text=Product"}
-                      alt={item.name}
-                      className="item-image"
-                    />
-                    <div className="item-details">
-                      <h3 className="item-name">{item.name}</h3>
-                      <p className="item-variant">Phân loại hàng: {item.variant_name || item.sku_code || "Mặc định"}</p>
-                      <div className="item-price-info">
-                        <span className="item-quantity">x{item.quantity}</span>
-                        <span className="item-price">{formatPrice(calculateOrderTotal(order.items))}</span>
-                      </div>
-                    </div>
+            {order.items.map((item, index) => (
+              <div key={index} className="history-order-item">
+                <img
+                  src={item.thumbnail_url || item.image || "/placeholder.svg?height=80&width=80&text=Product"}
+                  alt={item.name}
+                  className="item-image"
+                />
+                <div className="item-details">
+                  <h3 className="item-name">{item.name}</h3>
+                  <p className="item-variant">Phân loại hàng: {item.variant_name || item.sku_code || "Mặc định"}</p>
+                  <div className="item-price-info">
+                    <span className="item-quantity">x{item.quantity}</span>
+                    <span className="item-price">{formatPrice(calculateOrderTotal(order.items))}</span>
                   </div>
-                ))}
+                </div>
               </div>
+            ))}
+          </div>
         </div>
+
         {/* Tổng tiền */}
         <div className="detail-section">
           <div className="final-total">
             <span>Tổng cộng:</span>
             <span className="final-price">{formatPrice(calculateOrderTotal(order.items))}</span>
-
           </div>
+
           {order.note && (
             <div className="note-section">
               <p>
@@ -599,6 +606,7 @@ const OrderDetail = ({ order, onBack }) => {
               </p>
             </div>
           )}
+
           {(order.cancellation_reason || order.return_reason) && (
             <div className="reason-section">
               {order.cancellation_reason && (
