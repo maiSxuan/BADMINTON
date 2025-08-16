@@ -111,7 +111,7 @@ const PromotionListPage = () => {
           )
         }
       },
-      6
+      4
     )
   };
 
@@ -152,7 +152,7 @@ const PromotionListPage = () => {
       console.error("Lỗi khi thêm mã:", err.message);
       showPopup(
         'Lỗi',
-        'Thêm mã giảm giá thất bại',
+        err.message || 'Thêm mã giảm giá thất bại hoặc mã giảm đã tồn tại',
         null,
         null,
         4,
@@ -240,10 +240,10 @@ const PromotionListPage = () => {
         1
       )
     } catch (err) {
-      console.error(err.message || "Lỗi không xác định khi áp dụng mã");
+      console.error(err.message || "Lỗi khi áp dụng mã");
       showPopup(
         'Lỗi',
-        'Áp dụng mã không thành công. Vui lòng thử lại sau!',
+        err.message || 'Áp dụng mã không thành công!',
         null,
         null,
         4,
@@ -350,6 +350,23 @@ const PromotionListPage = () => {
     }
   }
 
+  function LoadingSpinner() {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Đang tải dữ liệu...</p>
+      </div>
+    );
+  }
+
+  function ErrorMessage({ message }) {
+        return (
+            <div className="error-container">
+                <p className="error-message">{message}</p>
+            </div>
+        );
+    }
+
   const [currentPage, setCurrentPage] = useState(1);
   let promotionsPerPage = 10;
   const indexOfLastpromotion = currentPage * promotionsPerPage;
@@ -360,9 +377,10 @@ const PromotionListPage = () => {
   return (
     <div className="promotion-list-page">
       {loading ? (
-        <p>Đang tải danh sách chiến dịch ...</p>
+        // <p>Đang tải danh sách chiến dịch ...</p>
+        <LoadingSpinner />
       ) : error ? (
-        <p className='promotion-error'>{error}</p>
+        <ErrorMessage message={error} />
       ) : (
         <div className="promo-table-container">
           {showDetail && selectedPromotion && (

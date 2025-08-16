@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { Search, X, Package, Truck, MapPin, Phone, Mail } from "lucide-react"
 import "./OrderManagement.css"
 import { getAllOrders, updateOrderStatus } from "../../services/orderService"
+import Pagination from "../../components/common/Pagination" // Import component phân trang
+import { usePopup } from "../../components/common/popupContext"
 
 const AllOrdersPage = () => {
   const [orders, setOrders] = useState([])
@@ -14,8 +16,14 @@ const AllOrdersPage = () => {
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [showOrderDetail, setShowOrderDetail] = useState(false)
 
+  const { showPopup } = usePopup();
+
+  // --- Phân trang ---
+  const [currentPage, setCurrentPage] = useState(1)
+  const ordersPerPage = 15
+
   const statusTabs = ["Tất cả", 'Chờ xác nhận', 'Chờ lấy', 'Đang vận chuyển',
-      'Đang giao', 'Đã giao', 'Hoàn thành', 'Đã hủy', 'Trả hàng/hoàn tiền']
+    'Đang giao', 'Đã giao', 'Hoàn thành', 'Đã hủy', 'Trả hàng/hoàn tiền']
 
   const statusColors = {
     "Chờ xác nhận": { backgroundColor: "#fef3c7", color: "#92400e" },
@@ -30,35 +38,33 @@ const AllOrdersPage = () => {
     "Đã trả hàng/hoàn tiền": { backgroundColor: "#dcfce7", color: "#166534" },
   }
 
-  // Fetch orders from backend
   useEffect(() => {
     setOrderListData()
   }, [])
-  
+
   const setOrderListData = async () => {
-    setLoading(true);
-    const data = await getAllOrders();
+    setLoading(true)
+    const data = await getAllOrders()
     if (data.success) {
-      setOrders(data.data);
+      setOrders(data.data)
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
-    const data = await updateOrderStatus(orderId, newStatus);
+    const data = await updateOrderStatus(orderId, newStatus)
     if (data.success) {
-      await getAllOrders(); // Cập nhật lại danh sách
+      await getAllOrders()
       setOrders(prevOrders =>
         prevOrders.map(order =>
           order._id === orderId ? { ...order, status: newStatus } : order
         )
       )
       if (selectedOrder && selectedOrder._id === orderId) {
-        setSelectedOrder({ ...selectedOrder, status: newStatus });
+        setSelectedOrder({ ...selectedOrder, status: newStatus })
       }
     }
-  };
-
+  }
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -76,12 +82,11 @@ const AllOrdersPage = () => {
       year: "numeric",
     })
   }
+
   const handlePrintPackingSlip = (orderId) => {
-    // Find the order
     const order = orders.find((o) => o._id === orderId)
     if (!order) return
 
-    // Create print content
     const printContent = `
       <div style="font-family: Arial, sans-serif; padding: 20px;">
         <h2>PHIẾU ĐÓNG GÓI</h2>
@@ -91,14 +96,14 @@ const AllOrdersPage = () => {
         <p><strong>Khách hàng:</strong> ${order.shippingInfo.fullName}</p>
         <p><strong>Số điện thoại:</strong> ${order.shippingInfo.phone}</p>
         <p><strong>Địa chỉ:</strong> ${[
-          order.shippingInfo.houseNumber,
-          order.shippingInfo.address,
-          order.shippingInfo.ward,
-          order.shippingInfo.district,
-          order.shippingInfo.city,
-        ]
-          .filter(Boolean)
-          .join(", ")}</p>
+        order.shippingInfo.houseNumber,
+        order.shippingInfo.address,
+        order.shippingInfo.ward,
+        order.shippingInfo.district,
+        order.shippingInfo.city,
+      ]
+        .filter(Boolean)
+        .join(", ")}</p>
         <hr>
         <h3>Danh sách sản phẩm:</h3>
         <table border="1" style="width: 100%; border-collapse: collapse;">
@@ -111,16 +116,16 @@ const AllOrdersPage = () => {
           </thead>
           <tbody>
             ${order.items
-              .map(
-                (item) => `
+        .map(
+          (item) => `
               <tr>
                 <td style="padding: 8px;">${item.sku_code}</td>
                 <td style="padding: 8px;">${item.quantity}</td>
                 <td style="padding: 8px;">${formatCurrency(item.priceAtTime)}</td>
               </tr>
             `,
-              )
-              .join("")}
+        )
+        .join("")}
           </tbody>
         </table>
         <hr>
@@ -129,65 +134,109 @@ const AllOrdersPage = () => {
       </div>
     `
 
-    // Open print window
     const printWindow = window.open("", "_blank")
     printWindow.document.write(printContent)
     printWindow.document.close()
     printWindow.print()
   }
 
-const handleUpdateStatus = async (orderId) => {
-  const order = orders.find((o) => o._id === orderId)
-  if (!order) return
+  const handleUpdateStatus = async (orderId) => {
+    const order = orders.find((o) => o._id === orderId)
+    if (!order) return
 
-  const immutableStatuses = ["Đã trả hàng/hoàn tiền", "Đã hủy"]
-  if (immutableStatuses.includes(order.status)) {
-    alert("Không thể cập nhật trạng thái đơn hàng này!")
-    return
-  }
-
-  // Đặc biệt xử lý luồng trả hàng
-  if (order.status === "Tiến hành trả hàng/hoàn tiền") {
-    const nextStatus = "Đã trả hàng/hoàn tiền"
-    if (window.confirm(`Xác nhận chuyển sang trạng thái "${nextStatus}"?`)) {
-      try {
-        await handleUpdateOrderStatus(orderId, nextStatus)
-        alert("Cập nhật trạng thái thành công!")
-      } catch (error) {
-        alert("Có lỗi xảy ra khi cập nhật trạng thái!")
-      }
+    const immutableStatuses = ["Đã trả hàng/hoàn tiền", "Đã hủy"]
+    if (immutableStatuses.includes(order.status)) {
+      // alert("Không thể cập nhật trạng thái đơn hàng này!")
+      showPopup(
+        'Thông báo',
+        'Không thể cập nhật trạng thái đơn hàng này!',
+        null,
+        null,
+        4,
+        3
+      )
+      return
     }
-    return
-  }
 
-  // Các trạng thái bình thường
-  const statusOptions = [
-    "Chờ xác nhận",
-    "Chờ lấy",
-    "Đang vận chuyển",
-    "Đang giao",
-    "Đã giao",
-  ]
-
-  const currentIndex = statusOptions.indexOf(order.status)
-  const nextStatus = statusOptions[currentIndex + 1]
-
-  if (nextStatus) {
-    if (window.confirm(`Cập nhật trạng thái đơn hàng từ "${order.status}" thành "${nextStatus}"?`)) {
-      try {
-        await handleUpdateOrderStatus(orderId, nextStatus)
-        alert("Cập nhật trạng thái thành công!")
-      } catch (error) {
-        alert("Có lỗi xảy ra khi cập nhật trạng thái!")
+    if (order.status === "Tiến hành trả hàng/hoàn tiền") {
+      const nextStatus = "Đã trả hàng/hoàn tiền"
+      if (window.confirm(`Xác nhận chuyển sang trạng thái "${nextStatus}"?`)) {
+        try {
+          await handleUpdateOrderStatus(orderId, nextStatus)
+          // alert("Cập nhật trạng thái thành công!")
+          showPopup(
+            'Thông báo',
+            'Cập nhật trạng thái thành công!',
+            null,
+            null,
+            4,
+            3
+          )
+        } catch (error) {
+          // alert("Có lỗi xảy ra khi cập nhật trạng thái!")
+          showPopup(
+            'Lỗi',
+            'Có lỗi xảy ra khi cập nhật trạng thái!',
+            null,
+            null,
+            4,
+            3
+          )
+        }
       }
+      return
     }
-  } else {
-    alert("Đơn hàng đã ở trạng thái cuối cùng!")
+
+    const statusOptions = [
+      "Chờ xác nhận",
+      "Chờ lấy",
+      "Đang vận chuyển",
+      "Đang giao",
+      "Đã giao",
+    ]
+
+    const currentIndex = statusOptions.indexOf(order.status)
+    const nextStatus = statusOptions[currentIndex + 1]
+
+    if (nextStatus) {
+      if (window.confirm(`Cập nhật trạng thái đơn hàng từ "${order.status}" thành "${nextStatus}"?`)) {
+        try {
+          await handleUpdateOrderStatus(orderId, nextStatus)
+          // alert("Cập nhật trạng thái thành công!")
+          showPopup(
+            'Thông báo',
+            'Cập nhật trạng thái thành công!',
+            null,
+            null,
+            4,
+            3
+          )
+        } catch (error) {
+          alert("Có lỗi xảy ra khi cập nhật trạng thái!")
+          showPopup(
+            'Lỗi',
+            'Có lỗi xảy ra khi cập nhật trạng thái!',
+            null,
+            null,
+            4,
+            3
+          )
+        }
+      }
+    } else {
+      // alert("Đơn hàng đã ở trạng thái cuối cùng!")
+      showPopup(
+        'Thông báo',
+        'Đơn hàng đã ở trạng thái cuối cùng!',
+        null,
+        null,
+        4,
+        3
+      )
+    }
   }
-}
 
   const handleOrderClick = (order, event) => {
-    // Only open detail if not clicking on action buttons
     if (event.target.closest(".om-action-buttons")) {
       return
     }
@@ -218,19 +267,23 @@ const handleUpdateStatus = async (orderId) => {
     return matchesSearch && matchesStatus
   })
 
+  // --- Chia dữ liệu theo trang ---
+  const indexOfLastOrder = currentPage * ordersPerPage
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage
+  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder)
+
   return (
     <div className="order-management">
-      {/* Header */}
-      
-
       <div className="main-layout">
         <main className="main-content">
-          {/* Status Tabs */}
           <div className="status-tabs">
             {statusTabs.map((tab) => (
               <button
                 key={tab}
-                onClick={() => setSelectedStatus(tab)}
+                onClick={() => {
+                  setSelectedStatus(tab)
+                  setCurrentPage(1) // Reset về trang 1 khi đổi tab
+                }}
                 className={`status-tab ${selectedStatus === tab ? "active" : ""}`}
               >
                 {tab}
@@ -238,7 +291,6 @@ const handleUpdateStatus = async (orderId) => {
             ))}
           </div>
 
-          {/* Search */}
           <div className="search-section">
             <select value={searchType} onChange={(e) => setSearchType(e.target.value)} className="search-select">
               <option>ID đơn hàng</option>
@@ -257,7 +309,6 @@ const handleUpdateStatus = async (orderId) => {
             </div>
           </div>
 
-          {/* Orders Table */}
           <div className="orders-table-container">
             <table className="orders-table">
               <thead>
@@ -272,18 +323,14 @@ const handleUpdateStatus = async (orderId) => {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="5" className="loading-cell">
-                      Đang tải...
-                    </td>
+                    <td colSpan="5" className="loading-cell">Đang tải...</td>
                   </tr>
-                ) : filteredOrders.length === 0 ? (
+                ) : currentOrders.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="empty-cell">
-                      Không có đơn hàng nào
-                    </td>
+                    <td colSpan="5" className="empty-cell">Không có đơn hàng nào</td>
                   </tr>
                 ) : (
-                  filteredOrders.map((order) => (
+                  currentOrders.map((order) => (
                     <tr key={order._id} className="order-row" onClick={(e) => handleOrderClick(order, e)}>
                       <td>
                         <div className="order-id-cell">
@@ -314,16 +361,6 @@ const handleUpdateStatus = async (orderId) => {
                       </td>
                       <td>
                         <div className="om-action-buttons">
-                          {/* <button
-                            className="om-action-btn cancel-btn"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleCancelOrder(order._id)
-                            }}
-                            title="Hủy đơn hàng"
-                          >
-                            <X className="btn-icon" />
-                          </button> */}
                           <button
                             onClick={(e) => {
                               e.stopPropagation()
@@ -351,11 +388,17 @@ const handleUpdateStatus = async (orderId) => {
                 )}
               </tbody>
             </table>
+
+            {/* --- Component phân trang --- */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(filteredOrders.length / ordersPerPage)}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
           </div>
         </main>
       </div>
 
-      {/* Order Detail Modal */}
       {showOrderDetail && selectedOrder && (
         <div className="om-modal-overlay" onClick={closeOrderDetail}>
           <div className="om-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -365,10 +408,8 @@ const handleUpdateStatus = async (orderId) => {
                 <X />
               </button>
             </div>
-
             <div className="om-modal-body">
               <div className="order-detail-grid">
-                {/* Order Status */}
                 <div className="detail-section">
                   <h3>
                     <Package className="section-icon" /> Thông tin đơn hàng
@@ -393,7 +434,6 @@ const handleUpdateStatus = async (orderId) => {
                   </div>
                 </div>
 
-                {/* Shipping Info */}
                 <div className="detail-section">
                   <h3>
                     <MapPin className="section-icon" /> Thông tin giao hàng
@@ -419,11 +459,7 @@ const handleUpdateStatus = async (orderId) => {
                   <div className="detail-item">
                     <span className="label">Địa chỉ:</span>
                     <span className="value">
-                      {[
-                        selectedOrder.shippingInfo.address,
-                      ]
-                        .filter(Boolean)
-                        .join(", ")}
+                      {[selectedOrder.shippingInfo.address].filter(Boolean).join(", ")}
                     </span>
                   </div>
                   <div className="detail-item">
@@ -435,7 +471,6 @@ const handleUpdateStatus = async (orderId) => {
                 </div>
               </div>
 
-              {/* Order Items */}
               <div className="detail-section full-width">
                 <h3>Sản phẩm đã đặt</h3>
                 <div className="items-table">
@@ -462,7 +497,6 @@ const handleUpdateStatus = async (orderId) => {
                 </div>
               </div>
 
-              {/* Notes */}
               {selectedOrder.note && (
                 <div className="detail-section full-width">
                   <h3>Ghi chú</h3>
@@ -470,7 +504,6 @@ const handleUpdateStatus = async (orderId) => {
                 </div>
               )}
             </div>
-
           </div>
         </div>
       )}
@@ -479,4 +512,3 @@ const handleUpdateStatus = async (orderId) => {
 }
 
 export default AllOrdersPage
-

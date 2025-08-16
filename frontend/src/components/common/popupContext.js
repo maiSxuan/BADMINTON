@@ -1,5 +1,5 @@
-import { createContext, useState, useContext, useCallback } from 'react';
-import Popup from './popup'; // Giả sử bạn đã đặt Popup.js và Popup.css trong src/components/
+import { createContext, useState, useContext, useCallback, useRef } from 'react';
+import Popup from './popup';
 
 const PopupContext = createContext();
 
@@ -12,9 +12,11 @@ export const PopupProvider = ({ children }) => {
     onConfirm: null,
     blurIntensity: 4,
     autoCloseSeconds: null,
+    mandatory: false,
   });
 
-  const showPopup = useCallback((title, message, buttonText, onConfirmCallback = null, blurValue, autoCloseSeconds = null) => {
+  const timeoutRef = useRef(null);
+  const showPopup = useCallback((title, message, buttonText, onConfirmCallback = null, blurValue = 4, autoCloseSeconds = null, mandatory = false) => {
     setPopupContent({
       title,
       message,
@@ -22,29 +24,34 @@ export const PopupProvider = ({ children }) => {
       onConfirm: onConfirmCallback,
       blurIntensity: blurValue,
       autoCloseSeconds,
+      mandatory,
     });
     setIsOpen(true);
 
-    if (autoCloseSeconds && autoCloseSeconds > 0) {
-      setTimeout(() => {
+    if (timeoutRef.current) 
+      clearTimeout(timeoutRef.current)
+
+    if (!onConfirmCallback && autoCloseSeconds && autoCloseSeconds > 0) {
+      timeoutRef.current = setTimeout(() => {
         setIsOpen(false);
+        timeoutRef.current = null;
       }, autoCloseSeconds * 1000);
     }
   }, []);
 
   const hidePopup = () => {
-    setIsOpen(false);
+    if (!popupContent.mandatory)
+      setIsOpen(false);
   };
 
   const confirmPopup = () => {
-    if (popupContent.onConfirm && typeof popupContent.onConfirm === 'function') {
+    if (popupContent.onConfirm && typeof popupContent.onConfirm === 'function')
       popupContent.onConfirm();
-    }
     setIsOpen(false);
   };
 
   return (
-    <PopupContext.Provider value={{ showPopup }}>
+    <PopupContext.Provider value={{ showPopup, hidePopup }}>
       {children}
       <Popup
         isOpen={isOpen}
@@ -54,6 +61,7 @@ export const PopupProvider = ({ children }) => {
         onClose={hidePopup}
         onConfirm={confirmPopup}
         blurIntensity={popupContent.blurIntensity}
+        mandatory={popupContent.mandatory}
       />
     </PopupContext.Provider>
   );

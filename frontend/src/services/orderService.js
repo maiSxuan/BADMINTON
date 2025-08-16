@@ -1,12 +1,13 @@
 const BASE_URL = "http://localhost:4000/api/order";
+const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
 export const createOrder = async (orderData) => {
-  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
   const response = await fetch(BASE_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`
-     },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
     body: JSON.stringify(orderData)
   });
 
@@ -23,14 +24,20 @@ export const createOrder = async (orderData) => {
 
 export const getAllOrders = async () => {
   try {
-    const response = await fetch(BASE_URL);
-    const data = await response.json();
-    return data;
+    const response = await fetch(BASE_URL, {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+    })
+    const data = await response.json()
+    return data
   } catch (error) {
-    console.error("Error fetching orders:", error);
-    return { success: false, error };
+    console.error("Error fetching orders:", error)
+    return { success: false, error }
   }
-};
+}
 
 export const updateOrderStatus = async (orderId, newStatus) => {
   try {
@@ -38,20 +45,27 @@ export const updateOrderStatus = async (orderId, newStatus) => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({ status: newStatus }),
-    });
+    })
 
-    const data = await response.json();
-    return data;
+    const data = await response.json()
+    return data
   } catch (error) {
-    console.error("Error updating order status:", error);
-    return { success: false, error };
+    console.error("Error updating order status:", error)
+    return { success: false, error }
   }
-};
+}
 
 export const getCancelledReqOrders = async () => {
-  const response = await fetch(`${BASE_URL}/cancellation-orders`)
+  const response = await fetch(`${BASE_URL}/cancellation-orders`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+  })
   const data = await response.json()
   if (!response.ok || !data.success) {
     throw new Error(data.message || "Không thể lấy danh sách đơn hủy")
@@ -60,7 +74,13 @@ export const getCancelledReqOrders = async () => {
 }
 
 export const getReturnRefundReqOrders = async () => {
-  const response = await fetch(`${BASE_URL}/return-refund-orders`)
+  const response = await fetch(`${BASE_URL}/return-refund-orders`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+  })
   const data = await response.json()
   if (!response.ok || !data.success) {
     throw new Error(data.message || "Không thể lấy danh sách đơn hoàn/trả hàng")
@@ -69,7 +89,13 @@ export const getReturnRefundReqOrders = async () => {
 }
 
 export const getOrdersByUserId = async (userId) => {
-  const response = await fetch(`${BASE_URL}/user/${userId}`)
+  const response = await fetch(`${BASE_URL}/user/${userId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+  })
   const data = await response.json()
   if (!response.ok || !data.success) {
     throw new Error(data.message || "Không thể lấy đơn hàng")
@@ -80,7 +106,10 @@ export const getOrdersByUserId = async (userId) => {
 export const requestReturnOrCancellation = async (orderId, type, reason) => {
   const response = await fetch(`${BASE_URL}/request/${orderId}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
     body: JSON.stringify({ type, reason }),
   })
   const data = await response.json()

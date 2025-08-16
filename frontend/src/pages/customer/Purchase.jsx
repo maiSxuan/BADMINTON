@@ -29,7 +29,7 @@ const PurchasePage = () => {
   })
   const user = JSON.parse(localStorage.getItem("user"))
   const [orderNote, setOrderNote] = useState("")
-  const [discountCode, setDiscountCode] = useState("")
+  // const [discountCode, setDiscountCode] = useState("")
   const [deliveryMethod, setDeliveryMethod] = useState("nhanh")
   const [orderId, setOrderId] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -99,7 +99,17 @@ const PurchasePage = () => {
       setCartItems(selectedItems)
   }, [location.state])
   
+  const deliveryMethods = [
+    { value: "nhanh", label: "Nhanh: Đảm bảo nhận hàng 3-5 ngày - 30.000đ", fee: 30000 },
+    { value: "sieu-toc", label: "Siêu tốc: Nhận hàng ngay ngày mai - 100.000đ", fee: 100000 },
+    { value: "tai-cua-hang", label: "Đến lấy tại cửa hàng - Freeship", fee: 0 },
+  ];
+
   const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  
+  const selectedMethod = deliveryMethods.find(m => m.value === deliveryMethod);
+  const shippingFee = selectedMethod ? selectedMethod.fee : 30000;
+  const finalAmount = totalAmount + shippingFee;
 
   // Toast notification
   const showToastMessage = (message) => {
@@ -277,7 +287,7 @@ const PurchasePage = () => {
 
         {/* Modal thông tin vận chuyển */}
         {currentStep === "shipping" && (
-          <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-overlay">
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h2>Thông tin vận chuyển</h2>
@@ -425,7 +435,7 @@ const PurchasePage = () => {
 
         {/* Modal xác nhận đơn hàng */}
         {currentStep === "confirm" && (
-          <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-overlay">
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h2>Xác nhận đơn hàng</h2>
@@ -480,7 +490,7 @@ const PurchasePage = () => {
                     rows="3"
                   />
                 </div>
-                <div className="form-group">
+                {/* <div className="form-group">
                   <label htmlFor="discountCode">Mã giảm giá</label>
                   <input
                     type="text"
@@ -489,24 +499,22 @@ const PurchasePage = () => {
                     onChange={(e) => setDiscountCode(e.target.value)}
                     placeholder="Nhập mã giảm giá"
                   />
-                </div>
+                </div> */}
 
                 {/* Phương thức nhận hàng */}
                 <div className="info-card">
                   <h3>Phương thức nhận hàng</h3>
                   <div className="delivery-options">
-                    {[
-                      { value: "nhanh", label: "Nhanh: Đảm bảo nhận hàng 3-5 ngày - 30.000đ" },
-                      { value: "sieu-toc", label: "Siêu tốc: Nhận hàng ngay ngày mai - 100.000đ" },
-                      { value: "tai-cua-hang", label: "Đến lấy tại cửa hàng - Freeship" },
-                    ].map((method) => (
+                    {deliveryMethods.map((method) => (
                       <div
                         key={method.value}
                         className={`delivery-option ${deliveryMethod === method.value ? "selected" : ""}`}
                         onClick={() => setDeliveryMethod(method.value)}
                       >
                         <div className="radio-button">
-                          <div className={`radio-inner ${deliveryMethod === method.value ? "selected" : ""}`}></div>
+                          <div
+                            className={`radio-inner ${deliveryMethod === method.value ? "selected" : ""}`}
+                          ></div>
                         </div>
                         <span>{method.label}</span>
                       </div>
@@ -518,7 +526,7 @@ const PurchasePage = () => {
                 <div className="total-section">
                   <div className="total-amount">
                     <span>Tổng tiền:</span>
-                    <span className="total-price">{totalAmount.toLocaleString("vi-VN")} VNĐ</span>
+                    <span className="total-price">{finalAmount.toLocaleString("vi-VN")} VNĐ</span>
                   </div>
                 </div>
 
@@ -537,7 +545,7 @@ const PurchasePage = () => {
 
         {/* Modal theo dõi đơn hàng */}
         {currentStep === "tracking" && (
-          <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-overlay">
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h2>Theo dõi đơn hàng</h2>
@@ -613,7 +621,7 @@ const PurchasePage = () => {
                 <div className="total-section">
                   <div className="total-amount">
                     <span>Tổng tiền:</span>
-                    <span className="total-price red">{totalAmount.toLocaleString("vi-VN")} VNĐ</span>
+                    <span className="total-price red">{finalAmount.toLocaleString("vi-VN")} VNĐ</span>
                   </div>
                 </div>
 

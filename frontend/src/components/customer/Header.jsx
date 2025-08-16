@@ -3,83 +3,86 @@ import { useEffect, useState, useRef } from "react";
 import "./Header.css";
 import DropdownMenu from "../customer/DropdownMenu";
 import DropdownHeader from "./DropdownHeader";
-import Breadcrumb from "../common/breadcrumb"; 
+import Breadcrumb from "../common/breadcrumb";
 import { useLocation } from "react-router-dom";
 import { fetchCart } from "../../services";
 import Logo from "../common/logo";
 import { UserIcon, Search, ShoppingCart } from "lucide-react";
 import { getProductsOnQuery } from "../../services";
+import { usePopup } from "../common/popupContext";
 
 const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [user, setUser] = useState(null); 
+    const [user, setUser] = useState(null);
 
     // State cho tìm kiếm
     const [searchTerm, setSearchTerm] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
-  const [cartItemCount, setcartItemCount] = useState(0);
+    const [cartItemCount, setcartItemCount] = useState(0);
     const searchBoxRef = useRef(null);
 
-      // Breadcrumb (code cũ)
+    const { showPopup } = usePopup()
+
+    // Breadcrumb (code cũ)
     const breadcrumbMap = {
         "/account/profile": [
-          { label: "Tài khoản", path: "/account/profile" },
-          { label: "Tài khoản của tôi" }
+            { label: "Tài khoản", path: "/account/profile" },
+            { label: "Tài khoản của tôi" }
         ],
         "/order-history": [
             { label: "Lịch sử mua hàng" }
         ],
         "/cart": [
-          { label: "Giỏ hàng", path: "/cart" },
-          { label: "Giỏ hàng của bạn" }
+            { label: "Giỏ hàng", path: "/cart" },
+            { label: "Giỏ hàng của bạn" }
         ]
-      };
-      const breadcrumbItems = breadcrumbMap[location.pathname] || [];
-
-  // useEffect(() => {
-  //   const checkLogin = () => {
-  //     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-  //     const storedUser = localStorage.getItem("user");
-  //     setUser(token && storedUser ? JSON.parse(storedUser) : null);
-  //   };
-
-  //   checkLogin();
-  //   window.addEventListener("loginStatusChanged", checkLogin);
-  //   return () => window.removeEventListener("loginStatusChanged", checkLogin);
-  // }, []);
-
-  useEffect(() => {
-    const loadUserAndCart = async () => {
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-      const storedUser = localStorage.getItem("user");
-      const parsedUser = token && storedUser ? JSON.parse(storedUser) : null;
-      setUser(parsedUser);
-
-      if (parsedUser) {
-        try {
-          const cartData = await fetchCart();
-          setcartItemCount(cartData.items?.length || 0); 
-        } catch (err) {
-          console.error("Failed to fetch cart total", err);
-          setcartItemCount(0);
-        }
-      } else {
-        setcartItemCount(0);
-      }
     };
+    const breadcrumbItems = breadcrumbMap[location.pathname] || [];
 
-    loadUserAndCart();
+    // useEffect(() => {
+    //   const checkLogin = () => {
+    //     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    //     const storedUser = localStorage.getItem("user");
+    //     setUser(token && storedUser ? JSON.parse(storedUser) : null);
+    //   };
 
-    window.addEventListener("loginStatusChanged", loadUserAndCart);
-    window.addEventListener("cartUpdated", loadUserAndCart); 
+    //   checkLogin();
+    //   window.addEventListener("loginStatusChanged", checkLogin);
+    //   return () => window.removeEventListener("loginStatusChanged", checkLogin);
+    // }, []);
 
-    return () => {
-      window.removeEventListener("loginStatusChanged", loadUserAndCart);
-      window.removeEventListener("cartUpdated", loadUserAndCart);
-    };
-  }, []);
+    useEffect(() => {
+        const loadUserAndCart = async () => {
+            const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+            const storedUser = localStorage.getItem("user");
+            const parsedUser = token && storedUser ? JSON.parse(storedUser) : null;
+            setUser(parsedUser);
+
+            if (parsedUser) {
+                try {
+                    const cartData = await fetchCart();
+                    setcartItemCount(cartData.items?.length || 0);
+                } catch (err) {
+                    console.error("Failed to fetch cart total", err);
+                    setcartItemCount(0);
+                }
+            } else {
+                setcartItemCount(0);
+            }
+        };
+
+        loadUserAndCart();
+
+        window.addEventListener("loginStatusChanged", loadUserAndCart);
+        window.addEventListener("cartUpdated", loadUserAndCart);
+
+        return () => {
+            window.removeEventListener("loginStatusChanged", loadUserAndCart);
+            window.removeEventListener("cartUpdated", loadUserAndCart);
+        };
+    }, []);
 
     // Logic tìm kiếm gợi ý động (code mới)
     useEffect(() => {
@@ -126,10 +129,10 @@ const Header = () => {
     };
 
     const accountMenu = !user
-    ? [ { label: "Đăng nhập", to: "/login" }, { label: "Đăng ký", to: "/registration" } ]
-    : [ { label: "Tài khoản của tôi", to: "/account/profile" }, { label: "Đăng xuất", action: handleLogout } ];
-      
-    const orderTrackingMenu = [ { label: "Lịch sử mua hàng", to: "/order-history" } ];
+        ? [{ label: "Đăng nhập", to: "/login" }, { label: "Đăng ký", to: "/registration" }]
+        : [{ label: "Tài khoản của tôi", to: "/account/profile" }, { label: "Đăng xuất", action: handleLogout }];
+
+    const orderTrackingMenu = [{ label: "Lịch sử mua hàng", to: "/order-history" }];
 
     // Xử lý khi submit form tìm kiếm (code mới)
     const handleSearchSubmit = (e) => {
@@ -140,7 +143,20 @@ const Header = () => {
             setSearchTerm('');
         }
     };
-  
+
+    const handleCartClick = (e) => {
+        if (!user) {
+            e.preventDefault(); 
+            showPopup(
+                "Chưa đăng nhập",
+                "Bạn cần đăng nhập để xem giỏ hàng",
+                "Đăng nhập",
+                () => navigate("/login"),
+                4
+            );
+        }
+    };
+
     return (
         <header className="site-header">
             <div className="main-header">
@@ -158,15 +174,15 @@ const Header = () => {
                     <div className="header-group search-group">
                         {/* --- CẤU TRÚC MỚI CHO SEARCH BOX --- */}
                         <form className="search-box" onSubmit={handleSearchSubmit} ref={searchBoxRef}>
-                            <input 
-                                type="text" 
-                                placeholder="Bạn muốn tìm gì hôm nay?" 
+                            <input
+                                type="text"
+                                placeholder="Bạn muốn tìm gì hôm nay?"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 onFocus={() => searchTerm.trim() !== '' && setShowSuggestions(true)}
                             />
-                            <button type="submit" aria-label="Tìm kiếm"><Search/></button>
-                            
+                            <button type="submit" aria-label="Tìm kiếm"><Search /></button>
+
                             {/* Khung gợi ý được đặt bên trong form */}
                             {showSuggestions && suggestions.length > 0 && (
                                 <div className="search-suggestions">
@@ -174,11 +190,11 @@ const Header = () => {
                                     <ul>
                                         {suggestions.map(product => (
                                             <li key={product.id}>
-                                                <NavLink 
-                                                    to={`/products/${product.slug}`} 
+                                                <NavLink
+                                                    to={`/products/${product.slug}`}
                                                     onClick={() => { setSearchTerm(''); setShowSuggestions(false); }}
                                                 >
-                                                    <img src={product.imageUrl || '/logo192.png'} alt={product.name}/>
+                                                    <img src={product.imageUrl || '/logo192.png'} alt={product.name} />
                                                     <div className="suggestion-info">
                                                         <span>{product.name}</span>
                                                         <span>{product.price.toLocaleString('vi-VN')}₫</span>
@@ -194,10 +210,10 @@ const Header = () => {
                 </div>
 
                 <div className="right-group header-group user-actions-group">
-                    <DropdownHeader icon={<Search size={20}/>} label="TRA CỨU" menuItems={orderTrackingMenu} />
-                    <DropdownHeader icon={<UserIcon/>} label="TÀI KHOẢN" menuItems={accountMenu} />
-                    <NavLink to="/cart" className="action-item cart">
-                        <ShoppingCart/><span>GIỎ HÀNG</span><span className="badge">{cartItemCount > 0 ? cartItemCount : 0}</span>
+                    <DropdownHeader icon={<Search size={20} />} label="TRA CỨU" menuItems={orderTrackingMenu} />
+                    <DropdownHeader icon={<UserIcon />} label="TÀI KHOẢN" menuItems={accountMenu} />
+                    <NavLink to="/cart" className="action-item cart" onClick={handleCartClick}>
+                        <ShoppingCart /><span>GIỎ HÀNG</span><span className="badge">{cartItemCount > 0 ? cartItemCount : 0}</span>
                     </NavLink>
                 </div>
             </div>
@@ -212,7 +228,7 @@ const Header = () => {
                     <NavLink to="/contact">LIÊN HỆ</NavLink>
                 </nav>
             </div>
-            
+
             {breadcrumbItems.length > 0 && (
                 <div className="breadcrumb-wrapper"><Breadcrumb items={breadcrumbItems} /></div>
             )}

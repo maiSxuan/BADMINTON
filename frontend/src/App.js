@@ -2,9 +2,7 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { Routes, Route, Navigate, useNavigate,ScrollRestoration } from "react-router-dom";
 import { publicRoutes, privateRoutes } from "./routes/index";
-import { toast, ToastContainer } from "react-toastify";
 import {PopupProvider, usePopup } from "./components/common/popupContext";
-import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
 function AppContent() {
@@ -73,7 +71,7 @@ function AppContent() {
         const message = "Bạn không có quyền truy cập trang này.";
         const navigateToHome = () => navigate("/", { replace: true });
         
-        showPopup("Truy cập bị từ chối", message, "Về Trang Chủ", navigateToHome, 10);
+        showPopup("Truy cập bị từ chối", message, "Về Trang Chủ", navigateToHome, 10, null, true);
         
       }
       if (user && user.user_type === "ADMIN" && window.location.pathname === "/") {
@@ -82,10 +80,18 @@ function AppContent() {
     }
   }, [user, loading, navigate, showPopup]);
 
+  function LoadingSpinner() {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Đang tải dữ liệu...</p>
+      </div>
+    );
+  }
+
   // if (loading) return <div className="loading">Đang tải...</div>;
   return (
     <div className="App">
-      <ToastContainer position="top-center" autoClose={3000} />
       <Routes>
         {publicRoutes.map((route) => {
           const Page = route.component;
@@ -117,7 +123,8 @@ function AppContent() {
               path={route.path}
               element={
                 loading ? (
-                  <div className="loading">Đang tải...</div>
+                  // <div className="loading">Đang tải...</div>
+                  <LoadingSpinner />
                 ) : isAuthorized ? (
                   <Layout>
                     <Page />

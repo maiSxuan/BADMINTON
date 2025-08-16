@@ -468,7 +468,8 @@ const ProductDetailPage = () => {
             <div className="product-reviews-section">
                 <h2 className="reviews-title">Đánh giá từ khách hàng</h2>
                 {reviewsLoading ? (
-                    <p>Đang tải đánh giá...</p>
+                    // <p>Đang tải đánh giá...</p>
+                    <LoadingSpinner />
                 ) : reviews.length > 0 ? (
                     <div className="review-list">
                         {reviews.map((review) => (

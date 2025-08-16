@@ -6,6 +6,7 @@ import {
     getAllBrands, getAllCategories, createBrandByName, createCategoryByName,
     uploadImage, deleteImage, addProduct, editProduct, getProductBySlug
 } from '../../services';
+import { usePopup } from '../../components/common/popupContext';
 
 // Helper: Extract public_id from Cloudinary URL for image deletion
 const getPublicIdFromUrl = (url) => {
@@ -54,6 +55,8 @@ const AddProducts = () => {
     const [formErrors, setFormErrors] = useState({});
     const [classificationError, setClassificationError] = useState(null);
     const [submitError, setSubmitError] = useState(null);
+
+    const { showPopup } = usePopup();
     
     // Refs for optimization and external DOM interaction
     const latestClassificationData = useRef(classificationData);
@@ -174,7 +177,15 @@ const AddProducts = () => {
                 }
             } catch (error) {
                 console.error("Error fetching and populating product data:", error);
-                alert(`Could not load product data: ${error.message}`);
+                // alert(`Could not load product data: ${error.message}`);
+                showPopup(
+                    'Lỗi',
+                    error.message || 'Lỗi khi tải dữ liệu sản phẩm',
+                    null,
+                    null,
+                    4,
+                    1
+                )
                 navigate('/admin/all-products');
             } finally {
                 setIsLoading(false);
@@ -211,7 +222,15 @@ const AddProducts = () => {
             setCategories([...categories, newCategory]); 
             handleSelectCategory(newCategory); 
         } catch (err) { 
-            alert("Cannot add new category"); 
+            // alert("Cannot add new category"); 
+            showPopup(
+                'Lỗi',
+                err.message || 'Lỗi khi thêm sản phẩm mới',
+                null,
+                null,
+                4,
+                1
+            )
         }
     };
     
@@ -228,7 +247,15 @@ const AddProducts = () => {
             setBrands([...brands, newBrand]); 
             handleSelectBrand(newBrand); 
         } catch (err) { 
-            alert("Cannot add new brand"); 
+            // alert("Cannot add new brand"); 
+            showPopup(
+                'Lỗi',
+                err.message || 'Lỗi khi thêm nhãn hàng mới',
+                null,
+                null,
+                4,
+                1
+            )
         }
     };
     
@@ -249,7 +276,15 @@ const AddProducts = () => {
             setCoverImage(data);
             setFormErrors(prev => ({ ...prev, coverImage: null }));
         } catch (error) {
-            alert(error.message);
+            // alert(error.message);
+            showPopup(
+                'Lỗi',
+                error.message || 'Tải ảnh sản phẩm thất bại',
+                null,
+                null,
+                4,
+                1
+            )
         }
     };
     
@@ -264,7 +299,15 @@ const AddProducts = () => {
             await deleteImage(coverImage.public_id);
             setCoverImage({ url: null, public_id: null });
         } catch (error) {
-            alert("Error deleting image: " + error.message);
+            // alert("Error deleting image: " + error.message);
+            showPopup(
+                'Lỗi',
+                error.message || 'Xóa ảnh sản phẩm thất bại',
+                null,
+                null,
+                4,
+                1
+            )
         }
     };
 
@@ -370,10 +413,26 @@ const AddProducts = () => {
                     };
                     if (isEditMode) {
                         await editProduct(slug, productPayload);
-                        alert(`Cập nhật sản phẩm thành công.`);
+                        // alert(`Cập nhật sản phẩm thành công.`);
+                        showPopup(
+                            'Thông báo',
+                            'Cập nhật sản phẩm thành công',
+                            null,
+                            null,
+                            4,
+                            1
+                        )
                     } else {
                         await addProduct(productPayload);
-                        alert(`Tạo sản phẩm thành công.`);
+                        // alert(`Tạo sản phẩm thành công.`);
+                        showPopup(
+                            'Thông báo',
+                            'Tạo sản phẩm thành công',
+                            null,
+                            null,
+                            4,
+                            1
+                        )
                     }
                     navigate('/admin/all-products');
                 } catch (error) {

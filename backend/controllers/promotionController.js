@@ -123,7 +123,7 @@ exports.addCodesToPromotion = async (req, res) => {
         const existingCodes = promotion.listCode.map(c => c.code);
         const duplicateCodes = codes.filter(c => existingCodes.includes(c.code));
         if (duplicateCodes.length > 0)
-            return res.status(400).json({ message: 'Duplicate codes detected', duplicates: duplicateCodes });
+            return res.status(400).json({ message: 'Mã giảm này đã tồn tại', duplicates: duplicateCodes });
 
         promotion.listCode.push(...codes);
         await promotion.save();
@@ -230,6 +230,13 @@ exports.addProductToPromotion = async (req, res) => {
 
             const product = await Product.findById(productId);
             if (!product) return;
+
+            if (product.sale && product.appliedCode === code)
+                return res.status(400).json({ message: `Sản phẩm ${product.name} đã được áp dụng mã ${code} trước đó` });
+
+            if (product.sale && product.appliedCode !== code)
+                return res.status(400).json({ message: `Sản phẩm ${product.name} đã được giảm giá` });
+
 
             product.sale = true;
             product.promotion = promotionId;

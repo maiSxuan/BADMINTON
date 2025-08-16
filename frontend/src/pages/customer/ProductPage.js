@@ -181,7 +181,10 @@ function ProductPage() {
                             ))}
                         </ul>
                     </div>
-                    {isFiltersLoading ? (<p>Đang tải bộ lọc...</p>) : (
+                    {isFiltersLoading ? (
+                        // <p>Đang tải bộ lọc...</p>
+                        <LoadingSpinner />
+                    ) : (
                         <>
                             {renderFilterGroup("THƯƠNG HIỆU", brands, 'brands', filters.brands)}
                             {renderFilterGroup("CHỌN SẢN PHẨM", categories, 'categories', filters.categories)}
