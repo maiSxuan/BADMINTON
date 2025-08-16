@@ -65,3 +65,8 @@
   align-items: center;
   gap: 10px;
 }
+
+body.userlist-page-open .popup-overlay {
+  background: transparent !important;
+  backdrop-filter: none !important;
+}

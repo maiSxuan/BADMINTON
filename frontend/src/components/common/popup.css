@@ -16,10 +16,10 @@
 }
 
 .popup-container {
-  background-color: #FEF7F9;
+  background-color: #fcdcf6;
   padding: 25px 40px;
   border-radius: 12px;
-  border: 1px solid #F8E8EE;
+  border: 1px solid #ebb6db;
   text-align: center;
   max-width: 560px;
   width: 90%;
@@ -42,7 +42,7 @@
 }
 
 .popup-button {
-  background-color: #E6A4B4;
+  background-color: #f390a8;
   color: #333;
   border: none;
   border-radius: 8px;

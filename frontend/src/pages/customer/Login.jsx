@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../services";
 import Logo from "../../components/common/logo";
 import { Eye, EyeOff } from "lucide-react";
+import { usePopup } from '../../components/common/popupContext';
 import "./Login.css";
 
 export default function Login() {
@@ -11,6 +12,7 @@ export default function Login() {
   const [rememberPassword, setRememberPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { showPopup } = usePopup();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,6 +22,7 @@ export default function Login() {
 
     if (!isEmail && !isPhone) {
       setError("Vui lòng nhập đúng định dạng Email hoặc SĐT");
+      showPopup("Thông báo lỗi", "Vui lòng nhập đúng định dạng Email hoặc SĐT", "OK")
       return;
     }
 
@@ -34,6 +37,7 @@ export default function Login() {
         sessionStorage.setItem("token", token);
       }
       window.dispatchEvent(new Event("loginStatusChanged"));
+      showPopup("Thành công", "Bạn đã đăng nhập thành công", "OK")
       // Redirect to homepage or admin page
       if (user.user_type === "ADMIN") {
         navigate("/admin");
@@ -45,6 +49,7 @@ export default function Login() {
         setError(err.response.data.message);
       } else {
         setError("Đăng nhập thất bại. Vui lòng thử lại.");
+        showPopup("Thông báo lỗi", "Đăng nhập thất bại. Vui lòng thử lại.", "OK")
       }
     }
   };
@@ -81,7 +86,7 @@ export default function Login() {
             aria-label="Mật khẩu"
           />
           <span
-            className="password-toggle-icon"
+            className="password-toggle-icon-lg"
             onClick={() => setShowPassword((prev) => !prev)}
             role="button"
             aria-label="Hiện/Ẩn mật khẩu"
