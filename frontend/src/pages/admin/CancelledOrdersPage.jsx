@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Search, X, Package, Truck, MapPin, Phone, Mail } from "lucide-react"
 import "./OrderManagement.css"
 import { getCancelledReqOrders, updateOrderStatus } from "../../services/orderService"
+import Pagination from "../../components/common/Pagination"
 
 const CancelledOrderPage = () => {
   const [orders, setOrders] = useState([])
@@ -13,17 +14,19 @@ const CancelledOrderPage = () => {
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [showOrderDetail, setShowOrderDetail] = useState(false)
 
+  // Phân trang
+  const [currentPage, setCurrentPage] = useState(1)
+  const ordersPerPage = 15
 
   const statusColors = {
     "Yêu cầu hủy": { backgroundColor: "#fef3c7", color: "#92400e" },
     "Đã hủy": { backgroundColor: "#fecaca", color: "#dc2626" }
   }
 
-  // Fetch orders from backend
   useEffect(() => {
-      setCancellationOrder()
+    setCancellationOrder()
   }, [])
-    
+
   const setCancellationOrder = async () => {
     try {
       setLoading(true)
@@ -34,9 +37,8 @@ const CancelledOrderPage = () => {
     } finally {
       setLoading(false)
     }
-  };
-  
-  
+  }
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -59,15 +61,14 @@ const CancelledOrderPage = () => {
       try {
         await updateOrderStatus(orderId, "Đã hủy")
         alert("Đã hủy đơn hàng thành công!")
+        setCancellationOrder() // load lại sau khi duyệt
       } catch (error) {
         alert("Có lỗi xảy ra khi hủy đơn hàng!")
       }
     }
   }
 
-
   const handleOrderClick = (order, event) => {
-    // Only open detail if not clicking on action buttons
     if (event.target.closest(".om-action-buttons")) {
       return
     }
@@ -80,11 +81,27 @@ const CancelledOrderPage = () => {
     setSelectedOrder(null)
   }
 
+  // --- Lọc đơn hàng theo tìm kiếm ---
+  const filteredOrders = orders.filter((order) => {
+    if (!searchTerm) return true
+    const term = searchTerm.toLowerCase()
+    if (searchType === "ID đơn hàng") {
+      return order._id.toLowerCase().includes(term)
+    } else if (searchType === "Tên khách hàng") {
+      return order.shippingInfo?.fullName?.toLowerCase().includes(term)
+    } else if (searchType === "Số điện thoại") {
+      return order.shippingInfo?.phone?.toLowerCase().includes(term)
+    }
+    return true
+  })
+
+  // --- Lấy đơn hàng của trang hiện tại ---
+  const indexOfLastOrder = currentPage * ordersPerPage
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage
+  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder)
+
   return (
     <div className="order-management">
-      {/* Header */}
-      
-
       <div className="main-layout">
         <main className="main-content">
           {/* Search */}
@@ -98,9 +115,12 @@ const CancelledOrderPage = () => {
               <Search className="search-icon" />
               <input
                 type="text"
-                placeholder="Tìm kiếm ID đơn hàng"
+                placeholder={`Tìm kiếm ${searchType}`}
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value)
+                  setCurrentPage(1) // reset về trang 1 khi search
+                }}
                 className="om-search-input"
               />
             </div>
@@ -121,18 +141,14 @@ const CancelledOrderPage = () => {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="5" className="loading-cell">
-                      Đang tải...
-                    </td>
+                    <td colSpan="5" className="loading-cell">Đang tải...</td>
                   </tr>
-                ) : orders.length === 0 ? (
+                ) : currentOrders.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="empty-cell">
-                      Không có đơn hàng nào
-                    </td>
+                    <td colSpan="5" className="empty-cell">Không có đơn hàng nào</td>
                   </tr>
                 ) : (
-                  orders.map((order) => (
+                  currentOrders.map((order) => (
                     <tr key={order._id} className="order-row" onClick={(e) => handleOrderClick(order, e)}>
                       <td>
                         <div className="order-id-cell">
@@ -162,26 +178,33 @@ const CancelledOrderPage = () => {
                         <div className="shipping-provider">{order.cancellation_reason}</div>
                       </td>
                       <td>
-                      {order.status !== "Đã hủy" && (
-                        <div className="om-action-buttons">
-                          <button
-                            className="om-action-btn cancel-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleAcceptCancellation(order._id);
-                            }}
-                            title="Hủy đơn hàng"
-                          >
-                            Duyệt yêu cầu
-                          </button>
-                        </div>
-                      )}
+                        {order.status !== "Đã hủy" && (
+                          <div className="om-action-buttons">
+                            <button
+                              className="om-action-btn cancel-btn"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleAcceptCancellation(order._id)
+                              }}
+                              title="Hủy đơn hàng"
+                            >
+                              Duyệt yêu cầu
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))
                 )}
               </tbody>
             </table>
+
+            {/* Phân trang */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(filteredOrders.length / ordersPerPage)}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
           </div>
         </main>
       </div>
@@ -192,92 +215,37 @@ const CancelledOrderPage = () => {
           <div className="om-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="om-modal-header">
               <h2>Chi tiết đơn hàng #{selectedOrder._id.slice(-8)}</h2>
-              <button className="close-btn" onClick={closeOrderDetail}>
-                <X />
-              </button>
+              <button className="close-btn" onClick={closeOrderDetail}><X /></button>
             </div>
 
             <div className="om-modal-body">
               <div className="order-detail-grid">
-                {/* Order Status */}
                 <div className="detail-section">
-                  <h3>
-                    <Package className="section-icon" /> Thông tin đơn hàng
-                  </h3>
-                  <div className="detail-item">
-                    <span className="label">Mã đơn hàng:</span>
-                    <span className="value">{selectedOrder._id}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="label">Trạng thái:</span>
-                    <span className="status-badge" style={statusColors[selectedOrder.status]}>
-                      {selectedOrder.status}
-                    </span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="label">Ngày tạo:</span>
-                    <span className="value">{formatDate(selectedOrder.created_at)}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="label">Tổng tiền:</span>
-                    <span className="value total-amount">{formatCurrency(selectedOrder.total_amount)}</span>
-                  </div>
+                  <h3><Package className="section-icon" /> Thông tin đơn hàng</h3>
+                  <div className="detail-item"><span className="label">Mã đơn hàng:</span><span className="value">{selectedOrder._id}</span></div>
+                  <div className="detail-item"><span className="label">Trạng thái:</span><span className="status-badge" style={statusColors[selectedOrder.status]}>{selectedOrder.status}</span></div>
+                  <div className="detail-item"><span className="label">Ngày tạo:</span><span className="value">{formatDate(selectedOrder.created_at)}</span></div>
+                  <div className="detail-item"><span className="label">Tổng tiền:</span><span className="value total-amount">{formatCurrency(selectedOrder.total_amount)}</span></div>
                 </div>
 
-                {/* Shipping Info */}
                 <div className="detail-section">
-                  <h3>
-                    <MapPin className="section-icon" /> Thông tin giao hàng
-                  </h3>
-                  <div className="detail-item">
-                    <span className="label">Họ tên:</span>
-                    <span className="value">{selectedOrder.shippingInfo.fullName}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="label">
-                      <Phone className="inline-icon" /> Số điện thoại:
-                    </span>
-                    <span className="value">{selectedOrder.shippingInfo.phone}</span>
-                  </div>
+                  <h3><MapPin className="section-icon" /> Thông tin giao hàng</h3>
+                  <div className="detail-item"><span className="label">Họ tên:</span><span className="value">{selectedOrder.shippingInfo.fullName}</span></div>
+                  <div className="detail-item"><span className="label"><Phone className="inline-icon" /> Số điện thoại:</span><span className="value">{selectedOrder.shippingInfo.phone}</span></div>
                   {selectedOrder.shippingInfo.email && (
-                    <div className="detail-item">
-                      <span className="label">
-                        <Mail className="inline-icon" /> Email:
-                      </span>
-                      <span className="value">{selectedOrder.shippingInfo.email}</span>
-                    </div>
+                    <div className="detail-item"><span className="label"><Mail className="inline-icon" /> Email:</span><span className="value">{selectedOrder.shippingInfo.email}</span></div>
                   )}
-                  <div className="detail-item">
-                    <span className="label">Địa chỉ:</span>
-                    <span className="value">
-                      {[
-                        selectedOrder.shippingInfo.address,
-                      ]
-                        .filter(Boolean)
-                        .join(", ")}
-                    </span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="label">
-                      <Truck className="inline-icon" /> Nhà vận chuyển:
-                    </span>
-                    <span className="value">{selectedOrder.shipping_provider}</span>
-                  </div>
+                  <div className="detail-item"><span className="label">Địa chỉ:</span><span className="value">{[selectedOrder.shippingInfo.address].filter(Boolean).join(", ")}</span></div>
+                  <div className="detail-item"><span className="label"><Truck className="inline-icon" /> Nhà vận chuyển:</span><span className="value">{selectedOrder.shipping_provider}</span></div>
                 </div>
               </div>
 
-              {/* Order Items */}
               <div className="detail-section full-width">
                 <h3>Sản phẩm đã đặt</h3>
                 <div className="items-table">
                   <table>
                     <thead>
-                      <tr>
-                        <th>SKU</th>
-                        <th>Số lượng</th>
-                        <th>Giá</th>
-                        <th>Thành tiền</th>
-                      </tr>
+                      <tr><th>SKU</th><th>Số lượng</th><th>Giá</th><th>Thành tiền</th></tr>
                     </thead>
                     <tbody>
                       {selectedOrder.items.map((item, index) => (
@@ -293,7 +261,6 @@ const CancelledOrderPage = () => {
                 </div>
               </div>
 
-              {/* Notes */}
               {selectedOrder.note && (
                 <div className="detail-section full-width">
                   <h3>Ghi chú</h3>
@@ -301,7 +268,6 @@ const CancelledOrderPage = () => {
                 </div>
               )}
             </div>
-
           </div>
         </div>
       )}
