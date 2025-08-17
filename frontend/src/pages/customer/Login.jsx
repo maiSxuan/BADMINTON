@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../services";
 import Logo from "../../components/common/logo";
 import { Eye, EyeOff } from "lucide-react";
-import { usePopup } from '../../components/common/popupContext';
+import { usePopup } from "../../components/common/popupContext";
 import "./Login.css";
 
 export default function Login() {
@@ -22,7 +22,11 @@ export default function Login() {
 
     if (!isEmail && !isPhone) {
       setError("Vui lòng nhập đúng định dạng Email hoặc SĐT");
-      showPopup("Thông báo lỗi", "Vui lòng nhập đúng định dạng Email hoặc SĐT", "OK")
+      showPopup(
+        "Thông báo lỗi",
+        "Vui lòng nhập đúng định dạng Email hoặc SĐT",
+        "OK"
+      );
       return;
     }
 
@@ -37,7 +41,7 @@ export default function Login() {
         sessionStorage.setItem("token", token);
       }
       window.dispatchEvent(new Event("loginStatusChanged"));
-      showPopup("Thành công", "Bạn đã đăng nhập thành công", "OK")
+      showPopup("Thành công", "Bạn đã đăng nhập thành công", "OK");
       // Redirect to homepage or admin page
       if (user.user_type === "ADMIN") {
         navigate("/admin");
@@ -49,7 +53,11 @@ export default function Login() {
         setError(err.response.data.message);
       } else {
         setError("Đăng nhập thất bại. Vui lòng thử lại.");
-        showPopup("Thông báo lỗi", "Đăng nhập thất bại. Vui lòng thử lại.", "OK")
+        showPopup(
+          "Thông báo lỗi",
+          "Đăng nhập thất bại. Vui lòng thử lại.",
+          "OK"
+        );
       }
     }
   };
@@ -121,6 +129,12 @@ export default function Login() {
           <button type="submit" className="login-button">
             ĐĂNG NHẬP
           </button>
+        </div>
+        <div className="login-register-link">
+          <span>Bạn chưa có tài khoản? </span>
+          <Link to="/registration" className="register-link">
+            Đăng ký
+          </Link>
         </div>
       </form>
     </div>
