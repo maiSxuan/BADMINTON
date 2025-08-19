@@ -49,16 +49,6 @@ export default function Login() {
         navigate("/");
       }
     } catch (err) {
-      // if (err.response?.data?.message) {
-      //   setError(err.response.data.message);
-      // } else {
-      //   setError("Đăng nhập thất bại. Vui lòng thử lại.");
-      //   showPopup(
-      //     "Thông báo lỗi",
-      //     "Đăng nhập thất bại. Vui lòng thử lại.",
-      //     "OK"
-      //   );
-      // }
       setError(err.message);
       showPopup("Thông báo lỗi", err.message, "OK");
     }

@@ -107,35 +107,6 @@ exports.register = async (req, res) => {
       otpExpires: Date.now() + 60 * 1000, // 1 phút
     };
 
-    // const newUser = await User.create({
-    //   userID: uuidv4(),
-    //   name,
-    //   phone,
-    //   address,
-    //   email,
-    //   password: hashed,
-    //   user_type: role,
-    //   isVerified: 0,
-    // });
-
-    //   const token = createToken(newUser);
-    //   res.status(201).json({
-    //     token,
-    //     user: {
-    //       userID: newUser.userID,
-    //       email: newUser.email,
-    //       phone: newUser.phone,
-    //       name: newUser.name,
-    //       user_type: newUser.user_type,
-    //     },
-    //   });
-    // } catch (err) {
-    //   console.error("REGISTER ERROR:", err);  // In lỗi chi tiết
-    //   res.status(500).json({ message: "Lỗi máy chủ, thử lại sau.", error: err.message });
-    // }
-    //const otp = newUser.createVerifyEmailToken(); // Tạo mã OTP
-    //await newUser.save({ validateBeforeSave: false });
-
     const message = `Mã xác minh tài khoản của bạn là: ${otp}. Mã có hiệu lực trong 1 phút.`;
     await sendEmail(email, "Xác minh đăng ký tài khoản", message);
 
@@ -152,11 +123,6 @@ exports.register = async (req, res) => {
 exports.verifyRegisterOtp = async (req, res) => {
   const { email, otp } = req.body;
   try {
-    // const existingUser = await User.findOne({ email });
-    // if (!existingUser) {
-    //   return res.status(404).json({ message: "Tài khoản chưa được đăng ký" });
-    // }
-
     const tempUser = tempUsers[email];
     if (!tempUser) {
       return res.status(400).json({
@@ -172,12 +138,6 @@ exports.verifyRegisterOtp = async (req, res) => {
         .json({ message: "OTP không hợp lệ hoặc đã hết hạn" });
     }
 
-    // const user = await User.findOne({
-    //   email,
-    //   verifyEmailToken: hashedOtp,
-    //   verifyEmailExpires: { $gt: Date.now() },
-    // });
-
     // Tạo user thật trong DB
     const user = await User.create({
       userID: tempUser.userID,
@@ -192,17 +152,6 @@ exports.verifyRegisterOtp = async (req, res) => {
 
     // Xóa user tạm
     delete tempUsers[email];
-
-    // if (!user) {
-    //   return res
-    //     .status(400)
-    //     .json({ message: "Mã không hợp lệ hoặc đã hết hạn" });
-    // }
-
-    // user.isVerified = 1;
-    // user.verifyEmailToken = undefined;
-    // user.verifyEmailExpires = undefined;
-    // await user.save();
 
     const token = createToken(user);
     res.status(200).json({

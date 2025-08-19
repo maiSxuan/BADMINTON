@@ -26,7 +26,7 @@ export const updateProfile = async (token, payload) => {
 };
 
 export const getAllUsers = async (token) => {
-  const res = await fetch('http://localhost:4000/api/users/', {
+  const res = await fetch("http://localhost:4000/api/users/", {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error("Không thể tải danh sách người dùng");
@@ -56,4 +56,3 @@ export const toggleUserStatus = async (id, token) => {
   }
   return await res.json();
 };
-

@@ -75,19 +75,21 @@ const Registration = () => {
     if (Object.keys(validateErrors).length === 0) {
       try {
         await registerUser(formData);
-        setStep("verify");
-        //const user = response.data.user;
-        // localStorage.setItem("token", response.data.token);
-        // localStorage.setItem("user", JSON.stringify(user));
-        //window.dispatchEvent(new Event("loginStatusChanged"));
-
-        // if(user.user_type === 'ADMIN'){
-        //   navigate("/admin");
-        // } else{
-        //   navigate("/");
-        // }
-        // alert("Đăng ký thành công! Vui lòng đăng nhập.");
-        // navigate("/login")
+        if (formData.email.endsWith("@admin.com")) {
+          // Admin: backend đã tự động xác minh và trả về token
+          showPopup(
+            "Thông báo",
+            "Tài khoản admin đã được xác minh tự động",
+            "Trở về trang đăng nhập",
+            () => navigate("/login"),
+            4,
+            null,
+            true
+          );
+        } else {
+          // User thường: chờ OTP
+          setStep("verify");
+        }
       } catch (error) {
         const field = error.response?.data?.field;
         const message = error.response?.data?.message || "Đăng ký thất bại";
@@ -100,18 +102,6 @@ const Registration = () => {
       }
     }
   };
-
-  // const handleRegister = async (e) => {
-  //   e.preventDefault();
-  //   setServerError("");
-  //   try {
-  //     await registerUser(formData);
-  //     setEmail(formData.email); // lưu lại email để dùng cho xác minh
-  //     setStep("verify");
-  //   } catch (err) {
-  //     setServerError(err.response?.data?.message || "Đăng ký thất bại");
-  //   }
-  // };
 
   const handleVerify = async (e) => {
     e.preventDefault();
@@ -153,8 +143,9 @@ const Registration = () => {
               {/* Tên đăng nhập */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${errors.name ? "registration-input-error" : ""
-                    }`}
+                  className={`registration-input-wrapper ${
+                    errors.name ? "registration-input-error" : ""
+                  }`}
                 >
                   <input
                     type="text"
@@ -172,8 +163,9 @@ const Registration = () => {
               {/* Số điện thoại */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${errors.phone ? "registration-input-error" : ""
-                    }`}
+                  className={`registration-input-wrapper ${
+                    errors.phone ? "registration-input-error" : ""
+                  }`}
                 >
                   <input
                     type="tel"
@@ -191,8 +183,9 @@ const Registration = () => {
               {/* Địa chỉ */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${errors.address ? "registration-input-error" : ""
-                    }`}
+                  className={`registration-input-wrapper ${
+                    errors.address ? "registration-input-error" : ""
+                  }`}
                 >
                   <input
                     type="text"
@@ -212,8 +205,9 @@ const Registration = () => {
               {/* Email */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${errors.email ? "registration-input-error" : ""
-                    }`}
+                  className={`registration-input-wrapper ${
+                    errors.email ? "registration-input-error" : ""
+                  }`}
                 >
                   <input
                     type="email"
@@ -231,8 +225,9 @@ const Registration = () => {
               {/* Mật khẩu */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${errors.password ? "registration-input-error" : ""
-                    }`}
+                  className={`registration-input-wrapper ${
+                    errors.password ? "registration-input-error" : ""
+                  }`}
                 >
                   <input
                     type={showPassword ? "text" : "password"}
@@ -258,8 +253,9 @@ const Registration = () => {
               {/* Xác nhận mật khẩu */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${errors.confirmPassword ? "registration-input-error" : ""
-                    }`}
+                  className={`registration-input-wrapper ${
+                    errors.confirmPassword ? "registration-input-error" : ""
+                  }`}
                 >
                   <input
                     type={showConfirmPassword ? "text" : "password"}
