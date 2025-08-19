@@ -5,13 +5,15 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
 
+let tempUsers = {}; // key = email, value = {userData, otp, expires}
+
 const createToken = (user) => {
-  const payload = { 
-    userID: user.userID, 
-    role: user.user_type, 
+  const payload = {
+    userID: user.userID,
+    role: user.user_type,
   };
   return jwt.sign({ payload }, process.env.ACCESS_TOKEN, {
-    expiresIn: "1h",
+    expiresIn: "7d",
   });
 };
 
@@ -61,35 +63,78 @@ exports.register = async (req, res) => {
     }
 
     const hashed = await bcrypt.hash(password, 10);
-
     const role = email.endsWith("@admin.com") ? "ADMIN" : "USER";
-    const newUser = await User.create({
+    if (role === "ADMIN") {
+      const newUser = await User.create({
+        userID: uuidv4(),
+        name,
+        phone,
+        address,
+        email,
+        password: hashed,
+        user_type: role,
+        isVerified: true, // luôn true
+      });
+
+      const token = createToken(newUser);
+      return res.status(201).json({
+        message: "Đăng ký ADMIN thành công",
+        token,
+        user: {
+          userID: newUser.userID,
+          email: newUser.email,
+          phone: newUser.phone,
+          name: newUser.name,
+          user_type: newUser.user_type,
+        },
+      });
+    }
+
+    // Tạo OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
+
+    // Lưu user tạm (chỉ trong RAM)
+    tempUsers[email] = {
       userID: uuidv4(),
       name,
       phone,
       address,
       email,
       password: hashed,
-      user_type: role
-    });
+      user_type: role,
+      otp: hashedOtp,
+      otpExpires: Date.now() + 60 * 1000, // 1 phút
+    };
 
-  //   const token = createToken(newUser);
-  //   res.status(201).json({
-  //     token,
-  //     user: {
-  //       userID: newUser.userID,
-  //       email: newUser.email,
-  //       phone: newUser.phone,
-  //       name: newUser.name,
-  //       user_type: newUser.user_type,
-  //     },
-  //   });
-  // } catch (err) {
-  //   console.error("REGISTER ERROR:", err);  // In lỗi chi tiết
-  //   res.status(500).json({ message: "Lỗi máy chủ, thử lại sau.", error: err.message });
-  // }
-    const otp = newUser.createVerifyEmailToken(); // Tạo mã OTP
-    await newUser.save({ validateBeforeSave: false });
+    // const newUser = await User.create({
+    //   userID: uuidv4(),
+    //   name,
+    //   phone,
+    //   address,
+    //   email,
+    //   password: hashed,
+    //   user_type: role,
+    //   isVerified: 0,
+    // });
+
+    //   const token = createToken(newUser);
+    //   res.status(201).json({
+    //     token,
+    //     user: {
+    //       userID: newUser.userID,
+    //       email: newUser.email,
+    //       phone: newUser.phone,
+    //       name: newUser.name,
+    //       user_type: newUser.user_type,
+    //     },
+    //   });
+    // } catch (err) {
+    //   console.error("REGISTER ERROR:", err);  // In lỗi chi tiết
+    //   res.status(500).json({ message: "Lỗi máy chủ, thử lại sau.", error: err.message });
+    // }
+    //const otp = newUser.createVerifyEmailToken(); // Tạo mã OTP
+    //await newUser.save({ validateBeforeSave: false });
 
     const message = `Mã xác minh tài khoản của bạn là: ${otp}. Mã có hiệu lực trong 1 phút.`;
     await sendEmail(email, "Xác minh đăng ký tài khoản", message);
@@ -97,7 +142,9 @@ exports.register = async (req, res) => {
     res.status(201).json({ message: "Mã xác minh đã được gửi qua email" });
   } catch (err) {
     console.error("REGISTER ERROR:", err);
-    res.status(500).json({ message: "Lỗi máy chủ, thử lại sau.", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Lỗi máy chủ, thử lại sau.", error: err.message });
   }
 };
 
@@ -105,22 +152,57 @@ exports.register = async (req, res) => {
 exports.verifyRegisterOtp = async (req, res) => {
   const { email, otp } = req.body;
   try {
-    const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
+    // const existingUser = await User.findOne({ email });
+    // if (!existingUser) {
+    //   return res.status(404).json({ message: "Tài khoản chưa được đăng ký" });
+    // }
 
-    const user = await User.findOne({
-      email,
-      verifyEmailToken: hashedOtp,
-      verifyEmailExpires: { $gt: Date.now() },
-    });
-
-    if (!user) {
-      return res.status(400).json({ message: "Mã không hợp lệ hoặc đã hết hạn" });
+    const tempUser = tempUsers[email];
+    if (!tempUser) {
+      return res.status(400).json({
+        message: "Không tìm thấy thông tin đăng ký, vui lòng thử lại",
+      });
     }
 
-    user.isVerified = 1;
-    user.verifyEmailToken = undefined;
-    user.verifyEmailExpires = undefined;
-    await user.save();
+    const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
+
+    if (tempUser.otp !== hashedOtp || tempUser.otpExpires < Date.now()) {
+      return res
+        .status(400)
+        .json({ message: "OTP không hợp lệ hoặc đã hết hạn" });
+    }
+
+    // const user = await User.findOne({
+    //   email,
+    //   verifyEmailToken: hashedOtp,
+    //   verifyEmailExpires: { $gt: Date.now() },
+    // });
+
+    // Tạo user thật trong DB
+    const user = await User.create({
+      userID: tempUser.userID,
+      name: tempUser.name,
+      phone: tempUser.phone,
+      address: tempUser.address,
+      email: tempUser.email,
+      password: tempUser.password,
+      user_type: tempUser.user_type,
+      isVerified: 1,
+    });
+
+    // Xóa user tạm
+    delete tempUsers[email];
+
+    // if (!user) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Mã không hợp lệ hoặc đã hết hạn" });
+    // }
+
+    // user.isVerified = 1;
+    // user.verifyEmailToken = undefined;
+    // user.verifyEmailExpires = undefined;
+    // await user.save();
 
     const token = createToken(user);
     res.status(200).json({
@@ -143,20 +225,17 @@ exports.verifyRegisterOtp = async (req, res) => {
 // Đăng nhập bằng email hoặc phone
 exports.login = async (req, res) => {
   const { email, phone, password } = req.body;
-  
-  try {
-    let user;
 
-    if (email) {
-      user = await User.findOne({ email });
-    } else if (phone) {
-      user = await User.findOne({ phone });
-    } else {
-      return res.status(400).json({ message: "Vui lòng nhập email hoặc số điện thoại" });
-    }
+  try {
+    const user = email
+      ? await User.findOne({ email })
+      : await User.findOne({ phone });
 
     if (!user) {
-      return res.status(401).json({ message: "Tài khoản không tồn tại" });
+      return res.status(401).json({ message: "Tài khoản chưa được đăng ký" });
+    }
+    if (user.user_type !== "ADMIN" && !user.isVerified) {
+      return res.status(403).json({ message: "Tài khoản chưa xác minh OTP" });
     }
 
     const match = await bcrypt.compare(password, user.password);
@@ -165,7 +244,8 @@ exports.login = async (req, res) => {
     }
 
     const token = createToken(user);
-    res.json({
+    res.status(200).json({
+      message: "Đăng nhập thành công",
       token,
       user: {
         userID: user.userID,
@@ -180,7 +260,6 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Đăng nhập thất bại", error: err.message });
   }
 };
-
 
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
@@ -207,7 +286,7 @@ exports.forgotPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   const { email, token, newPassword } = req.body;
   try {
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
     const user = await User.findOne({
       email,
@@ -215,7 +294,10 @@ exports.resetPassword = async (req, res) => {
       resetPasswordExpires: { $gt: Date.now() },
     });
 
-    if (!user) return res.status(400).json({ message: "Mã không hợp lệ hoặc đã hết hạn" });
+    if (!user)
+      return res
+        .status(400)
+        .json({ message: "Mã không hợp lệ hoặc đã hết hạn" });
 
     user.password = await bcrypt.hash(newPassword, 10);
     user.resetPasswordToken = undefined;
@@ -228,4 +310,3 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: "Lỗi đặt lại mật khẩu" });
   }
 };
-

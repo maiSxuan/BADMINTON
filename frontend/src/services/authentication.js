@@ -1,4 +1,4 @@
-export const loginUser = async (emailOrPhone, password) => {
+export const loginUser = async ({ emailOrPhone, password }) => {
   const isEmail = emailOrPhone.includes("@");
   const loginType = isEmail ? "email" : "phone";
 
@@ -8,11 +8,18 @@ export const loginUser = async (emailOrPhone, password) => {
     body: JSON.stringify({ [loginType]: emailOrPhone, password }),
   });
 
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Đăng nhập thất bại");
+  let data;
+  try {
+    data = await res.json(); // luôn cố parse JSON
+  } catch {
+    data = {};
   }
-  return await res.json(); // { token, user }
+
+  if (!res.ok) {
+    const message = data.message || res.statusText || "Đăng nhập thất bại";
+    throw new Error(message);
+  }
+  return data; // { token, user }
 };
 
 export const registerUser = async (data) => {
@@ -74,4 +81,3 @@ export const resetPassword = async (email, token, newPassword) => {
   }
   return res.json();
 };
-

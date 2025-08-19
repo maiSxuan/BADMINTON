@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./UserList.css";
 import Pagination from "../../components/common/Pagination";
-import { Trash, SquarePen, Lock, LockOpen } from "lucide-react";
+import { Trash, Lock, LockOpen } from "lucide-react";
 import { getAllUsers, deleteUser, toggleUserStatus } from "../../services";
 import { useNavigate } from "react-router-dom";
 import { usePopup } from "../../components/common/popupContext";
@@ -64,9 +64,10 @@ const UserListPage = () => {
     getUserData();
   }, [navigate, showPopup]);
   //get current posts
+  const filteredUsers = users.filter((user) => user.user_type !== "ADMIN");
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUSer = indexOfLastUser - usersPerPage;
-  const currentUsers = users.slice(indexOfFirstUSer, indexOfLastUser);
+  const currentUsers = filteredUsers.slice(indexOfFirstUSer, indexOfLastUser);
   const paginate = (pageNumbers) => setCurrentPage(pageNumbers);
 
   const handleDeleteUser = async (id) => {
@@ -130,32 +131,29 @@ const UserListPage = () => {
               </tr>
             </thead>
             <tbody>
-              {currentUsers
-                .filter((user) => user.user_type !== "ADMIN")
-                .map((user) => (
-                  <tr key={user._id}>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>
-                      {new Date(user.create_at).toLocaleDateString("vi-VN")}
-                    </td>
-                    <td className="center-cell-center">
-                      <button onClick={() => handleLockUser(user._id)}>
-                        {user.status === 0 ? (
-                          <Lock color="red" size="20" />
-                        ) : (
-                          <LockOpen color="green" size="20" />
-                        )}
-                      </button>
-                    </td>
-
-                    <td className="center-cell-center">
-                      <button onClick={() => handleDeleteUser(user._id)}>
-                        <Trash color="red" size="20" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+              {currentUsers.map((user) => (
+                <tr key={user._id}>
+                  <td>{user.name}</td>
+                  <td>{user.email}</td>
+                  <td>
+                    {new Date(user.create_at).toLocaleDateString("vi-VN")}
+                  </td>
+                  <td className="center-cell-center">
+                    <button onClick={() => handleLockUser(user._id)}>
+                      {user.status === 0 ? (
+                        <Lock color="red" size="20" />
+                      ) : (
+                        <LockOpen color="green" size="20" />
+                      )}
+                    </button>
+                  </td>
+                  <td className="center-cell-center">
+                    <button onClick={() => handleDeleteUser(user._id)}>
+                      <Trash color="red" size="20" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         ) : (
@@ -164,7 +162,7 @@ const UserListPage = () => {
       </div>
       <Pagination
         itemsPerPage={usersPerPage}
-        totalItems={users.length}
+        totalItems={filteredUsers.length}
         paginate={paginate}
         currentPage={currentPage}
         className="User-pagination"

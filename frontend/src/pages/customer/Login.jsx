@@ -31,7 +31,7 @@ export default function Login() {
     }
 
     try {
-      const { token, user } = await loginUser(emailOrPhone, password);
+      const { token, user } = await loginUser({ emailOrPhone, password });
       localStorage.setItem("user", JSON.stringify(user));
       //localStorage.setItem("token", token);
 
@@ -49,16 +49,18 @@ export default function Login() {
         navigate("/");
       }
     } catch (err) {
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError("Đăng nhập thất bại. Vui lòng thử lại.");
-        showPopup(
-          "Thông báo lỗi",
-          "Đăng nhập thất bại. Vui lòng thử lại.",
-          "OK"
-        );
-      }
+      // if (err.response?.data?.message) {
+      //   setError(err.response.data.message);
+      // } else {
+      //   setError("Đăng nhập thất bại. Vui lòng thử lại.");
+      //   showPopup(
+      //     "Thông báo lỗi",
+      //     "Đăng nhập thất bại. Vui lòng thử lại.",
+      //     "OK"
+      //   );
+      // }
+      setError(err.message);
+      showPopup("Thông báo lỗi", err.message, "OK");
     }
   };
 
