@@ -133,7 +133,7 @@ const getReturnRefundReqOrders = async (req, res) => {
   try {
     const returnStatuses = [
       "Yêu cầu trả hàng/hoàn tiền",
-      "Hoàn tất trả hàng/hoàn tiền"
+      "Đã trả hàng/hoàn tiền"
     ];
 
     const orders = await Order.find({ status: { $in: returnStatuses } }).sort({ created_at: -1 });

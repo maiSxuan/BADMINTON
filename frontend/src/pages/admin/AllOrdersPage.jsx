@@ -5,7 +5,6 @@ import { Search, X, Package, Truck, MapPin, Phone, Mail } from "lucide-react"
 import "./OrderManagement.css"
 import { getAllOrders, updateOrderStatus } from "../../services/orderService"
 import Pagination from "../../components/common/Pagination" // Import component phân trang
-import { usePopup } from "../../components/common/popupContext"
 
 const AllOrdersPage = () => {
   const [orders, setOrders] = useState([])
@@ -15,8 +14,6 @@ const AllOrdersPage = () => {
   const [searchType, setSearchType] = useState("ID đơn hàng")
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [showOrderDetail, setShowOrderDetail] = useState(false)
-
-  const { showPopup } = usePopup();
 
   // --- Phân trang ---
   const [currentPage, setCurrentPage] = useState(1)
@@ -96,14 +93,14 @@ const AllOrdersPage = () => {
         <p><strong>Khách hàng:</strong> ${order.shippingInfo.fullName}</p>
         <p><strong>Số điện thoại:</strong> ${order.shippingInfo.phone}</p>
         <p><strong>Địa chỉ:</strong> ${[
-        order.shippingInfo.houseNumber,
-        order.shippingInfo.address,
-        order.shippingInfo.ward,
-        order.shippingInfo.district,
-        order.shippingInfo.city,
-      ]
-        .filter(Boolean)
-        .join(", ")}</p>
+          order.shippingInfo.houseNumber,
+          order.shippingInfo.address,
+          order.shippingInfo.ward,
+          order.shippingInfo.district,
+          order.shippingInfo.city,
+        ]
+          .filter(Boolean)
+          .join(", ")}</p>
         <hr>
         <h3>Danh sách sản phẩm:</h3>
         <table border="1" style="width: 100%; border-collapse: collapse;">
@@ -116,16 +113,16 @@ const AllOrdersPage = () => {
           </thead>
           <tbody>
             ${order.items
-        .map(
-          (item) => `
+              .map(
+                (item) => `
               <tr>
                 <td style="padding: 8px;">${item.sku_code}</td>
                 <td style="padding: 8px;">${item.quantity}</td>
                 <td style="padding: 8px;">${formatCurrency(item.priceAtTime)}</td>
               </tr>
             `,
-        )
-        .join("")}
+              )
+              .join("")}
           </tbody>
         </table>
         <hr>
@@ -144,54 +141,22 @@ const AllOrdersPage = () => {
     const order = orders.find((o) => o._id === orderId)
     if (!order) return
 
-    const immutableStatuses = ["Đã trả hàng/hoàn tiền", "Đã hủy"]
+    const immutableStatuses = ["Đã trả hàng/hoàn tiền", "Đã hủy", "Hoàn thành"]
     if (immutableStatuses.includes(order.status)) {
-      // alert("Không thể cập nhật trạng thái đơn hàng này!")
-      showPopup(
-        'Thông báo',
-        'Không thể cập nhật trạng thái đơn hàng này!',
-        null,
-        null,
-        4,
-        3
-      )
+      alert("Không thể cập nhật trạng thái đơn hàng này!")
       return
     }
 
     if (order.status === "Tiến hành trả hàng/hoàn tiền") {
       const nextStatus = "Đã trả hàng/hoàn tiền"
-      // if (window.confirm(`Xác nhận chuyển sang trạng thái "${nextStatus}"?`)) {
-      showPopup(
-        'Thông báo',
-        `Xác nhận chuyển sang trạng thái "${nextStatus}"?`,
-        'Xác nhận',
-        async () => {
-          try {
-            await handleUpdateOrderStatus(orderId, nextStatus)
-            // alert("Cập nhật trạng thái thành công!")
-            showPopup(
-              'Thông báo',
-              'Cập nhật trạng thái thành công!',
-              null,
-              null,
-              4,
-              3
-            )
-          } catch (error) {
-            // alert("Có lỗi xảy ra khi cập nhật trạng thái!")
-            showPopup(
-              'Lỗi',
-              'Có lỗi xảy ra khi cập nhật trạng thái!',
-              null,
-              null,
-              4,
-              3
-            )
-          }
-        },
-        4
-      )
-      // }
+      if (window.confirm(`Xác nhận chuyển sang trạng thái "${nextStatus}"?`)) {
+        try {
+          await handleUpdateOrderStatus(orderId, nextStatus)
+          alert("Cập nhật trạng thái thành công!")
+        } catch (error) {
+          alert("Có lỗi xảy ra khi cập nhật trạng thái!")
+        }
+      }
       return
     }
 
@@ -207,48 +172,16 @@ const AllOrdersPage = () => {
     const nextStatus = statusOptions[currentIndex + 1]
 
     if (nextStatus) {
-      // if (window.confirm(`Cập nhật trạng thái đơn hàng từ "${order.status}" thành "${nextStatus}"?`)) {
-      showPopup(
-        'Thông báo',
-        `Cập nhật trạng thái đơn hàng từ "${order.status}" thành "${nextStatus}"?`,
-        'Cập nhật',
-        async () => {
-          try {
-            await handleUpdateOrderStatus(orderId, nextStatus)
-            // alert("Cập nhật trạng thái thành công!")
-            showPopup(
-              'Thông báo',
-              'Cập nhật trạng thái thành công!',
-              null,
-              null,
-              4,
-              3
-            )
-          } catch (error) {
-            // alert("Có lỗi xảy ra khi cập nhật trạng thái!")
-            showPopup(
-              'Lỗi',
-              'Có lỗi xảy ra khi cập nhật trạng thái!',
-              null,
-              null,
-              4,
-              3
-            )
-          }
-        },
-        4
-      )
-      // }
+      if (window.confirm(`Cập nhật trạng thái đơn hàng từ "${order.status}" thành "${nextStatus}"?`)) {
+        try {
+          await handleUpdateOrderStatus(orderId, nextStatus)
+          alert("Cập nhật trạng thái thành công!")
+        } catch (error) {
+          alert("Có lỗi xảy ra khi cập nhật trạng thái!")
+        }
+      }
     } else {
-      // alert("Đơn hàng đã ở trạng thái cuối cùng!")
-      showPopup(
-        'Thông báo',
-        'Đơn hàng đã ở trạng thái cuối cùng!',
-        null,
-        null,
-        4,
-        3
-      )
+      alert("Đơn hàng đã ở trạng thái cuối cùng!")
     }
   }
 
@@ -407,9 +340,10 @@ const AllOrdersPage = () => {
 
             {/* --- Component phân trang --- */}
             <Pagination
+              itemsPerPage={ordersPerPage}
+              totalItems={filteredOrders.length}
               currentPage={currentPage}
-              totalPages={Math.ceil(filteredOrders.length / ordersPerPage)}
-              onPageChange={(page) => setCurrentPage(page)}
+              paginate={(page) => setCurrentPage(page)}
             />
           </div>
         </main>

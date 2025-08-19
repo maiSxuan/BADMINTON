@@ -74,9 +74,6 @@ const StarRating = ({ rating, onRatingChange }) => {
   )
 }
 
-// ===================================================================
-// BƯỚC 3.2: TẠO COMPONENT REVIEW DIALOG
-// ===================================================================
 function ReviewDialog({ isOpen, onClose, order, userId }) {
   const [reviews, setReviews] = useState({}) // { productId: { rating: 0, comment: '' } }
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -411,7 +408,10 @@ const OrderHistory = () => {
 
   return (
     <div className="order-history-container">
-      <h1 className="page-title">Lịch sử mua hàng</h1>
+      <div className="cart-header">
+          <h1 className="cart-title">LỊCH SỬ MUA HÀNG</h1>
+          <p className="cart-subtitle">({orders.length} đơn hàng)</p>
+      </div>
       {orders.length === 0 ? (
         <div className="empty-orders">
           <p>Bạn chưa có đơn hàng nào</p>
@@ -493,7 +493,12 @@ const OrderHistory = () => {
           </div>
 
           {/* PHÂN TRANG */}
-          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+          <Pagination
+            itemsPerPage={ORDERS_PER_PAGE}
+            totalItems={orders.length}
+            currentPage={currentPage}
+            paginate={handlePageChange}
+          />
         </>
       )}
 

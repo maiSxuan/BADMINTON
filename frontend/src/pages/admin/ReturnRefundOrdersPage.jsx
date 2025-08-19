@@ -231,18 +231,20 @@ const ReturnReundOrdersPage = () => {
                         <div className="shipping-provider">{order.return_reason}</div>
                       </td>
                       <td>
-                        <div className="om-action-buttons">
-                          <button
-                            className="om-action-btn cancel-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleAcceptReturnRefund(order._id);
-                            }}
-                            title="Duyệt yêu cầu"
-                          >
-                            Duyệt yêu cầu
-                          </button>
-                        </div>
+                        {order.status !== "Đã trả hàng/hoàn tiền" && (
+                          <div className="om-action-buttons">
+                            <button
+                              className="om-action-btn cancel-btn"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleAcceptReturnRefund(order._id)
+                              }}
+                              title="Tiến hành trả hàng/hoàn tiền"
+                            >
+                              Duyệt yêu cầu
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))
@@ -252,9 +254,10 @@ const ReturnReundOrdersPage = () => {
 
             {/* Pagination */}
             <Pagination
+              itemsPerPage={ordersPerPage}
+              totalItems={filteredOrders.length}
               currentPage={currentPage}
-              totalPages={Math.ceil(filteredOrders.length / ordersPerPage)}
-              onPageChange={(page) => setCurrentPage(page)}
+              paginate={(page) => setCurrentPage(page)}
             />
           </div>
         </main>

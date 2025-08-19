@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useMemo, Fragment } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import './ProductDetail.css'; // File CSS của bạn
+import './ProductDetail.css'; 
 import { addItemToCart, getProductBySlug,getAllCategories,getRatingsByProduct } from '../../services';
 import { usePopup } from '../../components/common/popupContext';
-
-
-// import { getRatingsByProduct } from '../../services/ratingService';
 import Breadcrumb from '../../components/common/breadcrumb';
 import { CheckCircle2, Gift, ShieldCheck } from 'lucide-react';
 
@@ -368,7 +365,7 @@ const ProductDetailPage = () => {
                     <p className="selector-label">Chọn [{primaryLabel}]:</p>
                     <div className="variant-options">
                         {product.variants.map((variant) => (
-                            <button key={variant.variant_id} className={`variant-option ${variant.variant_id === selectedVariant.variant_id ? 'active' : ''}`} onClick={() => handleVariantSelect(variant)}>
+                            <button key={variant.variant_id} className={`variant-option ${variant._id === selectedVariant._id ? 'active' : ''}`} onClick={() => handleVariantSelect(variant)}>
                                 <img src={variant.images?.[0]} alt={variant.name} />
                                 <div className="variant-info">
                                     <span>{variant.name}</span>
@@ -447,14 +444,14 @@ const ProductDetailPage = () => {
 
                     <div className="action-buttons">
                         <button
-                            className="action-btn buy-now-btn"
+                            className="detail-action-btn buy-now-btn"
                             disabled={!selectedOption || selectedOption.stock_quantity === 0}
                             onClick={handleBuyNow}
                         >
                             Mua ngay
                         </button>
                         <button
-                            className="action-btn add-to-cart-btn"
+                            className="detail-action-btn add-to-cart-btn"
                             disabled={!selectedOption || selectedOption.stock_quantity === 0}
                             onClick={handleAddToCart}
                         >

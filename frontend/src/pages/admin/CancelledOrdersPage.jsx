@@ -238,9 +238,10 @@ const CancelledOrderPage = () => {
 
             {/* Phân trang */}
             <Pagination
+              itemsPerPage={ordersPerPage}
+              totalItems={filteredOrders.length}
               currentPage={currentPage}
-              totalPages={Math.ceil(filteredOrders.length / ordersPerPage)}
-              onPageChange={(page) => setCurrentPage(page)}
+              paginate={(page) => setCurrentPage(page)}
             />
           </div>
         </main>

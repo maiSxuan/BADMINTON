@@ -22,7 +22,7 @@ import ProductPage from "../pages/customer/ProductPage";
 //import BaloPage from "../pages/customer/Product/Balo";
 import UserListPage from "../pages/admin/UserList";
 import AddPromotionPage from "../pages/admin/AddPromotion";
-import RevenuePage from "../pages/admin/RevenuePage";
+// import RevenuePage from "../pages/admin/RevenuePage";
 import PromotionListPage from "../pages/admin/PromotionList";
 import FranchisePolicy from "../pages/customer/FranchisePolicy";
 import AllOrdersPage from "../pages/admin/AllOrdersPage";
@@ -36,7 +36,6 @@ import ForgotPasswordStep2 from "../pages/customer/RecoverPassword";
 import Login from "../pages/customer/Login";
 import Registration from "../pages/customer/Registration";
 import ProfilePage from "../pages/customer/ProfilePage";
-import ShippingInfo from "../pages/customer/ShippingInfo";
 import CartPage from "../pages/customer/Cart";
 import OrderHistoryPage from "../pages/customer/OrderHistory";
 import ProductDetailPage from "../pages/customer/ProductDetail";
@@ -158,9 +157,8 @@ const publicRoutes = [
   { path: "/recover-password", component: ForgotPasswordStep2, layout: DefaultLayout },
   { path: "/login", component: Login},
   { path: "/registration", component: Registration},
-  { path: "/registration-shipping-info", component: ShippingInfo, layout: DefaultLayout},
   {path: "/cart", component: CartPage, layout: HeaderFooterLayout},
-  {path: "/order-history", component: OrderHistoryPage, layout:HeaderFooterLayout},
+  {path: "/order-history", component: OrderHistoryPage, layout: HeaderFooterLayout},
   {path: "/products/:slug",component: ProductDetailPage, layout: DefaultLayout},
  
 

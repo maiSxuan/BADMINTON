@@ -56,7 +56,7 @@ exports.createRating = async (req, res) => {
 // GET /ratings/product/:productId - Lấy đánh giá theo sản phẩm
 exports.getRatingsByProduct = async (req, res) => {
   try {
-    console.log('API ĐANG TÌM KIẾM ĐÁNH GIÁ CHO PRODUCT ID:', req.params.productId);
+    // console.log('API ĐANG TÌM KIẾM ĐÁNH GIÁ CHO PRODUCT ID:', req.params.productId);
 
     const productId = req.params.productId;
     const limit = req.query.limit ? parseInt(req.query.limit) : null;

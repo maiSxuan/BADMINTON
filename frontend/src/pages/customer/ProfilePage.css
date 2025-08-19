@@ -3,7 +3,7 @@
   justify-content: center;
   padding: 40px 20px;
   background: #ffffff;
-  font-family: Arial, sans-serif;
+  font-family: Montserrat, sans-serif;
 }
 
 .profile-box {
@@ -37,51 +37,174 @@
 .form-row {
   display: grid;
   grid-template-columns: 180px 1fr;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
 }
 
 .form-row label {
   font-size: 14px;
   color: #333;
+  padding-top: 8px;
 }
 
-.form-row input {
+.pass-form-row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  align-items: flex-start;
+  gap: 25px;
+  padding-bottom: 25px;
+}
+
+.pass-form-row label {
+  font-size: 14px;
+  color: #333;
+  padding-top: 8px;
+
+}
+
+/* Added styles for field container and display modes */
+.field-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.display-mode {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.field-value {
+  font-size: 14px;
+  color: #333;
+  min-height: 20px;
+  flex: 1;
+}
+
+.edit-mode {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-mode input {
+  flex: 1;
   padding: 8px 12px;
   font-size: 14px;
   border: 1px solid #dca1d7;
   border-radius: 4px;
-  width: 100%;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-edit,
+.btn-confirm,
+.btn-cancel {
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-edit {
+  background-color: transparent;
+  color: #dca1d7;
+}
+
+.btn-edit:hover {
+  background-color: #f0f0f0;
+}
+
+.btn-confirm {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-confirm:hover {
+  background-color: #45a049;
+}
+
+.btn-cancel {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background-color: #da190b;
+}
+
+/* Added styles for password section */
+.password-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #f5dff2;
+}
+
+.btn-change-password {
+  padding: 10px 20px;
+  background-color: #dca1d7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-change-password:hover {
+  background-color: #e91e63;
 }
 
 .password-title {
-  margin-top: 30px;
+  margin-bottom: 20px;
   font-size: 16px;
   font-weight: bold;
   color: #333;
 }
 
-.btn-save {
-  margin: 20px auto;
-  padding: 12px 28px;
-  background-color: #dca1d7; /* màu hồng */
-  color: #fff;
-  border: none;
-  border-radius: 30px;
-  font-weight: bold;
+.password-buttons {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-save {
+  padding: 10px 20px;
+  background-color: #dca1d7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
   cursor: pointer;
-  width: 400px;
-  min-width: 150px;
-  text-align: center;
   transition: all 0.3s ease;
 }
 
 .btn-save:hover {
-  background-color: #e91e63;;
+  background-color: #e91e63;
+}
+
+.btn-cancel-password {
+  padding: 10px 20px;
+  background-color: #dca1d7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel-password:hover {
+  background-color: #e91e63;
 }
 
 .error-text {
@@ -97,12 +220,20 @@
 
 .input-wrapper input {
   width: 100%;
-  padding-right: 35px; /* để chừa chỗ cho icon */
+  padding: 8px 12px;
+  padding-right: 35px;
+  font-size: 14px;
+  border: 1px solid #dca1d7;
+  border-radius: 4px;
+}
+
+.input-error {
+  border-color: #f44336 !important;
 }
 
 .eye-icon {
   position: absolute;
-  top: 60%;
+  top: 50%;
   right: 10px;
   transform: translateY(-50%);
   cursor: pointer;

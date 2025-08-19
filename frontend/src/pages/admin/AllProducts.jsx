@@ -157,8 +157,6 @@ const AllProducts = () => {
                         <option>Tất cả thương hiệu</option>
                         {brands.map(brand => (<option key={brand._id} value={brand.name}>{brand.name}</option>))}
                     </select>
-
-                    <button className="filter-btn">Bộ lọc</button>
                 </div>
             </div>
 
