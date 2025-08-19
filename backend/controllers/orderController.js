@@ -167,7 +167,7 @@ const updateOrderStatus = async (req, res) => {
 
     if (status === 'Đã hủy' && order.status !== 'Đã hủy') {
       for (const item of order.items) {
-        const product = await Product.findById(item.product_id);
+        const product = await Product.findById(item.product);
         if (!product) continue;
 
         const variant = product.variants.id(item.variant_id);

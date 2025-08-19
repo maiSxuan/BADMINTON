@@ -60,31 +60,39 @@ const CancelledOrderPage = () => {
   }
 
   const handleAcceptCancellation = async (orderId) => {
-    if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
-      try {
-        await updateOrderStatus(orderId, "Đã hủy")
-        // alert("Đã hủy đơn hàng thành công!")
-        showPopup(
-          'Thông báo',
-          'Đã hủy đơn hàng thành công',
-          null,
-          null,
-          4,
-          1
-        )
-        setCancellationOrder() // load lại sau khi duyệt
-      } catch (err) {
-        // alert("Có lỗi xảy ra khi hủy đơn hàng!")
-        showPopup(
-          'Thông báo',
-          'Đã hủy đơn hàng thành công',
-          null,
-          null,
-          4,
-          1
-        )
-      }
-    }
+    // if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
+    showPopup(
+      'Xác nhận hủy',
+      'Bạn có chắc chắn muốn hủy đơn hàng này không?',
+      'Hủy đơn',
+      async () => {
+        try {
+          await updateOrderStatus(orderId, "Đã hủy")
+          // alert("Đã hủy đơn hàng thành công!")
+          showPopup(
+            'Thông báo',
+            'Đã hủy đơn hàng thành công',
+            null,
+            null,
+            4,
+            1
+          )
+          setCancellationOrder() // load lại sau khi duyệt
+        } catch (err) {
+          // alert("Có lỗi xảy ra khi hủy đơn hàng!")
+          showPopup(
+            'Thông báo',
+            'Đã hủy đơn hàng thành công',
+            null,
+            null,
+            4,
+            1
+          )
+        }
+      },
+      4
+    )
+    // }
   }
 
   const handleOrderClick = (order, event) => {

@@ -7,7 +7,7 @@ import Breadcrumb from "../common/breadcrumb";
 import { useLocation } from "react-router-dom";
 import { fetchCart } from "../../services";
 import Logo from "../common/logo";
-import { UserIcon, Search, ShoppingCart } from "lucide-react";
+import { UserIcon, Search, ShoppingCart, InfoIcon } from "lucide-react";
 import { getProductsOnQuery } from "../../services";
 import { usePopup } from "../common/popupContext";
 
@@ -132,7 +132,8 @@ const Header = () => {
         ? [{ label: "Đăng nhập", to: "/login" }, { label: "Đăng ký", to: "/registration" }]
         : [{ label: "Tài khoản của tôi", to: "/account/profile" }, { label: "Đăng xuất", action: handleLogout }];
 
-    const orderTrackingMenu = [{ label: "Lịch sử mua hàng", to: "/order-history" }];
+    
+    // const orderTrackingMenu = [{ label: "Lịch sử mua hàng", to: "/order-history", onClick: handleOrderHistoryClick }];
 
     // Xử lý khi submit form tìm kiếm (code mới)
     const handleSearchSubmit = (e) => {
@@ -146,12 +147,25 @@ const Header = () => {
 
     const handleCartClick = (e) => {
         if (!user) {
-            e.preventDefault(); 
+            e.preventDefault();
             showPopup(
                 "Chưa đăng nhập",
                 "Bạn cần đăng nhập để xem giỏ hàng",
                 "Đăng nhập",
                 () => navigate("/login"),
+                4
+            );
+        }
+    };
+
+    const handleOrderHistoryClick = (e) => {
+        if (!user) {
+            e.preventDefault();
+            showPopup(
+                "Chưa đăng nhập",
+                "Bạn cần đăng nhập để xem lịch sử mua hàng",
+                "Đăng nhập",
+                () => navigate("/order-history"),
                 4
             );
         }
@@ -210,7 +224,11 @@ const Header = () => {
                 </div>
 
                 <div className="right-group header-group user-actions-group">
-                    <DropdownHeader icon={<Search size={20} />} label="TRA CỨU" menuItems={orderTrackingMenu} />
+                    {/* <DropdownHeader icon={<InfoIcon size={20} />} label="TRA CỨU" menuItems={orderTrackingMenu} /> */}
+                    <NavLink to="/order-history" className="action-item" onClick={handleOrderHistoryClick}>
+                        <InfoIcon size={20} />
+                        <span>TRA CỨU</span>
+                    </NavLink>
                     <DropdownHeader icon={<UserIcon />} label="TÀI KHOẢN" menuItems={accountMenu} />
                     <NavLink to="/cart" className="action-item cart" onClick={handleCartClick}>
                         <ShoppingCart /><span>GIỎ HÀNG</span><span className="badge">{cartItemCount > 0 ? cartItemCount : 0}</span>

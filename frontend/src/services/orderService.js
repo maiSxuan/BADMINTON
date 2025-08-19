@@ -1,9 +1,12 @@
 const BASE_URL = "http://localhost:4000/api/order";
-const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+// const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
 export const createOrder = async (orderData) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+    if (!token) return
+
   const response = await fetch(BASE_URL, {
-    method: 'POST',
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
@@ -23,9 +26,12 @@ export const createOrder = async (orderData) => {
 };
 
 export const getAllOrders = async () => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+    if (!token) return
+
   try {
     const response = await fetch(BASE_URL, {
-      method: 'GET',
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
@@ -40,6 +46,9 @@ export const getAllOrders = async () => {
 }
 
 export const updateOrderStatus = async (orderId, newStatus) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+    if (!token) return
+
   try {
     const response = await fetch(`${BASE_URL}/${orderId}/status`, {
       method: "PUT",
@@ -59,6 +68,9 @@ export const updateOrderStatus = async (orderId, newStatus) => {
 }
 
 export const getCancelledReqOrders = async () => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+    if (!token) return
+
   const response = await fetch(`${BASE_URL}/cancellation-orders`, {
     method: "GET",
     headers: {
@@ -74,6 +86,9 @@ export const getCancelledReqOrders = async () => {
 }
 
 export const getReturnRefundReqOrders = async () => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+    if (!token) return
+
   const response = await fetch(`${BASE_URL}/return-refund-orders`, {
     method: "GET",
     headers: {
@@ -89,6 +104,9 @@ export const getReturnRefundReqOrders = async () => {
 }
 
 export const getOrdersByUserId = async (userId) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+    if (!token) return
+
   const response = await fetch(`${BASE_URL}/user/${userId}`, {
     method: "GET",
     headers: {
@@ -104,6 +122,9 @@ export const getOrdersByUserId = async (userId) => {
 }
 
 export const requestReturnOrCancellation = async (orderId, type, reason) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+    if (!token) return
+
   const response = await fetch(`${BASE_URL}/request/${orderId}`, {
     method: "PUT",
     headers: {

@@ -75,31 +75,39 @@ const AllProducts = () => {
     };
     const handleDeleteProduct = async (slug, e) => {
         e.stopPropagation();
-        if (window.confirm("Hành động này sẽ XÓA VĨNH VIỄN sản phẩm. Bạn chắc chắn?")) {
-            try {
-                await deleteProduct(slug);
-                setAllProducts(prev => prev.filter(p => p.slug !== slug));
-                alert('Xóa thành công.');
-                showPopup(
-                    'Thông báo',
-                    'Xóa thành công',
-                    null,
-                    null,
-                    4,
-                    3
-                )
-            } catch (err) {
-                // alert(err.message);
-                showPopup(
-                    'Lỗi',
-                    err.message || 'Xóa sản phẩm thất bại',
-                    null,
-                    null,
-                    4,
-                    3
-                )
-            }
-        }
+        // if (window.confirm("Hành động này sẽ XÓA VĨNH VIỄN sản phẩm. Bạn chắc chắn?")) {
+        showPopup(
+            'Xác nhận xóa',
+            'Hành động này sẽ XÓA VĨNH VIỄN sản phẩm. Bạn chắc chắn?',
+            'Xóa',
+            async () => {
+                try {
+                    await deleteProduct(slug);
+                    setAllProducts(prev => prev.filter(p => p.slug !== slug));
+                    // alert('Xóa thành công.')
+                    showPopup(
+                        'Thông báo',
+                        'Xóa thành công',
+                        null,
+                        null,
+                        4,
+                        3
+                    )
+                } catch (err) {
+                    // alert(err.message);
+                    showPopup(
+                        'Lỗi',
+                        err.message || 'Xóa sản phẩm thất bại',
+                        null,
+                        null,
+                        4,
+                        3
+                    )
+                }
+            },
+            4
+        )
+        // }
     };
     const handleTogglePublish = async (product, e) => {
         e.stopPropagation();

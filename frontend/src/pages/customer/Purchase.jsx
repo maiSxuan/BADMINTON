@@ -7,6 +7,8 @@ import { createOrder } from "../../services/orderService"
 import { removeItemFromCart } from "../../services/cartService"
 import { updateOrderStatus } from "../../services/orderService"
 import axios from "axios";
+import { usePopup } from "../../components/common/popupContext"
+
 const PurchasePage = () => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -33,41 +35,42 @@ const PurchasePage = () => {
   const [deliveryMethod, setDeliveryMethod] = useState("nhanh")
   const [orderId, setOrderId] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [showToast, setShowToast] = useState(false)
-  const [toastMessage, setToastMessage] = useState("")
+  // const [showToast, setShowToast] = useState(false)
+  // const [toastMessage, setToastMessage] = useState("")
+  const { showPopup } = usePopup()
 
   useEffect(() => {
-      axios.get("https://provinces.open-api.vn/api/?depth=3")
-          .then((res) => setCities(res.data))
-          .catch((err) => console.error("Failed to load cities", err));
+    axios.get("https://provinces.open-api.vn/api/?depth=3")
+      .then((res) => setCities(res.data))
+      .catch((err) => console.error("Failed to load cities", err));
   }, []);
 
   useEffect(() => {
-      const selectedCity = cities.find(c => c.name === shippingInfo.city);
-      setDistricts(selectedCity ? selectedCity.districts : []);
-      setShippingInfo(prev => ({ ...prev, district: "", ward: ""}));
+    const selectedCity = cities.find(c => c.name === shippingInfo.city);
+    setDistricts(selectedCity ? selectedCity.districts : []);
+    setShippingInfo(prev => ({ ...prev, district: "", ward: "" }));
   }, [shippingInfo.city, cities]);
 
   useEffect(() => {
-      const selectedDistrict = districts.find(d => d.name === shippingInfo.district);
-      setWards(selectedDistrict ? selectedDistrict.wards : []);
-      setShippingInfo(prev => ({ ...prev, ward: ""}));
+    const selectedDistrict = districts.find(d => d.name === shippingInfo.district);
+    setWards(selectedDistrict ? selectedDistrict.wards : []);
+    setShippingInfo(prev => ({ ...prev, ward: "" }));
   }, [shippingInfo.district, districts]);
 
   useEffect(() => {
-      const { houseNumber, ward, district, city } = shippingInfo;
-      const components = [houseNumber, ward, district, city].filter(Boolean);
-      const fullAddress = components.join(", ");
-      
-      if (shippingInfo.address !== fullAddress) {
-          setShippingInfo((prev) => ({
-              ...prev,
-              address: fullAddress
-          }));
-      }
+    const { houseNumber, ward, district, city } = shippingInfo;
+    const components = [houseNumber, ward, district, city].filter(Boolean);
+    const fullAddress = components.join(", ");
+
+    if (shippingInfo.address !== fullAddress) {
+      setShippingInfo((prev) => ({
+        ...prev,
+        address: fullAddress
+      }));
+    }
   }, [shippingInfo.houseNumber, shippingInfo.ward, shippingInfo.district, shippingInfo.city]);
 
-    
+
   const handleInputChange = (eOrKey, valueFromEvent = null) => {
     if (typeof eOrKey === "string") {
       // Dành cho input sử dụng custom (e.g. onChange={(e) => handleInputChange("fullName", e.target.value)})
@@ -83,22 +86,42 @@ const PurchasePage = () => {
   };
 
   const handleAcceptCancellation = async (orderId) => {
-    if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
-      try {
-        await updateOrderStatus(orderId, "Đã hủy")
-        alert("Đã hủy đơn hàng thành công!")
-        navigate("/cart")
-      } catch (error) {
-        alert("Có lỗi xảy ra khi hủy đơn hàng!")
+    showPopup(
+      'Xác nhận',
+      'Bạn có chắc chắn muốn hủy đơn hàng này không?',
+      'Hủy đơn',
+      async () => {
+        try {
+          await updateOrderStatus(orderId, "Đã hủy")
+          // alert("Đã hủy đơn hàng thành công!")
+          showPopup(
+            'Thông báo',
+            'Đã hủy đơn hàng thành công',
+            null,
+            null,
+            4,
+            3
+          )
+          navigate("/cart")
+        } catch (error) {
+          // alert("Có lỗi xảy ra khi hủy đơn hàng!")
+          showPopup(
+            'Lỗi',
+            'Có lỗi xảy ra khi hủy đơn hàng',
+            null,
+            null,
+            4,
+            3
+          )
+        }
       }
-    }
+    )
   }
 
-  // Khởi tạo dữ liệu từ Cart
   useEffect(() => {
-      setCartItems(selectedItems)
+    setCartItems(selectedItems)
   }, [location.state])
-  
+
   const deliveryMethods = [
     { value: "nhanh", label: "Nhanh: Đảm bảo nhận hàng 3-5 ngày - 30.000đ", fee: 30000 },
     { value: "sieu-toc", label: "Siêu tốc: Nhận hàng ngay ngày mai - 100.000đ", fee: 100000 },
@@ -106,17 +129,17 @@ const PurchasePage = () => {
   ];
 
   const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  
+
   const selectedMethod = deliveryMethods.find(m => m.value === deliveryMethod);
   const shippingFee = selectedMethod ? selectedMethod.fee : 30000;
   const finalAmount = totalAmount + shippingFee;
 
   // Toast notification
-  const showToastMessage = (message) => {
-    setToastMessage(message)
-    setShowToast(true)
-    setTimeout(() => setShowToast(false), 3000)
-  }
+  // const showToastMessage = (message) => {
+  //   setToastMessage(message)
+  //   setShowToast(true)
+  //   setTimeout(() => setShowToast(false), 3000)
+  // }
 
   // Cập nhật địa chỉ đầy đủ
   useEffect(() => {
@@ -144,7 +167,15 @@ const PurchasePage = () => {
     if (!shippingInfo.ward) errors.push("Vui lòng chọn phường/xã")
 
     if (errors.length > 0) {
-      showToastMessage(errors[0])
+      // showToastMessage(errors[0])
+      showPopup(
+        'Thiếu thông tin',
+        errors[0],
+        null,
+        null,
+        4,
+        3
+      )
       return false
     }
     return true
@@ -157,12 +188,28 @@ const PurchasePage = () => {
       const userId = user?.userID;
 
       if (!userId) {
-        showToastMessage("Bạn cần đăng nhập để đặt hàng");
+        // showToastMessage("Bạn cần đăng nhập để đặt hàng");
+        showPopup(
+          'Thông báo',
+          'Bạn cần đăng nhập để đặt hàng',
+          'Đăng nhập',
+          () => navigate("/login"),
+          4,
+          3
+        )
         return;
       }
 
       if (!shippingInfo.phone || !shippingInfo.address) {
-        showToastMessage("Vui lòng nhập đầy đủ thông tin giao hàng");
+        // showToastMessage("Vui lòng nhập đầy đủ thông tin giao hàng");
+        showPopup(
+          'Thông báo',
+          'Vui lòng nhập đầy đủ thông tin giao hàng',
+          null,
+          null,
+          4,
+          3
+        )
         return;
       }
 
@@ -175,7 +222,7 @@ const PurchasePage = () => {
           option_id: item.optionId,
           quantity: item.quantity,
           priceAtTime: item.price
-          })),
+        })),
         totalAmount: totalAmount,
         orderNote: orderNote,
         deliveryMethod: deliveryMethod
@@ -196,11 +243,28 @@ const PurchasePage = () => {
 
       setOrderId(data.orderId);
       setCurrentStep("tracking");
-      showToastMessage("Đặt hàng thành công");
+      // showToastMessage("Đặt hàng thành công");
+      showPopup(
+        'Thông báo',
+        'Đặt hàng thành công',
+        null,
+        null,
+        4,
+        2
+      )
 
     } catch (error) {
       console.error('Lỗi gửi đơn hàng:', error);
-      showToastMessage(error.message || "Có lỗi xảy ra, vui lòng thử lại");
+      // showToastMessage(error.message || "Có lỗi xảy ra, vui lòng thử lại");
+      showPopup(
+        'Lỗi',
+        // error.message || 'Có lỗi xảy ra, vui lòng thử lại',
+        'Bạn vui lòng đăng nhập lại để có thể đặt hàng',
+        null,
+        null,
+        4,
+        2
+      )
     } finally {
       setIsLoading(false);
     }
@@ -208,7 +272,15 @@ const PurchasePage = () => {
 
   const copyOrderId = () => {
     navigator.clipboard.writeText(orderId)
-    showToastMessage("Đã sao chép mã đơn hàng")
+    // showToastMessage("Đã sao chép mã đơn hàng")
+    showPopup(
+      null,
+      'Đã sao chép mã đơn hàng',
+      null,
+      null,
+      4,
+      1
+    )
   }
 
   const closeModal = () => {
@@ -237,8 +309,7 @@ const PurchasePage = () => {
 
   return (
     <div className="purchase-page">
-      {/* Toast Notification */}
-      {showToast && <div className="toast">{toastMessage}</div>}
+      {/* {showToast && <div className="toast">{toastMessage}</div>} */}
 
       <div className="container">
 
@@ -286,11 +357,15 @@ const PurchasePage = () => {
         </div>
 
         {/* Modal thông tin vận chuyển */}
-        {currentStep === "shipping" && (
+        {(currentStep === "shipping" || currentStep === "updateInfo") && (
           <div className="modal-overlay">
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
-                <h2>Thông tin vận chuyển</h2>
+                <h2>
+                  {currentStep === "shipping"
+                  ? "Thông tin vận chuyển"
+                  : "Cập nhật thông tin giao hàng"}
+                </h2>
                 <button className="close-btn" onClick={closeModal}>
                   ×
                 </button>
@@ -330,55 +405,55 @@ const PurchasePage = () => {
                       placeholder="Nhập email"
                     />
                   </div>
-                      <div className="form-group">
-                          <label htmlFor="city" >Tỉnh/ Thành phố</label>
-                          <select 
-                              id="city"
-                              name="city" 
-                              value={shippingInfo.city} 
-                              onChange={handleInputChange} 
-                              className="shipping-form-control"
-                              required
-                          >
-                              <option value="">- Chọn tỉnh/ thành phố -</option>
-                              {cities.map((c) => (
-                                  <option key={c.code} value={c.name}>{c.name}</option>
-                              ))}
-                          </select>
-                      </div>
-                      <div className="form-group">
-                          <label htmlFor="district" >Quận/ Huyện</label>
-                          <select 
-                              id="district"
-                              name="district"
-                              value={shippingInfo.district}
-                              onChange={handleInputChange}
-                              className="shipping-form-control"
-                              required
-                          >
-                              <option value="">- Chọn quận/ huyện -</option>
-                              {districts.map((d) => (
-                                  <option key={d.code} value={d.name}>{d.name}</option>
-                              ))}
-                          </select>
-                      </div>
+                  <div className="form-group">
+                    <label htmlFor="city" >Tỉnh/ Thành phố</label>
+                    <select
+                      id="city"
+                      name="city"
+                      value={shippingInfo.city}
+                      onChange={handleInputChange}
+                      className="shipping-form-control"
+                      required
+                    >
+                      <option value="">- Chọn tỉnh/ thành phố -</option>
+                      {cities.map((c) => (
+                        <option key={c.code} value={c.name}>{c.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="district" >Quận/ Huyện</label>
+                    <select
+                      id="district"
+                      name="district"
+                      value={shippingInfo.district}
+                      onChange={handleInputChange}
+                      className="shipping-form-control"
+                      required
+                    >
+                      <option value="">- Chọn quận/ huyện -</option>
+                      {districts.map((d) => (
+                        <option key={d.code} value={d.name}>{d.name}</option>
+                      ))}
+                    </select>
+                  </div>
 
-                      <div className="form-group">
-                          <label htmlFor="ward">Phường/ Xã</label>
-                          <select 
-                              id="ward"
-                              name="ward"
-                              value={shippingInfo.ward}
-                              onChange={handleInputChange}
-                              className="shipping-form-control"
-                              required
-                          >
-                              <option value="">- Chọn phường/ xã -</option>
-                              {wards.map((w) => (
-                                  <option key={w.code} value={w.name}>{w.name}</option>
-                              ))}
-                          </select>
-                      </div>
+                  <div className="form-group">
+                    <label htmlFor="ward">Phường/ Xã</label>
+                    <select
+                      id="ward"
+                      name="ward"
+                      value={shippingInfo.ward}
+                      onChange={handleInputChange}
+                      className="shipping-form-control"
+                      required
+                    >
+                      <option value="">- Chọn phường/ xã -</option>
+                      {wards.map((w) => (
+                        <option key={w.code} value={w.name}>{w.name}</option>
+                      ))}
+                    </select>
+                  </div>
 
                   <div className="form-group">
                     <label htmlFor="houseNumber">Số nhà, tên đường *</label>
@@ -414,18 +489,40 @@ const PurchasePage = () => {
                 </div>
 
                 <div className="modal-actions">
-                  <button className="btn btn-outline" onClick={closeModal}>
-                    Hủy
+                  <button 
+                    className="btn btn-outline" 
+                    onClick={() => {
+                      if (currentStep === "updateInfo")
+                        setCurrentStep("confirm")
+                      else
+                        closeModal()
+                    }}
+                  >
+                    {currentStep === "updateInfo" ? "Quay lại" : "Hủy"}
                   </button>
                   <button
                     className="btn btn-primary"
                     onClick={() => {
                       if (validateShippingInfo()) {
-                        setCurrentStep("confirm")
+                        if (currentStep === "shipping") {
+                          setCurrentStep("confirm")
+                        } else {
+                          showPopup(
+                            'Thông báo',
+                            'Cập nhật thông tin thành công',
+                            null,
+                            null,
+                            4,
+                            1
+                          );
+                          setCurrentStep("confirm")
+                        }
                       }
                     }}
                   >
-                    Xác nhận thông tin
+                    {currentStep === "shipping"
+                    ? "Xác nhận thông tin"
+                    : "Cập nhật thông tin"}
                   </button>
                 </div>
               </div>
@@ -448,12 +545,20 @@ const PurchasePage = () => {
                 {/* Thông tin người nhận */}
                 <div className="info-card">
                   <h3>Thông tin người nhận</h3>
-                  <div className="info-content">
-                    <p>
-                      <strong>{shippingInfo.fullName}</strong> - {shippingInfo.phone}
-                    </p>
-                    <p className="text-gray">{shippingInfo.email}</p>
-                    <p className="text-gray">{shippingInfo.address}</p>
+                  <div className="info-row">
+                    <div className="info-content">
+                      <p>
+                        <strong>{shippingInfo.fullName}</strong> - {shippingInfo.phone}
+                      </p>
+                      <p className="text-gray">{shippingInfo.email}</p>
+                      <p className="text-gray">{shippingInfo.address}</p>
+                    </div>
+                    <button 
+                      className="btn btn-outline btn-small"
+                      onClick={() => setCurrentStep("updateInfo")}
+                    > 
+                      Cập nhật 
+                    </button>
                   </div>
                 </div>
 
@@ -464,7 +569,7 @@ const PurchasePage = () => {
                     {cartItems.map((item) => (
                       <div key={item.id} className="product-item small">
                         <div className="item-image-container">
-                            <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
+                          <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
                         </div>
                         <div className="purchase-product-details">
                           <h3>{item.name}</h3>
@@ -579,7 +684,7 @@ const PurchasePage = () => {
                           </p>
                           <p className="text-gray">{shippingInfo.address}</p>
                         </div>
-                        <button className="btn btn-outline btn-small">Cập nhật</button>
+                        {/* <button className="btn btn-outline btn-small">Cập nhật</button> */}
                       </div>
                     </div>
                   </div>
@@ -597,23 +702,23 @@ const PurchasePage = () => {
 
                 {/* Sản phẩm */}
                 <div className="product-list">
-                    {cartItems.map((item) => (
-                        <div key={item._id} className="product-item small">
-                        <div className="item-image-container">
-                            <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
-                        </div>
+                  {cartItems.map((item) => (
+                    <div key={item._id} className="product-item small">
+                      <div className="item-image-container">
+                        <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
+                      </div>
 
-                            <div className="purchase-product-details">
-                            <h3>{item.name}</h3>
-                            <p className="variant"> {item.color} - {item.size}</p>
-                            <p className="price">{item.price.toLocaleString("vi-VN")}đ x {item.quantity}</p>
-                            </div>
-                            <p className="product-price">
-                            {(item.price * item.quantity).toLocaleString("vi-VN")}đ
-                            </p>
-                        
-                        </div>
-                    ))}
+                      <div className="purchase-product-details">
+                        <h3>{item.name}</h3>
+                        <p className="variant"> {item.color} - {item.size}</p>
+                        <p className="price">{item.price.toLocaleString("vi-VN")}đ x {item.quantity}</p>
+                      </div>
+                      <p className="product-price">
+                        {(item.price * item.quantity).toLocaleString("vi-VN")}đ
+                      </p>
+
+                    </div>
+                  ))}
                 </div>
 
 

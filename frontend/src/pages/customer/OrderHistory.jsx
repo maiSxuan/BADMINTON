@@ -5,6 +5,7 @@ import "./OrderHistory.css"
 import { updateOrderStatus, getOrdersByUserId, requestReturnOrCancellation } from "../../services/orderService"
 import { createRating } from "../../services/ratingService"
 import Pagination from "../../components/common/Pagination" // điều chỉnh path nếu khác
+import { usePopup } from "../../components/common/popupContext"
 
 function ReasonDialog({ isOpen, onClose, onSubmit, title, description, placeholder, submitButtonText }) {
   const [reason, setReason] = useState("")
@@ -79,6 +80,7 @@ const StarRating = ({ rating, onRatingChange }) => {
 function ReviewDialog({ isOpen, onClose, order, userId }) {
   const [reviews, setReviews] = useState({}) // { productId: { rating: 0, comment: '' } }
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { showPopup } = usePopup()
 
   const handleReviewChange = (productId, field, value) => {
     setReviews((prev) => ({
@@ -110,18 +112,42 @@ function ReviewDialog({ isOpen, onClose, order, userId }) {
     }
 
     if (reviewPromises.length === 0) {
-      alert("Vui lòng đánh giá và viết bình luận cho ít nhất một sản phẩm.")
+      // alert("Vui lòng đánh giá và viết bình luận cho ít nhất một sản phẩm.")
+      showPopup(
+        'Thông báo',
+        'Vui lòng chọn số sao và viết bình luận để đánh giá',
+        null,
+        null,
+        4,
+        3
+      )
       setIsSubmitting(false)
       return
     }
 
     try {
       await Promise.all(reviewPromises)
-      alert("Cảm ơn bạn đã đánh giá sản phẩm!")
+      // alert("Cảm ơn bạn đã đánh giá sản phẩm!")
+      showPopup(
+        'Thông báo',
+        'Cảm ơn bạn đã đánh giá sản phẩm',
+        null,
+        null,
+        4,
+        5
+      )
       onClose()
     } catch (error) {
       console.error("Lỗi khi gửi đánh giá:", error)
-      alert(error.message || "Có lỗi xảy ra khi gửi đánh giá.")
+      // alert(error.message || "Có lỗi xảy ra khi gửi đánh giá.")
+      showPopup(
+        'Lỗi',
+        error.message || 'Có lỗi xảy ra khi gửi đánh giá',
+        null,
+        null,
+        4,
+        3
+      )
     } finally {
       setIsSubmitting(false)
     }
@@ -188,6 +214,8 @@ const OrderHistory = () => {
   const [showOrderDetail, setShowOrderDetail] = useState(false)
   const [userIdNotFound, setUserIdNotFound] = useState(false)
   const [currentUser, setCurrentUser] = useState(null)
+
+  const { showPopup } = usePopup()
 
   // ===== PHÂN TRANG =====
   const ORDERS_PER_PAGE = 15
@@ -282,10 +310,26 @@ const OrderHistory = () => {
     try {
       await updateOrderStatus(order._id, "Hoàn thành")
       setOrders((prev) => prev.map((o) => (o._id === order._id ? { ...o, status: "Hoàn thành" } : o)))
-      alert("Đã xác nhận nhận hàng thành công!")
+      // alert("Đã xác nhận nhận hàng thành công!")
+      showPopup(
+        'Thông báo',
+        'Đã xác nhận nhận hàng thành công',
+        null,
+        null,
+        4,
+        3
+      )
     } catch (error) {
       console.error("Lỗi xác nhận nhận hàng:", error)
-      alert("Có lỗi xảy ra khi xác nhận nhận hàng.")
+      // alert("Có lỗi xảy ra khi xác nhận nhận hàng.")
+      showPopup(
+        'Lỗi',
+        error.message || 'Có lỗi xảy ra khi xác thực nhận hàng',
+        null,
+        null,
+        4,
+        3
+      )
     }
   }
 
@@ -305,10 +349,26 @@ const OrderHistory = () => {
       setOrders((prev) =>
         prev.map((o) => (o._id === currentOrderForAction._id ? { ...o, status: data.data.status } : o))
       )
-      alert(data.message)
+      // alert(data.message)
+      showPopup(
+        'Thông báo',
+        data.message,
+        null,
+        null,
+        4,
+        3
+      )
     } catch (error) {
       console.error("Lỗi gửi yêu cầu:", error)
-      alert("Có lỗi xảy ra khi gửi yêu cầu.")
+      // alert("Có lỗi xảy ra khi gửi yêu cầu.")
+      showPopup(
+        'Lỗi',
+        error.message || 'Có lỗi xảy ra khi gửi yêu cầu',
+        null,
+        null,
+        4,
+        3
+      )
     } finally {
       setShowReasonDialog(false)
       setCurrentOrderForAction(null)

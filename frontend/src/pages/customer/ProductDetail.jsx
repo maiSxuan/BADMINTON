@@ -147,7 +147,7 @@ const ProductDetailPage = () => {
                 null,
                 null,
                 4,
-                1
+                2
             )
             return;
         }
@@ -159,9 +159,15 @@ const ProductDetailPage = () => {
                 null,
                 null,
                 4,
-                1
+                2
             )
             return;
+        }
+
+        const getSalePrice = () => {
+            if (product.sale && product.sale_price)
+                return product.sale_price
+            return selectedOption.price
         }
 
         const selectedItem = {
@@ -171,7 +177,8 @@ const ProductDetailPage = () => {
             variantId: selectedVariant._id,
             optionId: selectedOption._id,
             quantity,
-            price: selectedOption.price,
+            // price: selectedOption.price,
+            price: getSalePrice(),
             color: selectedVariant.name || 'Không xác định',
             size: selectedOption.value || 'Không xác định',
             image: selectedVariant.image || product.thumbnail_url || "/placeholder.svg",
@@ -191,7 +198,7 @@ const ProductDetailPage = () => {
                 null,
                 null,
                 4, 
-                1
+                2
             )
             return;
         }
@@ -203,7 +210,7 @@ const ProductDetailPage = () => {
                 null,
                 null,
                 4, 
-                1
+                2
             )
             return;
         }
@@ -238,7 +245,7 @@ const ProductDetailPage = () => {
                 null,
                 null,
                 4, 
-                1
+                2
             )
             setQuantity(1);
         } catch (err) {
@@ -248,7 +255,7 @@ const ProductDetailPage = () => {
                 null,
                 null,
                 4, 
-                1
+                2
             )
         } finally {
             setIsAdding(false)

@@ -3,6 +3,7 @@ import "./ProfilePage.css";
 import { useNavigate } from "react-router-dom";
 import { Pencil, Eye, EyeOff } from "lucide-react";
 import { getProfile, updateProfile } from "../../services/UsersService";
+import { usePopup } from "../../components/common/popupContext";
 
 const ProfilePage = () => {
   const inputRefs = useRef({});
@@ -23,6 +24,8 @@ const ProfilePage = () => {
   // State lưu lỗi
   const [errors, setErrors] = useState({});
   const [editField, setEditField] = useState(null);
+
+  const { showPopup } = usePopup();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -122,11 +125,27 @@ const ProfilePage = () => {
         };
 
         await updateProfile(token, payload);
-        alert("Cập nhật thông tin thành công!");
+        // alert("Cập nhật thông tin thành công!");
+        showPopup(
+          'Thông báo',
+          'Cập nhật thông tin thành công',
+          null,
+          null,
+          4,
+          2
+        )
         navigate("/account/profile");
       } catch (err) {
         console.error("Update error:", err.response?.data);
-        alert(err.response?.data?.message || "Lỗi khi cập nhật thông tin");
+        // alert(err.response?.data?.message || "Lỗi khi cập nhật thông tin");
+        showPopup(
+          'Lỗi',
+          err.message || 'Lỗi khi cập nhật thông tin',
+          null,
+          null,
+          4,
+          2
+        )
       }
     }
   };

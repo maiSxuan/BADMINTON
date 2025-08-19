@@ -4,6 +4,7 @@ import { registerUser, verifyOtp } from "../../services";
 import "./Registration.css";
 import Logo from "../../components/common/logo";
 import { Eye, EyeOff } from "lucide-react";
+import { usePopup } from "../../components/common/popupContext";
 
 const Registration = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +21,8 @@ const Registration = () => {
   const [step, setStep] = useState("register"); // 'register' | 'verify'
   const [serverError, setServerError] = useState("");
   const navigate = useNavigate();
+
+  const { showPopup } = usePopup();
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -114,8 +117,17 @@ const Registration = () => {
     e.preventDefault();
     try {
       await verifyOtp({ email: formData.email, otp });
-      alert("Xác minh thành công. Vui lòng đăng nhập.");
-      navigate("/login");
+      // alert("Xác minh thành công. Vui lòng đăng nhập.");
+      showPopup(
+        "Thông báo",
+        "Xác minh thành công. Vui lòng đăng nhập lại",
+        "Đăng nhập",
+        () => navigate("/login"),
+        4,
+        null,
+        true
+      );
+      // navigate("/login");
     } catch (err) {
       setServerError(err.response?.data?.message || "Xác minh thất bại");
     }
@@ -141,9 +153,8 @@ const Registration = () => {
               {/* Tên đăng nhập */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${
-                    errors.name ? "registration-input-error" : ""
-                  }`}
+                  className={`registration-input-wrapper ${errors.name ? "registration-input-error" : ""
+                    }`}
                 >
                   <input
                     type="text"
@@ -161,9 +172,8 @@ const Registration = () => {
               {/* Số điện thoại */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${
-                    errors.phone ? "registration-input-error" : ""
-                  }`}
+                  className={`registration-input-wrapper ${errors.phone ? "registration-input-error" : ""
+                    }`}
                 >
                   <input
                     type="tel"
@@ -181,9 +191,8 @@ const Registration = () => {
               {/* Địa chỉ */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${
-                    errors.address ? "registration-input-error" : ""
-                  }`}
+                  className={`registration-input-wrapper ${errors.address ? "registration-input-error" : ""
+                    }`}
                 >
                   <input
                     type="text"
@@ -203,9 +212,8 @@ const Registration = () => {
               {/* Email */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${
-                    errors.email ? "registration-input-error" : ""
-                  }`}
+                  className={`registration-input-wrapper ${errors.email ? "registration-input-error" : ""
+                    }`}
                 >
                   <input
                     type="email"
@@ -223,9 +231,8 @@ const Registration = () => {
               {/* Mật khẩu */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${
-                    errors.password ? "registration-input-error" : ""
-                  }`}
+                  className={`registration-input-wrapper ${errors.password ? "registration-input-error" : ""
+                    }`}
                 >
                   <input
                     type={showPassword ? "text" : "password"}
@@ -251,9 +258,8 @@ const Registration = () => {
               {/* Xác nhận mật khẩu */}
               <div className="registration-form-group">
                 <div
-                  className={`registration-input-wrapper ${
-                    errors.confirmPassword ? "registration-input-error" : ""
-                  }`}
+                  className={`registration-input-wrapper ${errors.confirmPassword ? "registration-input-error" : ""
+                    }`}
                 >
                   <input
                     type={showConfirmPassword ? "text" : "password"}

@@ -160,30 +160,38 @@ const AllOrdersPage = () => {
 
     if (order.status === "Tiến hành trả hàng/hoàn tiền") {
       const nextStatus = "Đã trả hàng/hoàn tiền"
-      if (window.confirm(`Xác nhận chuyển sang trạng thái "${nextStatus}"?`)) {
-        try {
-          await handleUpdateOrderStatus(orderId, nextStatus)
-          // alert("Cập nhật trạng thái thành công!")
-          showPopup(
-            'Thông báo',
-            'Cập nhật trạng thái thành công!',
-            null,
-            null,
-            4,
-            3
-          )
-        } catch (error) {
-          // alert("Có lỗi xảy ra khi cập nhật trạng thái!")
-          showPopup(
-            'Lỗi',
-            'Có lỗi xảy ra khi cập nhật trạng thái!',
-            null,
-            null,
-            4,
-            3
-          )
-        }
-      }
+      // if (window.confirm(`Xác nhận chuyển sang trạng thái "${nextStatus}"?`)) {
+      showPopup(
+        'Thông báo',
+        `Xác nhận chuyển sang trạng thái "${nextStatus}"?`,
+        'Xác nhận',
+        async () => {
+          try {
+            await handleUpdateOrderStatus(orderId, nextStatus)
+            // alert("Cập nhật trạng thái thành công!")
+            showPopup(
+              'Thông báo',
+              'Cập nhật trạng thái thành công!',
+              null,
+              null,
+              4,
+              3
+            )
+          } catch (error) {
+            // alert("Có lỗi xảy ra khi cập nhật trạng thái!")
+            showPopup(
+              'Lỗi',
+              'Có lỗi xảy ra khi cập nhật trạng thái!',
+              null,
+              null,
+              4,
+              3
+            )
+          }
+        },
+        4
+      )
+      // }
       return
     }
 
@@ -199,30 +207,38 @@ const AllOrdersPage = () => {
     const nextStatus = statusOptions[currentIndex + 1]
 
     if (nextStatus) {
-      if (window.confirm(`Cập nhật trạng thái đơn hàng từ "${order.status}" thành "${nextStatus}"?`)) {
-        try {
-          await handleUpdateOrderStatus(orderId, nextStatus)
-          // alert("Cập nhật trạng thái thành công!")
-          showPopup(
-            'Thông báo',
-            'Cập nhật trạng thái thành công!',
-            null,
-            null,
-            4,
-            3
-          )
-        } catch (error) {
-          alert("Có lỗi xảy ra khi cập nhật trạng thái!")
-          showPopup(
-            'Lỗi',
-            'Có lỗi xảy ra khi cập nhật trạng thái!',
-            null,
-            null,
-            4,
-            3
-          )
-        }
-      }
+      // if (window.confirm(`Cập nhật trạng thái đơn hàng từ "${order.status}" thành "${nextStatus}"?`)) {
+      showPopup(
+        'Thông báo',
+        `Cập nhật trạng thái đơn hàng từ "${order.status}" thành "${nextStatus}"?`,
+        'Cập nhật',
+        async () => {
+          try {
+            await handleUpdateOrderStatus(orderId, nextStatus)
+            // alert("Cập nhật trạng thái thành công!")
+            showPopup(
+              'Thông báo',
+              'Cập nhật trạng thái thành công!',
+              null,
+              null,
+              4,
+              3
+            )
+          } catch (error) {
+            // alert("Có lỗi xảy ra khi cập nhật trạng thái!")
+            showPopup(
+              'Lỗi',
+              'Có lỗi xảy ra khi cập nhật trạng thái!',
+              null,
+              null,
+              4,
+              3
+            )
+          }
+        },
+        4
+      )
+      // }
     } else {
       // alert("Đơn hàng đã ở trạng thái cuối cùng!")
       showPopup(

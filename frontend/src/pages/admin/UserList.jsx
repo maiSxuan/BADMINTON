@@ -37,7 +37,10 @@ const UserListPage = () => {
         "Đóng",
         () => {
           navigate("/login");
-        }
+        },
+        4,
+        null,
+        true
       );
       return;
     }

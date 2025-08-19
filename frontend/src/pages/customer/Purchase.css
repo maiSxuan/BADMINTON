@@ -436,6 +436,7 @@ body {
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
+  position: relative;
 }
 
 .info-card h3 {
@@ -452,6 +453,14 @@ body {
 .text-gray {
   color: #6b7280;
 }
+
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 
 /* Delivery options */
 .delivery-options {
@@ -696,3 +705,5 @@ body {
     max-width: 100%;
     width: 100%;
 }
+
+

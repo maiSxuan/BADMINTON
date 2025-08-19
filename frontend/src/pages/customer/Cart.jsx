@@ -51,7 +51,7 @@ const CartPage = () => {
           null,
           null,
           4,
-          1
+          2
         )
       } finally {
         setLoading(false)
@@ -125,9 +125,10 @@ const CartPage = () => {
       showPopup(
         'Thông báo',
         'Bạn chưa chọn sản phẩm để xóa',
-        'Đóng',
         null,
-        4
+        null,
+        4,
+        2
       )
       return
     }
@@ -164,7 +165,7 @@ const CartPage = () => {
             null,
             null,
             4,
-            1
+            2
           )
         } catch (err) {
           console.error("Lỗi khi xóa các sản phẩm được chọn: ", err);
@@ -174,7 +175,7 @@ const CartPage = () => {
             null,
             null,
             4,
-            1
+            2
           )
         }
       },
@@ -198,7 +199,7 @@ const CartPage = () => {
             null,
             null,
             4,
-            1
+            2
           )
         } catch (err) {
           console.error("Clear cart error: ", err);
@@ -208,7 +209,7 @@ const CartPage = () => {
             null,
             null,
             4,
-            1
+            2
           )
         }
       },
@@ -233,7 +234,15 @@ const CartPage = () => {
   const handleProceedToPurchase = () => {
     const selectedItems = cartItems.filter(i => i.selected)
     if (selectedItems.length === 0) {
-      alert("Vui lòng chọn ít nhất một sản phẩm để mua hàng!")
+      // alert("Vui lòng chọn ít nhất một sản phẩm để mua hàng!")
+      showPopup(
+        'Thông báo',
+        'Vui lòng chọn ít nhất một sản phẩm để mua hàng',
+        null,
+        null,
+        4,
+        3
+      )
       return
     }
 

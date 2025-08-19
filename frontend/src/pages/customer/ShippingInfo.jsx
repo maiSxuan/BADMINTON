@@ -1,6 +1,8 @@
 import "./ShippingInfo.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { usePopup } from "../../components/common/popupContext";
 
 const ShippingInfo = () => {
     const [formData, setFormData] = useState({
@@ -12,9 +14,6 @@ const ShippingInfo = () => {
         district: "",
         ward: "",
         houseNumber: "",
-        storeLocation: "",
-        note: "",
-        shippingMethod: "",
         saveInfo: false,
     })
 
@@ -23,7 +22,10 @@ const ShippingInfo = () => {
     const [wards, setWards] = useState([]);
 
     const [errors, setErrors] = useState({});
-    const [isConfirmed, setIsConfirmed] = useState(false);
+    const [isUpdated, setIsUpdated] = useState(false);
+
+    const navigate = useNavigate();
+    const { showPopup } = usePopup()
 
     useEffect(() => {
         axios.get("https://provinces.open-api.vn/api/?depth=3")
@@ -98,29 +100,28 @@ const ShippingInfo = () => {
 
         // console.log("Form submitted:", formData)
         if (Object.keys(validateErrors).length === 0) {
-            console.log("Form submitted:", formData);
-            setIsConfirmed(true);
+            console.log("Updated Information:", formData);
+            setIsUpdated(true);
         }
     }
 
     return (
         <div className="shipping-container">
             <div className="shipping-form-wrapper">
-                <h1 className="shipping-form-title">Thông tin vận chuyển</h1>
+                <h1 className="shipping-form-title">Cập nhật thông tin</h1>
 
-                {isConfirmed ? (
+                {isUpdated ? (
                     <div className="shipping-confirmation">
                         <h2 className="shipping-confirmation-title">
-                            Thông tin vận chuyển của bạn đã được xác nhận
+                            Thông tin của bạn đã được cập nhật
                         </h2>
                         <button 
                             className="shipping-confirmation-button"
-                            onClick={() => alert("Tiếp tục thanh toán")}
+                            onClick={() => navigate("/purchase")}
                         >
-                            Tiếp tục thanh toán
+                            Quay lại xác nhận đơn hàng
                         </button>
                     </div>
-
                 ) : (
                     <form onSubmit={handleSubmit} className="shipping-form">
                         <div className="shipping-form-row">
@@ -246,58 +247,6 @@ const ShippingInfo = () => {
                                 </div>
                                 {errors.houseNumber && <ErrorText message={errors.houseNumber} />}
                             </div>
-
-                            <div className="shipping-form-group">
-                                <label htmlFor="storeLocation" className="shipping-form-label">Vị trí cửa hàng</label>
-                                <select 
-                                    id="storeLocation"
-                                    name="storeLocation"
-                                    value={formData.storeLocation}
-                                    onChange={handleInputChange}
-                                    className="shipping-form-select"
-                                    required
-                                >
-                                    <option value="">- Chọn cửa hàng -</option>
-                                    <option value="storePremium">SCD Premium</option>
-                                    <option value="store1">SCD Quận 1</option>
-                                    <option value="store3">SCD Quận 3</option>
-                                    <option value="store4">SCD Quận 4</option>
-                                    <option value="store5">SCD Quận 5</option>
-                                    <option value="store7">SCD Quận 7</option>
-                                    <option value="store8">SCD Quận 8</option>
-                                </select>
-                            </div>
-
-                            <div className="shipping-form-group">
-                                <label htmlFor="note" className="shipping-form-label">Ghi chú (tùy chọn)</label>
-                                <input 
-                                    type="text"
-                                    id="note"
-                                    name="note"
-                                    value={formData.note}
-                                    onChange={handleInputChange}
-                                    className="shipping-form-input"
-                                    placeholder="Ghi chú thêm về địa chỉ giao hàng..." 
-                                />
-                            </div>
-
-                            <div className="shipping-form-group">
-                                <label htmlFor="shippingMethod" className="shipping-form-label">Phương thức giao hàng</label>
-                                <select 
-                                    id="shippingMethod"
-                                    name="shippingMethod"
-                                    value={formData.shippingMethod}
-                                    onChange={handleInputChange}
-                                    className="shipping-form-select"
-                                    required
-                                >
-                                    <option value="">- Chọn phương thức giao hàng -</option>
-                                    <option value="standard">Giao hàng tiêu chuẩn</option>
-                                    <option value="express">Giao hàng nhanh</option>
-                                    <option value="same-day">Giao hàng trong ngày</option>
-                                    <option value="pickup">Nhận tại cửa hàng</option>
-                                </select>
-                            </div>
                         </div>
 
                         <div className="shipping-checkbox-group">
@@ -316,7 +265,7 @@ const ShippingInfo = () => {
                         
                         <div className="shipping-submit-wrapper">
                             <button type="submit" className="shipping-submit-button">
-                                Xác nhận
+                                Cập nhật
                             </button>
                         </div>
                     </form>

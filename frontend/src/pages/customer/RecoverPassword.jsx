@@ -5,6 +5,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { resetPassword } from "../../services";
 import "./ForgotPassword.css"
 
+import { usePopup } from "../../components/common/popupContext";
+
 export default function ForgotPasswordStep2() {
   const [code, setCode] = useState("");
   const [passwords, setPasswords] = useState({
@@ -14,6 +16,8 @@ export default function ForgotPasswordStep2() {
   const location = useLocation();
   const navigate = useNavigate();
   const email = location.state?.email || "";
+  
+  const { showPopup } = usePopup();
 
   const handleInputChange = (field, value) => {
     setPasswords((prev) => ({
@@ -24,19 +28,51 @@ export default function ForgotPasswordStep2() {
 
   const handleSubmit = async() => {
     if (passwords.newPassword !== passwords.confirmPassword) {
-      alert("Mật khẩu không khớp!")
+      // alert("Mật khẩu không khớp!")
+      showPopup(
+        'Thông báo',
+        'Mật khẩu không khớp',
+        null,
+        null,
+        4,
+        2
+      )
       return
     }
     if (!code) {
-      alert("Vui lòng nhập mã xác nhận!");
+      // alert("Vui lòng nhập mã xác nhận!");
+      showPopup(
+        'Thông báo',
+        'Vui lòng nhập mã xác nhận',
+        null,
+        null,
+        4,
+        2
+      )
       return;
     }
     try {
       await resetPassword(email, code, passwords.newPassword);
-      alert("Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
-      navigate("/login");
+      // alert("Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
+      showPopup(
+        "Thông báo",
+        "Đổi mật khẩu thành công! Vui lòng đăng nhập lại",
+        "Đăng nhập",
+        () => navigate("/login"),
+        4,
+        3
+      );
+      // navigate("/login");
     } catch (err) {
-      alert(err.message);
+      // alert(err.message);
+      showPopup(
+        'Lỗi',
+        err.message,
+        null,
+        null,
+        4,
+        3
+      )
     }
   }
 

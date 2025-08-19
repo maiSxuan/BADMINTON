@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import "./ProductClassification.css";
 import { uploadImage, deleteImage } from "../../services";
+import { usePopup } from "../../components/common/popupContext";
 
 // Helper functions (không đổi)
 const uploadImageToServer = async (file) => await uploadImage(file);
@@ -17,6 +18,8 @@ const ProductClassification = ({ initialClassifications, initialData, onClassifi
     const [uiVariants, setUiVariants] = useState([]); // Chỉ dùng để render bảng
     const [bulkValues, setBulkValues] = useState({ price: "", stock: "", skuPrefix: "" });
     const [uploadingState, setUploadingState] = useState({});
+
+    const {showPopup} = usePopup()
 
     // Effect 1: Đồng bộ props từ cha vào state nội bộ.
     useEffect(() => {
@@ -165,7 +168,16 @@ const ProductClassification = ({ initialClassifications, initialData, onClassifi
         const files = Array.from(event.target.files); if (files.length === 0) return;
         const optionToUpdate = localClassifications[0].options.find(o => o.id === optionId);
         if ((optionToUpdate.images || []).length + files.length > MAX_IMAGES_PER_VARIANT) {
-            alert(`Bạn chỉ có thể tải lên tối đa ${MAX_IMAGES_PER_VARIANT} ảnh.`); return;
+            // alert(`Bạn chỉ có thể tải lên tối đa ${MAX_IMAGES_PER_VARIANT} ảnh.`); 
+            showPopup(
+                'Thông báo',
+                `Bạn chỉ có thể tải lên tối đa ${MAX_IMAGES_PER_VARIANT} ảnh`,
+                null,
+                null,
+                4,
+                3
+            )
+            return;
         }
         setUploadingState(prev => ({ ...prev, [optionId]: true }));
         try {
@@ -173,7 +185,15 @@ const ProductClassification = ({ initialClassifications, initialData, onClassifi
             const newImages = [...(optionToUpdate.images || []), ...uploadedImages];
             updateOptionField(1, optionId, 'images', newImages); // Cập nhật trực tiếp
         } catch (error) {
-            alert("Lỗi khi tải lên: " + error.message);
+            // alert("Lỗi khi tải lên: " + error.message);
+            showPopup(
+                'Lỗi',
+                error.message || 'Lỗi khi tải ảnh',
+                null,
+                null,
+                4,
+                3
+            )
         } finally {
             setUploadingState(prev => ({ ...prev, [optionId]: false }));
         }
@@ -188,7 +208,15 @@ const ProductClassification = ({ initialClassifications, initialData, onClassifi
             const newImages = optionToUpdate.images.filter(img => img.public_id !== publicIdToRemove);
             updateOptionField(1, optionId, 'images', newImages); // Cập nhật trực tiếp
         } catch (error) {
-            alert("Lỗi khi xóa ảnh: " + error.message);
+            // alert("Lỗi khi xóa ảnh: " + error.message);
+            showPopup(
+                'Lỗi',
+                error.message || 'Lỗi khi xóa ảnh',
+                null,
+                null,
+                4,
+                3
+            )
         }
     };
     
