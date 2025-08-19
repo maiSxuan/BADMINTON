@@ -6,6 +6,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AllProducts.css";
 import { getProductsOnQuery, getAllCategories, deleteProduct, togglePublishProduct, getAllBrands } from "../../services";
+import { usePopup } from "../../components/common/popupContext";
 
 const AllProducts = () => {
     const navigate = useNavigate();
@@ -23,6 +24,8 @@ const AllProducts = () => {
     // State cho modal chi tiết
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showProductDetail, setShowProductDetail] = useState(false);
+
+    const { showPopup } = usePopup();
     
     useEffect(() => {
         const fetchData = async () => {
@@ -72,15 +75,39 @@ const AllProducts = () => {
     };
     const handleDeleteProduct = async (slug, e) => {
         e.stopPropagation();
-        if (window.confirm("Hành động này sẽ XÓA VĨNH VIỄN sản phẩm. Bạn chắc chắn?")) {
-            try {
-                await deleteProduct(slug);
-                setAllProducts(prev => prev.filter(p => p.slug !== slug));
-                alert('Xóa thành công.');
-            } catch (err) {
-                alert(err.message);
-            }
-        }
+        // if (window.confirm("Hành động này sẽ XÓA VĨNH VIỄN sản phẩm. Bạn chắc chắn?")) {
+        showPopup(
+            'Xác nhận xóa',
+            'Hành động này sẽ XÓA VĨNH VIỄN sản phẩm. Bạn chắc chắn?',
+            'Xóa',
+            async () => {
+                try {
+                    await deleteProduct(slug);
+                    setAllProducts(prev => prev.filter(p => p.slug !== slug));
+                    // alert('Xóa thành công.')
+                    showPopup(
+                        'Thông báo',
+                        'Xóa thành công',
+                        null,
+                        null,
+                        4,
+                        3
+                    )
+                } catch (err) {
+                    // alert(err.message);
+                    showPopup(
+                        'Lỗi',
+                        err.message || 'Xóa sản phẩm thất bại',
+                        null,
+                        null,
+                        4,
+                        3
+                    )
+                }
+            },
+            4
+        )
+        // }
     };
     const handleTogglePublish = async (product, e) => {
         e.stopPropagation();
@@ -90,7 +117,15 @@ const AllProducts = () => {
                 prev.map(p => p.id === product.id ? { ...p, is_published: !p.is_published } : p)
             );
         } catch (err) {
-            alert(err.message);
+            // alert(err.message);
+            showPopup(
+                'Lỗi',
+                err.message || 'Cập nhật trạng thái thất bại',
+                null,
+                null,
+                4,
+                3
+            )
         }
     };
 

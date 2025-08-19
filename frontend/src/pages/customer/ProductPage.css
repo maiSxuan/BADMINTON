@@ -66,6 +66,7 @@ body {
     margin-right: 10px;
     width: 16px;
     height: 16px;
+    accent-color: #eb9ce3;
 }
 
 /* --- KHU VỰC SẢN PHẨM (BÊN PHẢI) --- */
@@ -101,6 +102,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: relative;
 }
 
 .product-card:hover {
@@ -118,7 +120,8 @@ body {
 .product-card h4 {
     font-size: 14px;
     font-weight: 600;
-    height: 40px; /* Cố định chiều cao cho tên sản phẩm */
+    line-height: 20px;
+    height: 40px; 
     margin: 0 0 10px 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -127,12 +130,52 @@ body {
     -webkit-box-orient: vertical;
 }
 
-.product-card .price {
-    font-size: 16px;
+.pp-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
     font-weight: bold;
-    color: #e83d3d; /* Màu đỏ cho giá */
+    font-size: 12px;
+    color: #fff;
+    z-index: 10;
+}
+
+.pp-discount-percentage {
+    /* background-color: #e53935; */
+    /* border: 1px solid #b71c1c; */
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+.pp-discount-fixed {
+    /* background-color: #43a047;
+    border: 1px solid #2e7d32; */
+    background: linear-gradient(135deg, #27ae60, #219150);
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+}
+
+/* .product-card .price { */
+.pp-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #e83d3d; 
     margin: 0;
 }
+
+.pp-original-price {
+  text-decoration: line-through;
+  color: #888;
+  margin-right: 8px;
+  font-size: 14px;
+}
+.pp-sale-price {
+  color: #e53935; 
+  font-weight: 700;
+  margin-right: 8px;
+}
+
 
 /* --- PHÂN TRANG --- */
 .pagination {

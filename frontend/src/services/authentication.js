@@ -32,6 +32,23 @@ export const registerUser = async (data) => {
   return await res.json();
 };
 
+export const verifyOtp = async ({ email, otp }) => {
+  const res = await fetch(`http://localhost:4000/api/auth/verify-email`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, otp }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    const err = new Error(errorData.message || "Xác minh OTP thất bại");
+    err.response = { data: errorData };
+    throw err;
+  }
+
+  return await res.json();
+};
+
 export const requestPasswordReset = async (email) => {
   const res = await fetch("http://localhost:4000/api/auth/forgot-password", {
     method: "POST",
@@ -57,3 +74,4 @@ export const resetPassword = async (email, token, newPassword) => {
   }
   return res.json();
 };
+

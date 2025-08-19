@@ -96,36 +96,42 @@ const getTopSellingProducts = async (req, res) => {
       // Giai đoạn 3: Nhóm các sản phẩm giống nhau lại và tính toán
       {
         $group: {
-          _id: { 
-            sku: '$items.sku_code',
-            name: '$items.variant_name', // hoặc '$items.name' tùy bạn muốn hiển thị tên gì
-            thumbnail: '$items.thumbnail_url'
-          },
+          _id: '$items.product', // Nhóm theo ID của sản phẩm gốc
           totalQuantitySold: { $sum: '$items.quantity' },
-          
-          // --- FIX QUAN TRỌNG NHẤT ---
-          // Tính tổng doanh thu bằng cách nhân số lượng với giá *đã có sẵn trong item*
           totalRevenue: { 
             $sum: { 
-              $multiply: [ '$items.quantity', '$items.price' ] 
+              $multiply: [ '$items.quantity', '$items.priceAtTime' ] 
             } 
           }
         }
       },
 
+
       // Giai đoạn 4: Sắp xếp theo số lượng bán được nhiều nhất
-      { $sort: { totalQuantitySold: -1 } },
+      { $sort: { totalQuantitySold: -1, totalRevenue: -1 } },
 
       // Giai đoạn 5: Giới hạn số lượng kết quả
       { $limit: limit },
 
       // Giai đoạn 6: Định dạng lại output cho đẹp
       {
+        $lookup: {
+          from: 'products',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'productDetails'
+        }
+      },
+
+      // Giai đoạn 7: Tách mảng productDetails
+      { $unwind: '$productDetails' },
+
+      // Giai đoạn 8: Định dạng lại output cuối cùng
+      {
         $project: {
           _id: 0,
-          sku: '$_id.sku',
-          name: '$_id.name',
-          thumbnail: '$_id.thumbnail',
+          name: '$productDetails.name',
+          thumbnail: '$productDetails.thumbnail_url',
           totalQuantitySold: 1,
           totalRevenue: 1
         }

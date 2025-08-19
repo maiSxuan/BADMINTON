@@ -1,9 +1,11 @@
-export const getProductBySlug = async (slug) => {
+export const getProductBySlug = async (slug, view = 'public') => {
     if (!slug) throw new Error("Slug không được để trống.");
     
-    const response = await fetch(`http://localhost:4000/api/products/${slug}`);
+    const response = await fetch(`http://localhost:4000/api/products/${slug}?view=${view}`); 
+    
     if (!response.ok) {
-        throw new Error("Sản phẩm không tồn tại hoặc có lỗi xảy ra.");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Sản phẩm không tồn tại hoặc có lỗi xảy ra.");
     }
     
     return await response.json();
@@ -80,3 +82,15 @@ export const editProduct = async (slug, updatedData) => {
     }
     return await res.json();
 };
+
+export const fetchSaleProducts = async () => {
+    const res = await fetch('http://localhost:4000/api/products/sale-off', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json'}
+    });
+
+    if (!res.ok)
+        throw new Error('Không thể lấy danh sách sản phẩm giảm giá')
+
+    return await res.json();
+}

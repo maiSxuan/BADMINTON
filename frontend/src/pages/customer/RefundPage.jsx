@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import "./RefundPage.css"
+import { usePopup } from "../../components/common/popupContext"
 
 export default function ReturnRefundForm({ order, onSubmit, onBack }) {
   const [showSuccess, setShowSuccess] = useState(false)
@@ -10,6 +11,8 @@ export default function ReturnRefundForm({ order, onSubmit, onBack }) {
     reason: "",
     description: "",
   })
+
+  const { showPopup } = usePopup()
 
   const handleSend = async () => {
     // Logic to send the request and update the order
@@ -34,11 +37,27 @@ export default function ReturnRefundForm({ order, onSubmit, onBack }) {
         setShowSuccess(true)
         onSubmit(updatedOrder) // Notify parent component about the update
       } else {
-        alert("Có lỗi xảy ra khi gửi yêu cầu trả hàng/hoàn tiền.")
+        // alert("Có lỗi xảy ra khi gửi yêu cầu trả hàng/hoàn tiền.")
+        showPopup(
+          'Lỗi',
+          'Có lỗi xảy ra khi gửi yêu cầu trả hàng/hoàn tiền',
+          null,
+          null,
+          4,
+          3
+        )
       }
     } catch (error) {
       console.error("Lỗi khi gửi yêu cầu trả hàng/hoàn tiền:", error)
-      alert("Có lỗi xảy ra khi gửi yêu cầu trả hàng/hoàn tiền.")
+      // alert("Có lỗi xảy ra khi gửi yêu cầu trả hàng/hoàn tiền.")
+      showPopup(
+        'Lỗi',
+        error.message || 'Có lỗi xảy ra khi gửi yêu cầu trả hàng/hoàn tiền',
+        null,
+        null,
+        4,
+        3
+      )
     }
   }
 

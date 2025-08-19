@@ -118,3 +118,16 @@
   transition: all 0.3s ease;
 }
 
+.registration-input-wrapper {
+  position: relative;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  top: 60%;
+  right: 15px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+}
+

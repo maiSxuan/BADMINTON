@@ -4,32 +4,52 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom";
 import { requestPasswordReset } from "../../services";
 import "./ForgotPassword.css"
+import { usePopup } from "../../components/common/popupContext";
 
 export default function ForgotPasswordStep1() {
   const [email, setEmail] = useState("")
-  const [showPopup, setShowPopup] = useState(false)
+  const [displayPopup, setDisplayPopup] = useState(false)
   const [countdown, setCountdown] = useState(60)
   const [canResend, setCanResend] = useState(false)
   const navigate = useNavigate();
 
+  const { showPopup } = usePopup()
+
   useEffect(() => {
-    if (showPopup && countdown > 0) {
+    if (displayPopup && countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000)
       return () => clearTimeout(timer)
-    } else if (showPopup && countdown === 0) {
+    } else if (displayPopup && countdown === 0) {
       setCanResend(true)
     }
-  }, [countdown, showPopup])
+  }, [countdown, displayPopup])
 
   const handleSubmit = async () => {
-    if (!email) return alert("Vui lòng nhập email");
+    if (!email) 
+      // return alert("Vui lòng nhập email");
+      return showPopup(
+        'Thông báo',
+        'Vui lòng nhập email',
+        null,
+        null,
+        4,
+        3
+      )
     try {
       await requestPasswordReset(email);
-      setShowPopup(true);
+      setDisplayPopup(true);
       setCountdown(60);
       setCanResend(false);
     } catch (err) {
-      alert(err.response?.data?.message || "Lỗi gửi email hoặc email không tồn tại");
+      // alert(err.response?.data?.message || "Lỗi gửi email hoặc email không tồn tại");
+      showPopup(
+        'Lỗi',
+        err.message || 'Lỗi gửi email hoặc email không tồn tại',
+        null,
+        null,
+        4,
+        3
+      )
     }
   }
 
@@ -39,9 +59,25 @@ export default function ForgotPasswordStep1() {
         await requestPasswordReset(email);
         setCountdown(60);
         setCanResend(false);
-        alert("Đã gửi lại mã xác nhận");
+        // alert("Đã gửi lại mã xác nhận");
+        showPopup(
+          'Thông báo',
+          'Đã gửi lại mã xác nhận',
+          null,
+          null,
+          4,
+          3
+        )
       } catch (err) {
-        alert("Lỗi khi gửi lại: " + err.message);
+        // alert("Lỗi khi gửi lại: " + err.message);
+        showPopup(
+          'Lỗi',
+          err.message || 'Lỗi khi gửi lại mã xác nhận',
+          null,
+          null,
+          4,
+          3
+        )
       }
     }
   };
@@ -65,7 +101,7 @@ export default function ForgotPasswordStep1() {
         </button>
       </div>
 
-      {showPopup && (
+      {displayPopup && (
         <div className="forgot-overlay">
           <div className="forgot-popup">
             <h1 className="forgot-title">QUÊN MẬT KHẨU</h1>

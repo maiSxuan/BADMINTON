@@ -1,153 +1,344 @@
-// SaleOffPage.js
-import React, { useState, useMemo } from 'react';
-import './Saleoff.css'; // Giả sử bạn dùng chung file CSS
+import { useState, useMemo, useEffect } from 'react';
+import './Saleoff.css';
+import { fetchSaleProducts } from '../../services/index';
+import { Link } from 'react-router-dom';
 
-// --- DỮ LIỆU & HẰNG SỐ ---
-
-// Hằng số cho các bộ lọc
-const discountLevels = ['20', '30', '40', '50', '60'];
+const discountLevels = ['20%', '30%', '40%', '50%', '60%', 'Trực tiếp'];
 const priceRanges = {
-    'range1': { min: 0, max: 500000, label: 'Giá dưới 500.000đ' },
-    'range2': { min: 500000, max: 1000000, label: '500.000đ - 1 triệu' },
-    'range3': { min: 1000000, max: 2000000, label: '1 - 2 triệu' },
-    'range4': { min: 2000000, max: 3000000, label: '2 - 3 triệu' },
-    'range5': { min: 3000000, max: Infinity, label: 'Giá trên 3 triệu' }
+    'range1': { label: "Dưới 500,000đ", min: 0, max: 499999 },
+    'range2': { label: "500,000đ - 1,000,000đ", min: 500000, max: 1000000 },
+    'range3': { label: "1,000,000đ - 2,000,000đ", min: 1000001, max: 2000000 },
+    'range4': { label: "2,000,000đ - 3,000,000đ", min: 2000001, max: 3000000 },
+    'range5': { label: "Trên 3,000,000đ", min: 3000001, max: Number.MAX_SAFE_INTEGER }
 };
-const branches = ["SCD Premium", "SCD Quận 1", "SCD Quận 3", "SCD Quận 5", "SCD Quận 7", "SCD Quận 8"];
-
-// Dữ liệu giả lập, bao gồm giá gốc và giá bán
-const allMockProducts = [
-    { id: 41, name: "Áo Cầu Lông Kumpoo KW 1108 Nam - Size: L", originalPrice: 450000, salePrice: 135000, imageUrl: "https://cdn.shopvnb.com/uploads/gallery/vot-cau-long-victor-tk-ryuga-metallic-chinh-hang_1702259879.webp", inStockAt: ["SCD Quận 5"] },
-    { id: 42, name: "Áo Cầu Lông Kumpoo KW 1108 Nam - Size: XL", originalPrice: 450000, salePrice: 135000, imageUrl: "https://cdn.shopvnb.com/uploads/gallery/vot-cau-long-victor-tk-ryuga-metallic-chinh-hang_1702259879.webp", inStockAt: ["SCD Quận 5", "SCD Quận 7"] },
-    { id: 44, name: "Băng Ống Tay Aolikes A-7146", originalPrice: 59000, salePrice: 23600, imageUrl: "https://cdn.shopvnb.com/uploads/gallery/vot-cau-long-victor-tk-ryuga-metallic-chinh-hang_1702259879.webp", inStockAt: ["SCD Quận 1", "SCD Premium"] },
-    { id: 45, name: "Vợt Cầu Lông Kamito Legend Limited 2023", originalPrice: 1800000, salePrice: 900000, imageUrl: "https://cdn.shopvnb.com/uploads/gallery/vot-cau-long-victor-tk-ryuga-metallic-chinh-hang_1702259879.webp", inStockAt: ["SCD Quận 3", "SCD Quận 8"] },
-    { id: 46, name: "Vợt Cầu Lông Kamito VTT Gowo", originalPrice: 1600000, salePrice: 800000, imageUrl: "https://cdn.shopvnb.com/uploads/gallery/vot-cau-long-victor-tk-ryuga-metallic-chinh-hang_1702259879.webp", inStockAt: ["SCD Quận 7"] },
-    { id: 47, name: "Giày Cầu Lông Yonex Strider - Trắng Hồng - Size: 39", originalPrice: 1090000, salePrice: 545000, imageUrl: "https://cdn.shopvnb.com/uploads/gallery/vot-cau-long-victor-tk-ryuga-metallic-chinh-hang_1702259879.webp", inStockAt: ["SCD Premium", "SCD Quận 1"] },
-    { id: 48, name: "Vợt Proace Stroke 318II", originalPrice: 1250000, salePrice: 1000000, imageUrl: "https://cdn.shopvnb.com/uploads/gallery/vot-cau-long-victor-tk-ryuga-metallic-chinh-hang_1702259879.webp", inStockAt: ["SCD Quận 3"] },
-];
 
 function SaleOffPage() {
     const [filters, setFilters] = useState({
         discountLevels: [],
-        priceRanges: [],
-        branches: []
+        priceRanges: '',
     });
     const [currentPage, setCurrentPage] = useState(1);
-    const productsPerPage = 8;
+    const productsPerPage = 12;
 
-    // Logic lọc sản phẩm
+    const [promotions, setPromotions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const loadSaleProducts = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const data = await fetchSaleProducts();
+                console.log('data from API:', data);
+
+                if (!data || data.length === 0) {
+                    setPromotions([]);
+                    return;
+                }
+
+                setPromotions(data);
+
+            } catch (err) {
+                setError('Có lỗi xảy ra khi tải dữ liệu chương trình giảm giá');
+                setPromotions([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadSaleProducts();
+    }, []);
+
+    const sortedPromotions = useMemo(() => {
+        if (!promotions) return [];
+        return [...promotions].sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+    }, [promotions]);
+
+    const allProducts = useMemo(() => {
+        if (!sortedPromotions || sortedPromotions.length === 0) return [];
+
+        return sortedPromotions.flatMap(promo =>
+            promo.products.map(product => ({
+                ...product,
+                promotionId: promo.promotion_id,
+                promotionName: promo.promotion_name,
+                discountType: product.discountType || null,
+                discountValue: product.discountValue || 0,
+            }))
+        );
+    }, [sortedPromotions]);
+
+    const calcDiscountValue = (product) => {
+        if (product.discountType === 'percentage') {
+            return {
+                type: 'percentage',
+                value: product.discountValue || 0,
+            };
+        } else if (product.discountType === 'fixed') {
+            return {
+                type: 'fixed',
+                value: product.discountValue || 0,
+            };
+        } else if (product.price && product.sale_price) {
+            const percentOff = Math.floor(((product.price - product.sale_price) / product.price) * 100);
+            return {
+                type: 'percentage',
+                value: percentOff,
+            };
+        }
+        return {
+            type: null,
+            value: 0,
+        };
+    };
+
     const filteredProducts = useMemo(() => {
-        let products = allMockProducts;
+        return allProducts.filter(product => {
+            const { discountType, discountValue, price, sale_price } = product;
 
-        // Lọc theo mức giảm giá
-        if (filters.discountLevels.length > 0) {
-            products = products.filter(p => {
-                const percentOff = Math.floor(((p.originalPrice - p.salePrice) / p.originalPrice) * 100);
-                return filters.discountLevels.some(level => percentOff >= parseInt(level));
-            });
-        }
+            if (filters.discountLevels.length > 0) {
+                if (discountType === 'percentage') {
+                    if (
+                        filters.discountLevels.includes('Trực tiếp') ||
+                        !filters.discountLevels.some(level => discountValue >= parseInt(level))
+                    ) {
+                        return false;
+                    }
+                } else if (discountType === 'fixed') {
+                    if (!filters.discountLevels.includes('Trực tiếp')) {
+                        return false;
+                    }
+                } else {
+                    const percentOff = price && sale_price ? Math.floor(((price - sale_price) / price) * 100) : 0;
+                    if (
+                        filters.discountLevels.includes('Trực tiếp') ||
+                        !filters.discountLevels.some(level => percentOff >= parseInt(level))
+                    ) {
+                        return false;
+                    }
+                }
+            }
 
-        // Lọc theo khoảng giá (dựa trên giá đã giảm)
-        if (filters.priceRanges.length > 0) {
-            products = products.filter(p => {
-                return filters.priceRanges.some(rangeKey => {
-                    const range = priceRanges[rangeKey];
-                    return p.salePrice >= range.min && p.salePrice < range.max;
-                });
-            });
-        }
-        
-        // Lọc theo chi nhánh
-        if (filters.branches.length > 0) {
-            products = products.filter(p => p.inStockAt.some(branch => filters.branches.includes(branch)));
-        }
+            if (filters.priceRanges) {
+                const salePrice = sale_price ?? price ?? 0;
+                const range = priceRanges[filters.priceRanges];
+                if (!(salePrice >= range.min && salePrice < range.max)) return false;
+            }
 
-        return products;
-    }, [filters]);
+            return true;
+        });
+    }, [allProducts, filters]);
 
-    // Tính toán phân trang
+    const handleRadioClick = (key) => {
+        setFilters(prev => ({
+            ...prev,
+            priceRanges: prev.priceRanges === key ? '' : key,
+        }));
+        setCurrentPage(1);
+    };
+
     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
     const startIndex = (currentPage - 1) * productsPerPage;
     const paginatedProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
 
-    // Hàm xử lý chung cho checkbox
-    const handleCheckboxChange = (filterName) => (e) => {
+    const paginatedGroupedByPromotion = useMemo(() => {
+        const groups = {};
+        paginatedProducts.forEach(product => {
+            if (!groups[product.promotionId]) {
+                groups[product.promotionId] = [];
+            }
+            groups[product.promotionId].push(product);
+        });
+        return groups;
+    }, [paginatedProducts]);
+
+    const handleFilterChange = (filterName, isRadio = false) => (e) => {
         const { value, checked } = e.target;
-        const currentValues = filters[filterName];
-        const newValues = checked ? [...currentValues, value] : currentValues.filter(item => item !== value);
-        setFilters(prev => ({ ...prev, [filterName]: newValues }));
+        const currentValue = filters[filterName];
+
+        if (isRadio) {
+            // toggle radio: click lại option đang chọn => bỏ chọn
+            const newValue = currentValue === value ? '' : value;
+            setFilters(prev => ({ ...prev, [filterName]: newValue }));
+        } else {
+            // checkbox thêm/bớt trong mảng
+            const currentValues = currentValue || [];
+            const newValues = checked
+                ? [...currentValues, value]
+                : currentValues.filter(item => item !== value);
+            setFilters(prev => ({ ...prev, [filterName]: newValues }));
+        }
+
         setCurrentPage(1);
     };
 
-    // Hàm render một thẻ sản phẩm
     const renderProductCard = (product) => {
-        const discountPercent = Math.floor(((product.originalPrice - product.salePrice) / product.originalPrice) * 100);
-        return React.createElement(
-            'div', { key: product.id, className: 'product-card sale-card' },
-            React.createElement('div', { className: 'sale-tag' }, `Giảm ${discountPercent}%`),
-            React.createElement('img', { src: product.imageUrl, alt: product.name }),
-            React.createElement('h4', { className: 'product-name' }, product.name),
-            React.createElement(
-                'div', { className: 'price-container' },
-                React.createElement('p', { className: 'sale-price' }, `${product.salePrice.toLocaleString('vi-VN')} ₫`),
-                React.createElement('p', { className: 'original-price' }, `${product.originalPrice.toLocaleString('vi-VN')} ₫`)
-            ),
-            React.createElement('p', { className: 'branch-info' }, product.inStockAt.join(', '))
+        const discount = calcDiscountValue(product);
+
+        let discountLabel = '';
+        let badgeClass = 'saleoff-discount-badge';
+
+        if (discount.type === 'percentage') {
+            discountLabel = `Giảm ${discount.value}%`;
+            badgeClass += ' saleoff-discount-percentage';
+        } else if (discount.type === 'fixed') {
+            discountLabel = `Giảm ${discount.value.toLocaleString('vi-VN')} ₫`;
+            badgeClass += ' saleoff-discount-fixed';
+        }
+
+        return (
+            <Link to={`/products/${product.slug}`} key={product._id} className="saleoff-product-card saleoff-sale-card" >
+                <div className={badgeClass}>{discountLabel}</div>
+                <img src={product.thumbnail_url} className='saleoff-product-image' alt={product.name} />
+                <h4 className="saleoff-product-name">{product.name}</h4>
+                <div className="saleoff-price-container">
+                    <p className="saleoff-sale-price">{product.sale_price.toLocaleString('vi-VN')} ₫</p>
+                    <p className="saleoff-original-price">{product.price.toLocaleString('vi-VN')} ₫</p>
+                </div>
+            </Link>
         );
     };
-    
-    // Render toàn bộ component
-    return React.createElement(
-        'div', { className: 'container' },
-        React.createElement(
-            'main', { className: 'product-page-layout' },
-            React.createElement(
-                'aside', { className: 'sidebar' },
-                React.createElement(
-                    'div', { className: 'filter-group' },
-                    React.createElement('h3', null, 'MỨC GIẢM GIÁ'),
-                    React.createElement('ul', null, 
-                        discountLevels.map(level => React.createElement('li', { key: level }, React.createElement('label', null,
-                            React.createElement('input', { type: 'checkbox', value: level, onChange: handleCheckboxChange('discountLevels') }), ` ${level}%`
-                        )))
-                    )
-                ),
-                React.createElement(
-                    'div', { className: 'filter-group' },
-                    React.createElement('h3', null, 'CHỌN MỨC GIÁ'),
-                    React.createElement('ul', null, 
-                        Object.keys(priceRanges).map(key => React.createElement('li', { key }, React.createElement('label', null,
-                            React.createElement('input', { type: 'checkbox', value: key, onChange: handleCheckboxChange('priceRanges') }), ` ${priceRanges[key].label}`
-                        )))
-                    )
-                ),
-                React.createElement(
-                    'div', { className: 'filter-group' },
-                    React.createElement('h3', null, 'CHI NHÁNH'),
-                    React.createElement('ul', null, 
-                        branches.map(branch => React.createElement('li', { key: branch }, React.createElement('label', null,
-                            React.createElement('input', { type: 'checkbox', value: branch, onChange: handleCheckboxChange('branches') }), ` ${branch}`
-                        )))
-                    )
-                )
-            ),
-            React.createElement(
-                'section', { className: 'product-content' },
-                React.createElement('h1', { className: 'page-title' }, 'SẢN PHẨM THANH LÝ'),
-                React.createElement(
-                    'div', { className: 'product-grid' },
-                    paginatedProducts.length > 0
-                        ? paginatedProducts.map(product => renderProductCard(product))
-                        : React.createElement('p', { className: 'no-products' }, 'Không tìm thấy sản phẩm phù hợp.')
-                ),
-                React.createElement(
-                    'nav', { className: 'pagination' },
-                    totalPages > 1 && Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber =>
-                        React.createElement('button', { key: pageNumber, className: currentPage === pageNumber ? 'active' : '', onClick: () => setCurrentPage(pageNumber) }, pageNumber)
-                    )
-                )
-            )
+
+    function LoadingSpinner() {
+        return (
+            <div className="loading-container">
+                <div className="spinner"></div>
+                <p>Đang tải dữ liệu...</p>
+            </div>
+        );
+    }
+
+    function ErrorMessage({ message }) {
+        return (
+            <div className="error-container">
+                <p className="error-message">{message}</p>
+            </div>
+        );
+    }
+
+    function EmptyPromotion({ message }) {
+        return (
+            <div className="empty-promotion-wrapper">
+                <div className="saleoff-no-products">
+                    <div className="marquee-container">
+                        <div className="marquee-content">
+                            {/* <span className="marquee-icon">🎉</span> */}
+                            <span className="marquee-text">{message}</span>
+                            {/* <span className="marquee-icon">🎉</span> */}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="static-message">
+                    <div className="static-content">
+                        <div className="message-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                                    fill="#e91e63"
+                                />
+                            </svg>
+                        </div>
+                        <div className="message-text">
+                            <h3>Coming soon</h3>
+                            <p>Hãy theo dõi thường xuyên để không bỏ lỡ những ưu đãi hấp dẫn từ chúng tôi!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         )
+    }
+
+
+    if (loading) return <LoadingSpinner />;
+    if (error) return <ErrorMessage message={error} />;
+    if (!promotions.length) return <EmptyPromotion message="Hiện tại chúng tôi chưa có chương trình khuyến mãi. Xin vui lòng quay lại sau!"/>;
+
+    return (
+        <div className="sale-off-container">
+            <div className="sale-off-layout">
+                <aside className="saleoff-sidebar">
+                    <div className="saleoff-filter-section">
+                        <div className="saleoff-filter-group">
+                            <h3>MỨC GIẢM GIÁ</h3>
+                            <ul>
+                                {discountLevels.map(level => (
+                                    <li key={level}>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                value={level}
+                                                onChange={handleFilterChange('discountLevels')}
+                                                checked={filters.discountLevels.includes(level)}
+                                            />
+                                            {level}
+                                        </label>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div className="saleoff-filter-group">
+                            <h3>CHỌN MỨC GIÁ</h3>
+                            <ul>
+                                {Object.keys(priceRanges).map(key => (
+                                    <li key={key}>
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                name="priceRange"
+                                                value={key}
+                                                checked={filters.priceRanges === key}
+                                                onClick={() => handleRadioClick(key)}
+                                            />
+                                            {priceRanges[key].label}
+                                        </label>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                </aside>
+
+                <main className="saleoff-main-content">
+                    {Object.entries(paginatedGroupedByPromotion).length > 0 ? (
+                        <div className="saleoff-promotions-list">
+                            {Object.entries(paginatedGroupedByPromotion).map(([promoId, products]) => {
+                                const promo = sortedPromotions.find(p => p.promotion_id === promoId);
+                                if (!promo) return null;
+
+                                return (
+                                    <div key={promoId} className="saleoff-promotion-group">
+                                        <h2 className="saleoff-promotion-title">{promo.promotion_name}</h2>
+                                        <div className="saleoff-products-grid">
+                                            {products.map(product => renderProductCard(product))}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="saleoff-no-products">
+                            <p>Không tìm thấy sản phẩm phù hợp</p>
+                        </div>
+                    )}
+
+                    {totalPages > 1 && (
+                        <div className="saleoff-pagination">
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => (
+                                <button
+                                    key={pageNumber}
+                                    className={`saleoff-page-button ${currentPage === pageNumber ? 'active' : ''}`}
+                                    onClick={() => setCurrentPage(pageNumber)}
+                                >
+                                    {pageNumber}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </main>
+            </div>
+        </div>
     );
 }
 

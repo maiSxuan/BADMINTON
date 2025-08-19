@@ -1,10 +1,12 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./ProfilePage.css";
 import { useNavigate } from "react-router-dom";
-import { Pencil } from "lucide-react"; 
+import { Pencil, Eye, EyeOff } from "lucide-react";
 import { getProfile, updateProfile } from "../../services/UsersService";
+import { usePopup } from "../../components/common/popupContext";
 
 const ProfilePage = () => {
+  const inputRefs = useRef({});
   const navigate = useNavigate();
 
   // State lưu giá trị form
@@ -17,16 +19,19 @@ const ProfilePage = () => {
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
-});
+  });
 
   // State lưu lỗi
   const [errors, setErrors] = useState({});
-  const [editField, setEditField] = useState(null); 
+  const [editField, setEditField] = useState(null);
+
+  const { showPopup } = usePopup();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+        const token =
+          localStorage.getItem("token") || sessionStorage.getItem("token");
         const data = await getProfile(token);
         setFormData((prev) => ({
           ...prev,
@@ -65,39 +70,85 @@ const ProfilePage = () => {
     e.preventDefault();
     const newErrors = {};
 
-    if (formData.newPassword && formData.newPassword !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Mật khẩu nhập lại không khớp";
-    }
+    // Validate email
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email không hợp lệ";
+    }
+
+    // Nếu chỉ nhập 1 trong 3 ô mật khẩu thì báo lỗi
+    const passwordFields = [
+      formData.currentPassword,
+      formData.newPassword,
+      formData.confirmPassword,
+    ];
+    const filledPasswordCount = passwordFields.filter(Boolean).length;
+
+    if (filledPasswordCount > 0 && filledPasswordCount < 3) {
+      if (!formData.currentPassword) {
+        newErrors.currentPassword = "Vui lòng nhập mật khẩu hiện tại";
+      }
+      if (!formData.newPassword) {
+        newErrors.newPassword = "Vui lòng nhập mật khẩu mới";
+      }
+      if (!formData.confirmPassword) {
+        newErrors.confirmPassword = "Vui lòng xác nhận mật khẩu mới";
+      }
+    }
+
+    // So sánh mật khẩu mới và xác nhận
+    if (
+      formData.newPassword &&
+      formData.confirmPassword &&
+      formData.newPassword !== formData.confirmPassword
+    ) {
+      newErrors.confirmPassword = "Mật khẩu nhập lại không khớp";
     }
 
     setErrors(newErrors);
 
     // Nếu không có lỗi thì lưu và chuyển trang
     if (Object.keys(newErrors).length === 0) {
-    try {
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-      // Tạo object mới chỉ chứa các field cần thiết
-      const payload = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        gender: formData.gender,
-        date_of_birth: formData.date_of_birth ? new Date(formData.date_of_birth).toISOString() : null,
-        currentPassword: formData.currentPassword || undefined,
-        newPassword: formData.newPassword || undefined,
-      };
+      try {
+        const token =
+          localStorage.getItem("token") || sessionStorage.getItem("token");
+        // Tạo object mới chỉ chứa các field cần thiết
+        const payload = {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          gender: formData.gender,
+          date_of_birth: formData.date_of_birth
+            ? new Date(formData.date_of_birth).toISOString()
+            : null,
+          currentPassword: formData.currentPassword || undefined,
+          newPassword: formData.newPassword || undefined,
+        };
 
-      await updateProfile(token, payload);
-      alert("Cập nhật thông tin thành công!");
-      navigate("/");
-    } catch (err) {
-      console.error("Update error:", err.response?.data);
-      alert(err.response?.data?.message || "Lỗi khi cập nhật thông tin");
+        await updateProfile(token, payload);
+        // alert("Cập nhật thông tin thành công!");
+        showPopup(
+          'Thông báo',
+          'Cập nhật thông tin thành công',
+          null,
+          null,
+          4,
+          2
+        )
+        navigate("/account/profile");
+      } catch (err) {
+        console.error("Update error:", err.response?.data);
+        // alert(err.response?.data?.message || "Lỗi khi cập nhật thông tin");
+        showPopup(
+          'Lỗi',
+          err.message || 'Lỗi khi cập nhật thông tin',
+          null,
+          null,
+          4,
+          2
+        )
+      }
     }
-  }
-};
+  };
 
   const fields = [
     { label: "Tên đăng nhập", name: "name", type: "text" },
@@ -106,6 +157,12 @@ const ProfilePage = () => {
     { label: "Giới tính", name: "gender", type: "text" },
     { label: "Ngày sinh", name: "date_of_birth", type: "date" },
   ];
+
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false,
+  });
 
   return (
     <div className="profile-page">
@@ -125,13 +182,23 @@ const ProfilePage = () => {
                   name={f.name}
                   value={formData[f.name]}
                   onChange={handleChange}
-                  readOnly={editField !== f.name} // chỉ cho sửa khi bấm bút
+                  readOnly={editField !== f.name}
+                  ref={(el) => (inputRefs.current[f.name] = el)}
                   placeholder="Chưa có thông tin"
                   className={errors[f.name] ? "input-error" : ""}
                 />
                 <button
                   type="button"
-                  onClick={() => setEditField(f.name)}
+                  onClick={() => {
+                    setEditField(f.name);
+                    setFormData((prev) => ({
+                      ...prev,
+                      [f.name]: "",
+                    }));
+                    setTimeout(() => {
+                      inputRefs.current[f.name]?.focus();
+                    }, 0);
+                  }}
                   style={{ marginLeft: "5px" }}
                 >
                   <Pencil size={16} />
@@ -142,36 +209,90 @@ const ProfilePage = () => {
 
           <h3 className="password-title">Đổi mật khẩu:</h3>
 
+          {/* Mật khẩu hiện tại */}
           <div className="form-row">
             <label>Mật khẩu hiện tại:</label>
-            <input
-              type="password"
-              name="currentPassword"
-              value={formData.currentPassword}
-              onChange={handleChange}
-              placeholder="Để trống nếu không đổi"
-            />
+            <div className="input-wrapper">
+              <input
+                type={showPasswords.current ? "text" : "password"}
+                name="currentPassword"
+                value={formData.currentPassword}
+                onChange={handleChange}
+                placeholder="Để trống nếu không đổi"
+                className={errors.currentPassword ? "input-error" : ""}
+              />
+              <span
+                className="eye-icon"
+                onClick={() =>
+                  setShowPasswords((prev) => ({
+                    ...prev,
+                    current: !prev.current,
+                  }))
+                }
+              >
+                {showPasswords.current ? (
+                  <EyeOff size={18} />
+                ) : (
+                  <Eye size={18} />
+                )}
+              </span>
+            </div>
+            {errors.currentPassword && (
+              <span className="error-text">{errors.currentPassword}</span>
+            )}
           </div>
 
+          {/* Mật khẩu mới */}
           <div className="form-row">
             <label>Mật khẩu mới:</label>
-            <input
-              type="password"
-              name="newPassword"
-              value={formData.newPassword}
-              onChange={handleChange}
-            />
+            <div className="input-wrapper">
+              <input
+                type={showPasswords.new ? "text" : "password"}
+                name="newPassword"
+                value={formData.newPassword}
+                onChange={handleChange}
+              />
+              <span
+                className="eye-icon"
+                onClick={() =>
+                  setShowPasswords((prev) => ({
+                    ...prev,
+                    new: !prev.new,
+                  }))
+                }
+              >
+                {showPasswords.new ? <EyeOff size={18} /> : <Eye size={18} />}
+              </span>
+            </div>
           </div>
 
+          {/* Nhập lại mật khẩu */}
           <div className="form-row">
             <label>Nhập lại mật khẩu mới:</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className={errors.confirmPassword ? "input-error" : ""}
-            />
+            <div className="input-wrapper">
+              <input
+                type={showPasswords.confirm ? "text" : "password"}
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className={errors.confirmPassword ? "input-error" : ""}
+              />
+              <span
+                className="eye-icon"
+                onClick={() =>
+                  setShowPasswords((prev) => ({
+                    ...prev,
+                    confirm: !prev.confirm,
+                  }))
+                }
+              >
+                {showPasswords.confirm ? (
+                  <EyeOff size={18} />
+                ) : (
+                  <Eye size={18} />
+                )}
+              </span>
+            </div>
             {errors.confirmPassword && (
               <span className="error-text">{errors.confirmPassword}</span>
             )}

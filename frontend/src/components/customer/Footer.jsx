@@ -35,15 +35,6 @@ const Footer = () => {
                 <li><Link to="/warranty">Chính sách bảo hành</Link></li>
               </ul>
             </div>
-
-            {/* Cột Hướng dẫn */}
-            <div className="footer-col">
-              <h4>Hướng dẫn</h4>
-              <ul>
-                <li><Link to="/how-to-buy">Hướng dẫn mua hàng</Link></li>
-                <li><Link to="/payment">Hướng dẫn thanh toán</Link></li>
-              </ul>
-            </div>
           </div>
         </div>
       </div>

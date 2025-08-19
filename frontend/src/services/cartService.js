@@ -76,10 +76,48 @@ export const addItemToCart = async ({ productId, variantId, optionId, quantity }
   });
 
   if (!res.ok) {
-    throw new Error(`Add to cart failed. Status: ${res.status}`);
+    const errorData = await res.json();
+    throw new Error(errorData.message || `Add to cart failed. Status: ${res.status}`);
   }
 
   return await res.json(); 
 };
+
+export const clearAllCart = async () => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  if (!token) return;
+
+  const res = await fetch('http://localhost:4000/api/cart', {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    } 
+  });
+
+  if (!res.ok)
+    throw new Error("Failed to clear cart");
+
+  return await res.json();
+}
+
+export const removeSelectedItemsFromCart = async (items) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!token) return;
+
+  const res = await fetch(`http://localhost:4000/api/cart/items/bulk`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ items })
+  });
+
+  if (!res.ok)
+    throw new Error('Remove selected items failed');
+
+  return await res.json();
+} 
 
 

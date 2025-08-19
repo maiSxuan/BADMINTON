@@ -183,13 +183,13 @@ POST http://localhost:4000/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "testuser@gmail.com",
+  "email": "testuser2@gmail.com",
   "password": "123456789"
 }
 
 ### GET cart
 GET http://localhost:4000/api/cart
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1MzkzODE5MCwiZXhwIjoxNzU0MTEwOTkwfQ.evd5FRqQp6zeJFnZ324N2KALN2EIFbj10B0_j5c45ng
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjRhZTBjMDkwLWVmNzItNDE1YS04MzYwLTYxOTQ1YTQ4MzAwMSIsInJvbGUiOiJVU0VSIn0sImlhdCI6MTc1NDY1MTMwOCwiZXhwIjoxNzU0NjU0OTA4fQ.96E3d5OQwW2j78gbroXmYtEfT5Y6HnzT7ZIb-EG_QI8
 
 ### ADD ITEM 1
 POST http://localhost:4000/api/cart
@@ -442,5 +442,7 @@ DELETE http://localhost:4000/api/promotions/6887a39e0c88bf52316411bf
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJRCI6IjAxMGRmYWE4LTZmZmYtNDRkYS1iOGZmLTI4ZDQyY2U4MzEzYSIsInJvbGUiOiJBRE1JTiJ9LCJpYXQiOjE3NTQxODI2NTMsImV4cCI6MTc1NDE4NjI1M30.SBZLk_e-qFcGiifzGx3Z-OOBL3A3keev4vebEZvXoOQ
 
-
+###
+GET http://localhost:4000/api/products/sale-off
+Content-Type: application/json
 

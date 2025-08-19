@@ -661,3 +661,75 @@
   white-space: nowrap;
   border-width: 0;
 }
+
+/* ... (CSS hiện có của bạn) ... */
+
+/* Styles cho StarRating component */
+.star-rating {
+  display: flex;
+  flex-direction: row;
+}
+
+.star-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px; /* Kích thước ngôi sao */
+  color: #ccc; /* Màu sao chưa được chọn */
+  padding: 0 2px;
+}
+
+.star-button.on {
+  color: #ffc107; /* Màu sao đã được chọn (vàng) */
+}
+
+/* Styles cho Review Dialog */
+.review-dialog .dialog-content {
+  max-width: 600px; /* Tăng chiều rộng cho dialog */
+}
+
+.review-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.review-item:last-child {
+  border-bottom: none;
+}
+
+.review-item-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 16px;
+}
+
+.review-item-details {
+  flex: 1;
+}
+
+.review-item-name {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 0 4px 0;
+}
+
+.review-item-variant {
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.review-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.review-textarea {
+  min-height: 80px; /* Chiều cao tối thiểu cho ô bình luận */
+  resize: none; /* Cho phép người dùng thay đổi chiều cao */
+}

@@ -7,12 +7,12 @@ import { createOrder } from "../../services/orderService"
 import { removeItemFromCart } from "../../services/cartService"
 import { updateOrderStatus } from "../../services/orderService"
 import axios from "axios";
-import {usePopup } from "../../components/common/popupContext";
+import { usePopup } from "../../components/common/popupContext"
+
 
 const PurchasePage = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { showPopup } = usePopup()
   const selectedItems = location.state?.selectedItems || [];
   const [cities, setCities] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -32,45 +32,47 @@ const PurchasePage = () => {
   })
   const user = JSON.parse(localStorage.getItem("user"))
   const [orderNote, setOrderNote] = useState("")
-  const [discountCode, setDiscountCode] = useState("")
+  // const [discountCode, setDiscountCode] = useState("")
   const [deliveryMethod, setDeliveryMethod] = useState("nhanh")
   const [orderId, setOrderId] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   // const [showToast, setShowToast] = useState(false)
   // const [toastMessage, setToastMessage] = useState("")
 
+  const { showPopup } = usePopup()
+
   useEffect(() => {
-      axios.get("https://provinces.open-api.vn/api/?depth=3")
-          .then((res) => setCities(res.data))
-          .catch((err) => console.error("Failed to load cities", err));
+    axios.get("https://provinces.open-api.vn/api/?depth=3")
+      .then((res) => setCities(res.data))
+      .catch((err) => console.error("Failed to load cities", err));
   }, []);
 
   useEffect(() => {
-      const selectedCity = cities.find(c => c.name === shippingInfo.city);
-      setDistricts(selectedCity ? selectedCity.districts : []);
-      setShippingInfo(prev => ({ ...prev, district: "", ward: ""}));
+    const selectedCity = cities.find(c => c.name === shippingInfo.city);
+    setDistricts(selectedCity ? selectedCity.districts : []);
+    setShippingInfo(prev => ({ ...prev, district: "", ward: "" }));
   }, [shippingInfo.city, cities]);
 
   useEffect(() => {
-      const selectedDistrict = districts.find(d => d.name === shippingInfo.district);
-      setWards(selectedDistrict ? selectedDistrict.wards : []);
-      setShippingInfo(prev => ({ ...prev, ward: ""}));
+    const selectedDistrict = districts.find(d => d.name === shippingInfo.district);
+    setWards(selectedDistrict ? selectedDistrict.wards : []);
+    setShippingInfo(prev => ({ ...prev, ward: "" }));
   }, [shippingInfo.district, districts]);
 
   useEffect(() => {
-      const { houseNumber, ward, district, city } = shippingInfo;
-      const components = [houseNumber, ward, district, city].filter(Boolean);
-      const fullAddress = components.join(", ");
-      
-      if (shippingInfo.address !== fullAddress) {
-          setShippingInfo((prev) => ({
-              ...prev,
-              address: fullAddress
-          }));
-      }
+    const { houseNumber, ward, district, city } = shippingInfo;
+    const components = [houseNumber, ward, district, city].filter(Boolean);
+    const fullAddress = components.join(", ");
+
+    if (shippingInfo.address !== fullAddress) {
+      setShippingInfo((prev) => ({
+        ...prev,
+        address: fullAddress
+      }));
+    }
   }, [shippingInfo.houseNumber, shippingInfo.ward, shippingInfo.district, shippingInfo.city]);
 
-    
+
   const handleInputChange = (eOrKey, valueFromEvent = null) => {
     if (typeof eOrKey === "string") {
       // Dành cho input sử dụng custom (e.g. onChange={(e) => handleInputChange("fullName", e.target.value)})
@@ -86,28 +88,53 @@ const PurchasePage = () => {
   };
 
   const handleAcceptCancellation = async (orderId) => {
-    if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
-      try {
-        await updateOrderStatus(orderId, "Đã hủy")
-        alert("Đã hủy đơn hàng thành công!")
-        navigate("/cart")
-      } catch (error) {
-        alert("Có lỗi xảy ra khi hủy đơn hàng!")
+    showPopup(
+      'Xác nhận',
+      'Bạn có chắc chắn muốn hủy đơn hàng này không?',
+      'Hủy đơn',
+      async () => {
+        try {
+          await updateOrderStatus(orderId, "Đã hủy")
+          // alert("Đã hủy đơn hàng thành công!")
+          showPopup(
+            'Thông báo',
+            'Đã hủy đơn hàng thành công',
+            null,
+            null,
+            4,
+            3
+          )
+          navigate("/cart")
+        } catch (error) {
+          // alert("Có lỗi xảy ra khi hủy đơn hàng!")
+          showPopup(
+            'Lỗi',
+            'Có lỗi xảy ra khi hủy đơn hàng',
+            null,
+            null,
+            4,
+            3
+          )
+        }
       }
-    }
+    )
   }
 
-  // Khởi tạo dữ liệu từ Cart
   useEffect(() => {
-      setCartItems(selectedItems)
+    setCartItems(selectedItems)
   }, [location.state])
-  
+
+  const deliveryMethods = [
+    { value: "nhanh", label: "Nhanh: Đảm bảo nhận hàng 3-5 ngày - 30.000đ", fee: 30000 },
+    { value: "sieu-toc", label: "Siêu tốc: Nhận hàng ngay ngày mai - 100.000đ", fee: 100000 },
+    { value: "tai-cua-hang", label: "Đến lấy tại cửa hàng - Freeship", fee: 0 },
+  ];
+
   const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
-  // Toast notification
-  // const showMessage = (message) => {
-  //   showPopup("Lỗi xác nhận thông tin", message, "OK")
-  // }
+  const selectedMethod = deliveryMethods.find(m => m.value === deliveryMethod);
+  const shippingFee = selectedMethod ? selectedMethod.fee : 30000;
+  const finalAmount = totalAmount + shippingFee;
 
   // Cập nhật địa chỉ đầy đủ
   useEffect(() => {
@@ -135,7 +162,17 @@ const PurchasePage = () => {
     if (!shippingInfo.ward) errors.push("Vui lòng chọn phường/xã")
 
     if (errors.length > 0) {
-      showPopup("Lỗi", errors[0], "OK")
+
+      // showToastMessage(errors[0])
+      showPopup(
+        'Thiếu thông tin',
+        errors[0],
+        null,
+        null,
+        4,
+        3
+      )
+
       return false
     }
     return true
@@ -148,12 +185,31 @@ const PurchasePage = () => {
       const userId = user?.userID;
 
       if (!userId) {
-        showPopup("Đã xảy ra lỗi khi mua hàng", "Bạn cần đăng nhập để đặt hàng", "OK");
+
+        // showToastMessage("Bạn cần đăng nhập để đặt hàng");
+        showPopup(
+          'Thông báo',
+          'Bạn cần đăng nhập để đặt hàng',
+          'Đăng nhập',
+          () => navigate("/login"),
+          4,
+          3
+        )
+
         return;
       }
 
       if (!shippingInfo.phone || !shippingInfo.address) {
-        showPopup("Đã xảy ra lỗi khi mua hàng", "Vui lòng nhập đầy đủ thông tin giao hàng", "OK");
+
+        // showToastMessage("Vui lòng nhập đầy đủ thông tin giao hàng");
+        showPopup(
+          'Thông báo',
+          'Vui lòng nhập đầy đủ thông tin giao hàng',
+          null,
+          null,
+          4,
+          3
+        )        
         return;
       }
 
@@ -166,7 +222,7 @@ const PurchasePage = () => {
           option_id: item.optionId,
           quantity: item.quantity,
           priceAtTime: item.price
-          })),
+        })),
         totalAmount: totalAmount,
         orderNote: orderNote,
         deliveryMethod: deliveryMethod
@@ -187,11 +243,29 @@ const PurchasePage = () => {
 
       setOrderId(data.orderId);
       setCurrentStep("tracking");
-      showPopup("Đặt hàng thành công", "Cảm ơn bạn đã mua hàng!", "OK");
+
+      // showToastMessage("Đặt hàng thành công");
+      showPopup(
+        'Thông báo',
+        'Đặt hàng thành công',
+        null,
+        null,
+        4,
+        2
+      )
 
     } catch (error) {
       console.error('Lỗi gửi đơn hàng:', error);
-      showPopup("Đã xảy ra lỗi khi mua hàng", "Có lỗi xảy ra, vui lòng thử lại", "OK");
+      // showToastMessage(error.message || "Có lỗi xảy ra, vui lòng thử lại");
+      showPopup(
+        'Lỗi',
+        // error.message || 'Có lỗi xảy ra, vui lòng thử lại',
+        'Bạn vui lòng đăng nhập lại để có thể đặt hàng',
+        null,
+        null,
+        4,
+        2
+      )
     } finally {
       setIsLoading(false);
     }
@@ -199,7 +273,16 @@ const PurchasePage = () => {
 
   const copyOrderId = () => {
     navigator.clipboard.writeText(orderId)
-    showPopup("Sao chép thành công", "Đã sao chép mã đơn hàng", "OK");
+
+    // showToastMessage("Đã sao chép mã đơn hàng")
+    showPopup(
+      null,
+      'Đã sao chép mã đơn hàng',
+      null,
+      null,
+      4,
+      1
+    )
   }
 
   const closeModal = () => {
@@ -228,7 +311,7 @@ const PurchasePage = () => {
 
   return (
     <div className="purchase-page">
-      {/* Toast Notification */}
+
       <div className="container">
 
         {/* Danh sách sản phẩm đã chọn */}
@@ -275,11 +358,15 @@ const PurchasePage = () => {
         </div>
 
         {/* Modal thông tin vận chuyển */}
-        {currentStep === "shipping" && (
-          <div className="modal-overlay" onClick={closeModal}>
+        {(currentStep === "shipping" || currentStep === "updateInfo") && (
+          <div className="modal-overlay">
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
-                <h2>Thông tin vận chuyển</h2>
+                <h2>
+                  {currentStep === "shipping"
+                  ? "Thông tin vận chuyển"
+                  : "Cập nhật thông tin giao hàng"}
+                </h2>
                 <button className="close-btn" onClick={closeModal}>
                   ×
                 </button>
@@ -319,55 +406,55 @@ const PurchasePage = () => {
                       placeholder="Nhập email"
                     />
                   </div>
-                      <div className="form-group">
-                          <label htmlFor="city" >Tỉnh/ Thành phố</label>
-                          <select 
-                              id="city"
-                              name="city" 
-                              value={shippingInfo.city} 
-                              onChange={handleInputChange} 
-                              className="shipping-form-control"
-                              required
-                          >
-                              <option value="">- Chọn tỉnh/ thành phố -</option>
-                              {cities.map((c) => (
-                                  <option key={c.code} value={c.name}>{c.name}</option>
-                              ))}
-                          </select>
-                      </div>
-                      <div className="form-group">
-                          <label htmlFor="district" >Quận/ Huyện</label>
-                          <select 
-                              id="district"
-                              name="district"
-                              value={shippingInfo.district}
-                              onChange={handleInputChange}
-                              className="shipping-form-control"
-                              required
-                          >
-                              <option value="">- Chọn quận/ huyện -</option>
-                              {districts.map((d) => (
-                                  <option key={d.code} value={d.name}>{d.name}</option>
-                              ))}
-                          </select>
-                      </div>
+                  <div className="form-group">
+                    <label htmlFor="city" >Tỉnh/ Thành phố</label>
+                    <select
+                      id="city"
+                      name="city"
+                      value={shippingInfo.city}
+                      onChange={handleInputChange}
+                      className="shipping-form-control"
+                      required
+                    >
+                      <option value="">- Chọn tỉnh/ thành phố -</option>
+                      {cities.map((c) => (
+                        <option key={c.code} value={c.name}>{c.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="district" >Quận/ Huyện</label>
+                    <select
+                      id="district"
+                      name="district"
+                      value={shippingInfo.district}
+                      onChange={handleInputChange}
+                      className="shipping-form-control"
+                      required
+                    >
+                      <option value="">- Chọn quận/ huyện -</option>
+                      {districts.map((d) => (
+                        <option key={d.code} value={d.name}>{d.name}</option>
+                      ))}
+                    </select>
+                  </div>
 
-                      <div className="form-group">
-                          <label htmlFor="ward">Phường/ Xã</label>
-                          <select 
-                              id="ward"
-                              name="ward"
-                              value={shippingInfo.ward}
-                              onChange={handleInputChange}
-                              className="shipping-form-control"
-                              required
-                          >
-                              <option value="">- Chọn phường/ xã -</option>
-                              {wards.map((w) => (
-                                  <option key={w.code} value={w.name}>{w.name}</option>
-                              ))}
-                          </select>
-                      </div>
+                  <div className="form-group">
+                    <label htmlFor="ward">Phường/ Xã</label>
+                    <select
+                      id="ward"
+                      name="ward"
+                      value={shippingInfo.ward}
+                      onChange={handleInputChange}
+                      className="shipping-form-control"
+                      required
+                    >
+                      <option value="">- Chọn phường/ xã -</option>
+                      {wards.map((w) => (
+                        <option key={w.code} value={w.name}>{w.name}</option>
+                      ))}
+                    </select>
+                  </div>
 
                   <div className="form-group">
                     <label htmlFor="houseNumber">Số nhà, tên đường *</label>
@@ -403,18 +490,40 @@ const PurchasePage = () => {
                 </div>
 
                 <div className="modal-actions">
-                  <button className="btn btn-outline" onClick={closeModal}>
-                    Hủy
+                  <button 
+                    className="btn btn-outline" 
+                    onClick={() => {
+                      if (currentStep === "updateInfo")
+                        setCurrentStep("confirm")
+                      else
+                        closeModal()
+                    }}
+                  >
+                    {currentStep === "updateInfo" ? "Quay lại" : "Hủy"}
                   </button>
                   <button
                     className="btn btn-primary"
                     onClick={() => {
                       if (validateShippingInfo()) {
-                        setCurrentStep("confirm")
+                        if (currentStep === "shipping") {
+                          setCurrentStep("confirm")
+                        } else {
+                          showPopup(
+                            'Thông báo',
+                            'Cập nhật thông tin thành công',
+                            null,
+                            null,
+                            4,
+                            1
+                          );
+                          setCurrentStep("confirm")
+                        }
                       }
                     }}
                   >
-                    Xác nhận thông tin
+                    {currentStep === "shipping"
+                    ? "Xác nhận thông tin"
+                    : "Cập nhật thông tin"}
                   </button>
                 </div>
               </div>
@@ -424,7 +533,7 @@ const PurchasePage = () => {
 
         {/* Modal xác nhận đơn hàng */}
         {currentStep === "confirm" && (
-          <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-overlay">
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h2>Xác nhận đơn hàng</h2>
@@ -437,12 +546,20 @@ const PurchasePage = () => {
                 {/* Thông tin người nhận */}
                 <div className="info-card">
                   <h3>Thông tin người nhận</h3>
-                  <div className="info-content">
-                    <p>
-                      <strong>{shippingInfo.fullName}</strong> - {shippingInfo.phone}
-                    </p>
-                    <p className="text-gray">{shippingInfo.email}</p>
-                    <p className="text-gray">{shippingInfo.address}</p>
+                  <div className="info-row">
+                    <div className="info-content">
+                      <p>
+                        <strong>{shippingInfo.fullName}</strong> - {shippingInfo.phone}
+                      </p>
+                      <p className="text-gray">{shippingInfo.email}</p>
+                      <p className="text-gray">{shippingInfo.address}</p>
+                    </div>
+                    <button 
+                      className="btn btn-outline btn-small"
+                      onClick={() => setCurrentStep("updateInfo")}
+                    > 
+                      Cập nhật 
+                    </button>
                   </div>
                 </div>
 
@@ -453,7 +570,7 @@ const PurchasePage = () => {
                     {cartItems.map((item) => (
                       <div key={item.id} className="product-item small">
                         <div className="item-image-container">
-                            <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
+                          <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
                         </div>
                         <div className="purchase-product-details">
                           <h3>{item.name}</h3>
@@ -479,7 +596,7 @@ const PurchasePage = () => {
                     rows="3"
                   />
                 </div>
-                <div className="form-group">
+                {/* <div className="form-group">
                   <label htmlFor="discountCode">Mã giảm giá</label>
                   <input
                     type="text"
@@ -488,24 +605,22 @@ const PurchasePage = () => {
                     onChange={(e) => setDiscountCode(e.target.value)}
                     placeholder="Nhập mã giảm giá"
                   />
-                </div>
+                </div> */}
 
                 {/* Phương thức nhận hàng */}
                 <div className="info-card">
                   <h3>Phương thức nhận hàng</h3>
                   <div className="delivery-options">
-                    {[
-                      { value: "nhanh", label: "Nhanh: Đảm bảo nhận hàng 3-5 ngày - 30.000đ" },
-                      { value: "sieu-toc", label: "Siêu tốc: Nhận hàng ngay ngày mai - 100.000đ" },
-                      { value: "tai-cua-hang", label: "Đến lấy tại cửa hàng - Freeship" },
-                    ].map((method) => (
+                    {deliveryMethods.map((method) => (
                       <div
                         key={method.value}
                         className={`delivery-option ${deliveryMethod === method.value ? "selected" : ""}`}
                         onClick={() => setDeliveryMethod(method.value)}
                       >
                         <div className="radio-button">
-                          <div className={`radio-inner ${deliveryMethod === method.value ? "selected" : ""}`}></div>
+                          <div
+                            className={`radio-inner ${deliveryMethod === method.value ? "selected" : ""}`}
+                          ></div>
                         </div>
                         <span>{method.label}</span>
                       </div>
@@ -517,7 +632,7 @@ const PurchasePage = () => {
                 <div className="total-section">
                   <div className="total-amount">
                     <span>Tổng tiền:</span>
-                    <span className="total-price">{totalAmount.toLocaleString("vi-VN")} VNĐ</span>
+                    <span className="total-price">{finalAmount.toLocaleString("vi-VN")} VNĐ</span>
                   </div>
                 </div>
 
@@ -536,7 +651,7 @@ const PurchasePage = () => {
 
         {/* Modal theo dõi đơn hàng */}
         {currentStep === "tracking" && (
-          <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-overlay">
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h2>Theo dõi đơn hàng</h2>
@@ -588,23 +703,23 @@ const PurchasePage = () => {
 
                 {/* Sản phẩm */}
                 <div className="product-list">
-                    {cartItems.map((item) => (
-                        <div key={item._id} className="product-item small">
-                        <div className="item-image-container">
-                            <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
-                        </div>
+                  {cartItems.map((item) => (
+                    <div key={item._id} className="product-item small">
+                      <div className="item-image-container">
+                        <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
+                      </div>
 
-                            <div className="purchase-product-details">
-                            <h3>{item.name}</h3>
-                            <p className="variant"> {item.color} - {item.size}</p>
-                            <p className="price">{item.price.toLocaleString("vi-VN")}đ x {item.quantity}</p>
-                            </div>
-                            <p className="product-price">
-                            {(item.price * item.quantity).toLocaleString("vi-VN")}đ
-                            </p>
-                        
-                        </div>
-                    ))}
+                      <div className="purchase-product-details">
+                        <h3>{item.name}</h3>
+                        <p className="variant"> {item.color} - {item.size}</p>
+                        <p className="price">{item.price.toLocaleString("vi-VN")}đ x {item.quantity}</p>
+                      </div>
+                      <p className="product-price">
+                        {(item.price * item.quantity).toLocaleString("vi-VN")}đ
+                      </p>
+
+                    </div>
+                  ))}
                 </div>
 
 
@@ -612,7 +727,7 @@ const PurchasePage = () => {
                 <div className="total-section">
                   <div className="total-amount">
                     <span>Tổng tiền:</span>
-                    <span className="total-price red">{totalAmount.toLocaleString("vi-VN")} VNĐ</span>
+                    <span className="total-price red">{finalAmount.toLocaleString("vi-VN")} VNĐ</span>
                   </div>
                 </div>
 

@@ -2,8 +2,7 @@
 import { useState } from 'react';
 import './AddPromotion.css';
 import { createPromotion } from '../../services/index';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { usePopup } from '../../components/common/popupContext';
 
 const AddPromotionPage = () => {
   // const [step, setStep] = useState(1);
@@ -16,6 +15,7 @@ const AddPromotionPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { showPopup } = usePopup()
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,7 +33,15 @@ const AddPromotionPage = () => {
     try {
       await createPromotion(promotionData);
       // setStep(2);
-      toast.success("Tạo chiến dịch thành công");
+      // toast.success("Tạo chiến dịch thành công");
+      showPopup(
+        'Thông báo',
+        'Tạo chiến dịch thành công',
+        null,
+        null,
+        4,
+        1
+      )
 
       setPromotionData({
         name: '',
@@ -42,20 +50,49 @@ const AddPromotionPage = () => {
         description: ''
       });
 
-    } catch (error) {
-      console.error("Lỗi khi tạo chiến dịch:", error);
-      setError(error.message);
+    } catch (err) {
+      console.error("Lỗi khi tạo chiến dịch:", err);
+      setError(err.message);
+      showPopup(
+        'Lỗi',
+        err.message || 'Tạo chiến dịch thất bại',
+        null,
+        null,
+        4,
+        1
+      )
     } finally {
       setLoading(false);
     }
   };
+
+  function LoadingSpinner() {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Đang tải dữ liệu...</p>
+      </div>
+    );
+  }
+
+  function ErrorMessage({ message }) {
+    return (
+      <div className="error-container">
+        <p className="error-message">{message}</p>
+      </div>
+    );
+  }
+
+
+  if (loading) return <LoadingSpinner />
+  if (error) return <ErrorMessage message={error} />;
 
   return (
     <div className="add-promotion-container">
       <h1 className="page-title">Tạo Chiến Dịch Khuyến Mãi</h1>
 
       <form className="promotion-form" onSubmit={handleCreatePromotion}>
-        
+
         <label htmlFor="promo-name" className="form-label">Tên chiến dịch</label>
         <input
           type="text"
@@ -99,19 +136,12 @@ const AddPromotionPage = () => {
           onChange={handleChange}
           required
         />
-
-        {loading && <p className="promo-form-info">Đang gửi dữ liệu...</p>}
-        {error && <p className="promo-form-error">{error}</p>}
-      
-        <div></div> 
-        <div className="form-actions">
-          <button type="submit" className="submit-btn" disabled={loading}>
-            {loading ? 'Đang xử lý...' : 'Tạo Chiến Dịch'}
-          </button>
-        </div>
-
       </form>
-      <ToastContainer position='top-right' autoClose={3000} />
+      <div className="promo-form-actions">
+        <button type="submit" className="promo-submit-btn">
+          Tạo Chiến Dịch
+        </button>
+      </div>
     </div>
   );
 };
