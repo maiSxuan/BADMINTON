@@ -7,8 +7,15 @@ import {
     uploadImage, deleteImage, addProduct, editProduct, getProductBySlug
 } from '../../services';
 import { usePopup } from '../../components/common/popupContext';
-
-// Helper: Extract public_id from Cloudinary URL for image deletion
+const CHAR_LIMITS = {
+    NAME: 200,
+    DESCRIPTION: 5000,
+    BRAND: 100,      
+    CATEGORY: 100,  
+    CLASSIFICATION_NAME: 50,
+    OPTION_VALUE: 100,
+    SKU: 50,
+};
 const getPublicIdFromUrl = (url) => {
     if (!url) return null;
     try {
@@ -20,8 +27,6 @@ const getPublicIdFromUrl = (url) => {
         return null;
     }
 };
-
-// Helper: Create initial classification state for "add new" mode
 const createInitialClassificationState = () => ([
     { id: 1, name: "", options: [] },
     { id: 2, name: "", options: [] },
@@ -31,8 +36,6 @@ const AddProducts = () => {
     const { slug } = useParams();
     const navigate = useNavigate();
     const isEditMode = !!slug;
-
-    // --- STATE MANAGEMENT ---
     const [activeTab, setActiveTab] = useState("basic");
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
@@ -58,12 +61,10 @@ const AddProducts = () => {
 
     const { showPopup } = usePopup();
     
-    // Refs for optimization and external DOM interaction
     const latestClassificationData = useRef(classificationData);
     const brandInputRef = useRef();
     const categoryInputRef = useRef();
 
-    // --- EFFECTS ---
     useEffect(() => {
         latestClassificationData.current = classificationData;
     }, [classificationData]);
@@ -133,51 +134,65 @@ const AddProducts = () => {
                 if (product.classification_config?.length > 0 && product.variants?.length > 0) {
                     const tempConfigs = [...product.classification_config];
                     while (tempConfigs.length < 2) { tempConfigs.push({ name: "" }); }
-                    const [primaryConfig, secondaryConfig] = tempConfigs;
-                    const primaryOptionNames = Array.from(new Set(product.variants.map(v => v.name)));
-                    const secondaryOptionNames = Array.from(new Set(product.variants.flatMap(v => v.options.map(o => o.value))));
-                    const secondaryOptionIdMap = new Map(
-                        secondaryOptionNames.map(name => [name, Date.now() + Math.random()])
-                    );
-                    const newClassifications = [
-                        {
-                            id: 1,
-                            name: primaryConfig.name,
-                            options: primaryOptionNames.map(pOptName => {
-                                const dbPrimaryVariant = product.variants.find(v => v.name === pOptName);
-                                return {
-                                    id: Date.now() + Math.random(),
-                                    name: pOptName,
-                                    selected: true,
-                                    images: (dbPrimaryVariant.images || []).map(url => ({ url, public_id: getPublicIdFromUrl(url) })),
-                                    options: secondaryOptionNames.map(sOptName => {
-                                        const dbSecondaryOption = dbPrimaryVariant.options.find(o => o.value === sOptName);
-                                        return {
-                                            id: secondaryOptionIdMap.get(sOptName),
-                                            name: sOptName,
-                                            price: dbSecondaryOption?.price ?? '',
-                                            stock: dbSecondaryOption?.stock_quantity ?? '',
-                                            sku: dbSecondaryOption?.sku_code ?? ''
-                                        }
-                                    })
-                                }
-                            })
-                        },
-                        {
-                            id: 2,
-                            name: secondaryConfig.name,
-                            options: secondaryOptionNames.map(sOptName => ({
-                                id: secondaryOptionIdMap.get(sOptName),
-                                name: sOptName,
-                                selected: true,
-                            }))
+                    const optionIdMap = new Map();
+                    const getOptionId = (name) => {
+                        if (!optionIdMap.has(name)) {
+                            optionIdMap.set(name, Date.now() + Math.random());
                         }
-                    ];
-                    setInitialClassificationData({ classifications: newClassifications });
+                        return optionIdMap.get(name);
+                    };
+                    const newClassificationsState = tempConfigs.map((cfg, index) => {
+                        let optionNames = new Set();
+                        if (index === 0) {
+                            product.variants.forEach(v => optionNames.add(v.name));
+                        } else {
+                            product.variants.forEach(v => v.options.forEach(opt => optionNames.add(opt.value)));
+                        }
+                        return {
+                            id: index + 1,
+                            name: cfg.name,
+                            options: Array.from(optionNames).map(optName => {
+                                const primaryVariant = (index === 0) ? product.variants.find(v => v.name === optName) : null;
+                                return {
+                                    id: getOptionId(optName),
+                                    name: optName,
+                                    selected: true,
+                                    images: primaryVariant ? (primaryVariant.images || []).map(url => ({ url, public_id: getPublicIdFromUrl(url) })) : []
+                                };
+                            })
+                        };
+                    });
+                    const [primaryCls, secondaryCls] = newClassificationsState;
+                    if (primaryCls?.options && secondaryCls?.options) {
+                        const initialUiVariants = primaryCls.options.map(pOpt => {
+                            const dbPrimaryVariant = product.variants.find(v => v.name === pOpt.name);
+                            return {
+                                id: pOpt.id, 
+                                name: pOpt.name,
+                                images: pOpt.images,
+                                options: secondaryCls.options.map(sOpt => {
+                                    const dbSecondaryOption = dbPrimaryVariant?.options.find(o => o.value === sOpt.name);
+                                    return {
+                                        id: sOpt.id, 
+                                        name: sOpt.name,
+                                        price: dbSecondaryOption?.price ?? '',
+                                        stock: dbSecondaryOption?.stock_quantity ?? '',
+                                        sku: dbSecondaryOption?.sku_code ?? ''
+                                    };
+                                })
+                            };
+                        });
+                        
+                        setInitialClassificationData({
+                            classifications: newClassificationsState,
+                            uiVariants: initialUiVariants
+                        });
+                    }
+                    
+                    setClassifications(newClassificationsState);
                 }
             } catch (error) {
                 console.error("Error fetching and populating product data:", error);
-                // alert(`Could not load product data: ${error.message}`);
                 showPopup(
                     'Lỗi',
                     error.message || 'Lỗi khi tải dữ liệu sản phẩm',
@@ -204,7 +219,6 @@ const AddProducts = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // --- HANDLERS ---
     const handleClassificationChange = useCallback((data) => {
         setClassificationData(data);
     }, []);
@@ -222,7 +236,6 @@ const AddProducts = () => {
             setCategories([...categories, newCategory]); 
             handleSelectCategory(newCategory); 
         } catch (err) { 
-            // alert("Cannot add new category"); 
             showPopup(
                 'Lỗi',
                 err.message || 'Lỗi khi thêm sản phẩm mới',
@@ -247,7 +260,6 @@ const AddProducts = () => {
             setBrands([...brands, newBrand]); 
             handleSelectBrand(newBrand); 
         } catch (err) { 
-            // alert("Cannot add new brand"); 
             showPopup(
                 'Lỗi',
                 err.message || 'Lỗi khi thêm nhãn hàng mới',
@@ -276,7 +288,6 @@ const AddProducts = () => {
             setCoverImage(data);
             setFormErrors(prev => ({ ...prev, coverImage: null }));
         } catch (error) {
-            // alert(error.message);
             showPopup(
                 'Lỗi',
                 error.message || 'Tải ảnh sản phẩm thất bại',
@@ -299,7 +310,6 @@ const AddProducts = () => {
             await deleteImage(coverImage.public_id);
             setCoverImage({ url: null, public_id: null });
         } catch (error) {
-            // alert("Error deleting image: " + error.message);
             showPopup(
                 'Lỗi',
                 error.message || 'Xóa ảnh sản phẩm thất bại',
@@ -310,9 +320,7 @@ const AddProducts = () => {
             )
         }
     };
-
-    // --- VALIDATION & SUBMISSION ---
-    const validateForm = (data) => {
+        const validateForm = (data) => {
         const newErrors = {};
         let clsError = null;
 
@@ -330,13 +338,13 @@ const AddProducts = () => {
                 clsError = `Vui lòng thêm ít nhất một lựa chọn cho "${primaryConfig.name}".`;
             } else {
                 for (const variant of variants) {
-                    if (!variant.name.trim()) { 
-                        clsError = `Vui lòng nhập tên cho tất cả lựa chọn ở "${primaryConfig.name}".`; 
-                        break; 
+                    if (!variant.name.trim()) {
+                        clsError = `Vui lòng nhập tên cho tất cả lựa chọn ở "${primaryConfig.name}".`;
+                        break;
                     }
-                    if (!variant.images || variant.images.length === 0) { 
-                        clsError = `Mỗi lựa chọn ở "${primaryConfig.name}" (ví dụ: "${variant.name}") phải có ít nhất một hình ảnh.`; 
-                        break; 
+                    if (!variant.images || variant.images.length === 0) {
+                        clsError = `Mỗi lựa chọn ở "${primaryConfig.name}" (ví dụ: "${variant.name}") phải có ít nhất một hình ảnh.`;
+                        break;
                     }
                 }
 
@@ -344,26 +352,34 @@ const AddProducts = () => {
                     if (!variants.every(v => v.options && v.options.length > 0)) {
                         clsError = `Vui lòng thêm ít nhất một lựa chọn cho "${secondaryConfig.name}".`;
                     } else {
+                        const seenSkus = new Set(); 
                         for (const variant of variants) {
                             for (const option of variant.options) {
-                                if (!option.value.trim()) { 
-                                    clsError = `Vui lòng nhập tên cho tất cả lựa chọn ở "${secondaryConfig.name}".`; 
-                                    break; 
+                                if (!option.value.trim()) {
+                                    clsError = `Vui lòng nhập tên cho tất cả lựa chọn ở "${secondaryConfig.name}".`;
+                                    break;
                                 }
-                                if (option.price === null || option.price === '' || Number(option.price) <= 0) { 
-                                    clsError = `Giá của phiên bản "${variant.name} - ${option.value}" phải lớn hơn 0.`; 
-                                    break; 
+                                if (option.price === null || option.price === '' || Number(option.price) <= 0) {
+                                    clsError = `Giá của phiên bản "${variant.name} - ${option.value}" phải lớn hơn 0.`;
+                                    break;
                                 }
                                 const stockValue = option.stock_quantity;
                                 const stockNumber = Number(stockValue);
-                                if (stockValue === null || stockValue === '' || isNaN(stockNumber) || stockNumber < 0) { 
-                                    clsError = `Kho hàng của phiên bản "${variant.name} - ${option.value}" phải là số không âm và không được để trống.`; 
-                                    break; 
+                                if (stockValue === null || stockValue === '' || isNaN(stockNumber) || stockNumber < 0) {
+                                    clsError = `Kho hàng của phiên bản "${variant.name} - ${option.value}" phải là số không âm và không được để trống.`;
+                                    break;
                                 }
-                                if (!option.sku_code || !option.sku_code.trim()) { 
-                                    clsError = `SKU của phiên bản "${variant.name} - ${option.value}" không được để trống.`; 
-                                    break; 
+                                const currentSku = option.sku_code?.trim();
+                                if (!currentSku) {
+                                    clsError = `SKU của phiên bản "${variant.name} - ${option.value}" không được để trống.`;
+                                    break;
                                 }
+
+                                if (seenSkus.has(currentSku)) {
+                                    clsError = `SKU bị trùng lặp: "${currentSku}". Mỗi phiên bản phải có SKU duy nhất.`;
+                                    break;
+                                }
+                                seenSkus.add(currentSku);
                             }
                             if (clsError) break;
                         }
@@ -375,17 +391,16 @@ const AddProducts = () => {
         setFormErrors(newErrors);
         setClassificationError(clsError);
 
-        if (Object.keys(newErrors).length > 0) { 
-            setActiveTab('basic'); 
-            return false; 
+        if (Object.keys(newErrors).length > 0) {
+            setActiveTab('basic');
+            return false;
         }
-        if (clsError) { 
-            setActiveTab('sales'); 
-            return false; 
+        if (clsError) {
+            setActiveTab('sales');
+            return false;
         }
         return true;
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         const currentData = latestClassificationData.current;
@@ -413,7 +428,6 @@ const AddProducts = () => {
                     };
                     if (isEditMode) {
                         await editProduct(slug, productPayload);
-                        // alert(`Cập nhật sản phẩm thành công.`);
                         showPopup(
                             'Thông báo',
                             'Cập nhật sản phẩm thành công',
@@ -424,7 +438,6 @@ const AddProducts = () => {
                         )
                     } else {
                         await addProduct(productPayload);
-                        // alert(`Tạo sản phẩm thành công.`);
                         showPopup(
                             'Thông báo',
                             'Tạo sản phẩm thành công',
@@ -451,9 +464,7 @@ const AddProducts = () => {
     }
 
     return (
-        // **THAY ĐỔI: Cấu trúc hoàn toàn mới giống Figma**
         <div className="add-product-container">
-            {/* **TAB NAVIGATION - Đặt ở ngoài cùng, trải đều toàn bộ chiều rộng** */}
             <div className="add-product-tabs">
                 <button
                     type="button"
@@ -470,13 +481,10 @@ const AddProducts = () => {
                     Thông tin bán hàng
                 </button>
             </div>
-            
-            {/* **FORM CONTENT & SUBMIT - Bọc trong form duy nhất** */}
             <form onSubmit={handleSubmit}>
                 <div className="add-product-content">
                     {activeTab === 'basic' && (
                         <>
-                            {/* Cover Image */}
                             <div className="product-field-group">
                                 <label className="product-field-label required">Ảnh bìa</label>
                                 <div className="product-field-content">
@@ -517,8 +525,6 @@ const AddProducts = () => {
                                     )}
                                 </div>
                             </div>
-
-                            {/* Product Name */}
                             <div className="product-field-group">
                                 <label className="product-field-label required">Tên sản phẩm</label>
                                 <div className="product-field-content">
@@ -531,14 +537,16 @@ const AddProducts = () => {
                                             if (formErrors.productName) setFormErrors(p => ({ ...p, productName: null }));
                                         }}
                                         placeholder="Nhập tên sản phẩm"
+                                        maxLength={CHAR_LIMITS.NAME}
                                     />
+                                    <div className="product-char-counter">
+                                        {productName.length}/{CHAR_LIMITS.NAME}
+                                    </div>
                                     {formErrors.productName && (
                                         <div className="product-error-message">{formErrors.productName}</div>
                                     )}
                                 </div>
                             </div>
-
-                            {/* Brand Autocomplete */}
                             <div className="product-field-group">
                                 <label className="product-field-label required">Thương hiệu</label>
                                 <div className="product-field-content">
@@ -555,36 +563,31 @@ const AddProducts = () => {
                                                 if (formErrors.brand) setFormErrors(p => ({ ...p, brand: null }));
                                             }}
                                             placeholder="Chọn hoặc thêm thương hiệu"
+                                            maxLength={CHAR_LIMITS.BRAND} 
                                         />
                                         {showBrandSuggestions && (
                                             <div className="product-autocomplete-suggestions">
                                                 {filteredBrands.map((brand) => (
-                                                    <div
-                                                        key={brand._id}
-                                                        className="product-autocomplete-item"
-                                                        onClick={() => handleSelectBrand(brand)}
-                                                    >
+                                                    <div key={brand._id} className="product-autocomplete-item" onClick={() => handleSelectBrand(brand)}>
                                                         {brand.name}
                                                     </div>
                                                 ))}
                                                 {filteredBrands.length === 0 && brandInput && (
-                                                    <div
-                                                        className="product-autocomplete-item product-autocomplete-add-new"
-                                                        onClick={() => handleAddNewBrand(brandInput)}
-                                                    >
+                                                    <div className="product-autocomplete-item product-autocomplete-add-new" onClick={() => handleAddNewBrand(brandInput)}>
                                                         + Thêm mới: "{brandInput}"
                                                     </div>
                                                 )}
                                             </div>
                                         )}
                                     </div>
+                                    <div className="product-char-counter">
+                                        {brandInput.length}/{CHAR_LIMITS.BRAND}
+                                    </div>
                                     {formErrors.brand && (
                                         <div className="product-error-message">{formErrors.brand}</div>
                                     )}
                                 </div>
                             </div>
-
-                            {/* Category Autocomplete */}
                             <div className="product-field-group">
                                 <label className="product-field-label required">Ngành hàng</label>
                                 <div className="product-field-content">
@@ -601,36 +604,31 @@ const AddProducts = () => {
                                                 if (formErrors.category) setFormErrors(p => ({ ...p, category: null }));
                                             }}
                                             placeholder="Chọn hoặc thêm ngành hàng"
+                                            maxLength={CHAR_LIMITS.CATEGORY} 
                                         />
                                         {showCategorySuggestions && (
                                             <div className="product-autocomplete-suggestions">
                                                 {filteredCategories.map((cat) => (
-                                                    <div
-                                                        key={cat._id}
-                                                        className="product-autocomplete-item"
-                                                        onClick={() => handleSelectCategory(cat)}
-                                                    >
+                                                    <div key={cat._id} className="product-autocomplete-item" onClick={() => handleSelectCategory(cat)}>
                                                         {cat.name}
                                                     </div>
                                                 ))}
                                                 {filteredCategories.length === 0 && categoryInput && (
-                                                    <div
-                                                        className="product-autocomplete-item product-autocomplete-add-new"
-                                                        onClick={() => handleAddNewCategory(categoryInput)}
-                                                    >
+                                                    <div className="product-autocomplete-item product-autocomplete-add-new" onClick={() => handleAddNewCategory(categoryInput)}>
                                                         + Thêm mới: "{categoryInput}"
                                                     </div>
                                                 )}
                                             </div>
                                         )}
                                     </div>
+                                    <div className="product-char-counter">
+                                        {categoryInput.length}/{CHAR_LIMITS.CATEGORY}
+                                    </div>
                                     {formErrors.category && (
                                         <div className="product-error-message">{formErrors.category}</div>
                                     )}
                                 </div>
                             </div>
-
-                            {/* Description */}
                             <div className="product-field-group">
                                 <label className="product-field-label">Mô tả sản phẩm</label>
                                 <div className="product-field-content">
@@ -640,7 +638,11 @@ const AddProducts = () => {
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
                                         placeholder="Nhập mô tả sản phẩm..."
+                                        maxLength={CHAR_LIMITS.DESCRIPTION}
                                     />
+                                    <div className="product-char-counter">
+                                        {description.length}/{CHAR_LIMITS.DESCRIPTION}
+                                    </div>
                                 </div>
                             </div>
                         </>
@@ -659,7 +661,6 @@ const AddProducts = () => {
                     )}
                 </div>
                 
-                {/* **SUBMIT SECTION - Footer cố định** */}
                 <div className="product-submit-section">
                     {submitError && (
                         <div className="product-submit-error">{submitError}</div>

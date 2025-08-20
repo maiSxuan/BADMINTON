@@ -85,7 +85,9 @@ html, body {
   text-align: right;
   padding-right: 16px;
 }
-
+.product-field-group--image .product-field-label {
+  padding-top: 0;
+}
 .product-field-label.required::after {
   content: " *";
   color: var(--color-primary);
@@ -367,11 +369,29 @@ html, body {
   .product-submit-section {
     padding: 16px 12px;
   }
-  .product-field-group {
-    margin-bottom: 20px;
-  }
+ .product-field-group--image {
+  align-items: center;
+}
   .product-image-upload {
     width: 100px;
     height: 100px;
   }
+}
+.product-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.product-char-counter {
+    width: 100%;
+    text-align: right;
+    margin-top: 8px;  
+    font-size: 13px;
+    color: var(--color-text-light); 
+    padding-right: 4px; 
+}
+
+.add-product-content .product-input,
+.add-product-content .product-textarea {
+    padding-right: 16px !important; 
 }
