@@ -21,6 +21,7 @@ export const updateCartItemQuantity = async (variantId, payload) => {
   const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (!token) return;
 
+  // Không cần thay đổi gì ở đây. Hàm này chỉ gửi payload được truyền vào.
   const response = await fetch(`http://localhost:4000/api/cart/${variantId}`, {
     method: 'PUT',
     headers: {
@@ -31,7 +32,8 @@ export const updateCartItemQuantity = async (variantId, payload) => {
   });
 
   if (!response.ok) {
-    throw new Error(`Update quantity failed. Status: ${response.status}`);
+    const errorData = await response.json();
+    throw new Error(errorData.message || `Cập nhật số lượng thất bại. Mã lỗi: ${response.status}`);
   }
 
   return await response.json(); 
