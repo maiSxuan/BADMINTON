@@ -92,38 +92,62 @@ exports.addToCart = async (req, res) => {
         const userId = req.user.id;
         const { product: productId, variant_id: variantId, option_id: optionId, quantity } = req.body;
 
-        if (!mongoose.Types.ObjectId.isValid(productId) || !mongoose.Types.ObjectId.isValid(variantId))
-            return res.status(400).json({ message: 'Invalid productId or variantId' });
-
-        if (quantity <= 0)
-            return res.status(400).json({ message: 'Quantity must be greater than zero' });
+        const quantityToAdd = parseInt(quantity, 10);
+        if (!mongoose.Types.ObjectId.isValid(productId) || 
+            !mongoose.Types.ObjectId.isValid(variantId) || 
+            !mongoose.Types.ObjectId.isValid(optionId)) {
+            return res.status(400).json({ message: 'ID sản phẩm, biến thể hoặc tùy chọn không hợp lệ.' });
+        }
+        
+        if (isNaN(quantityToAdd) || quantityToAdd <= 0) {
+            return res.status(400).json({ message: 'Số lượng thêm vào phải lớn hơn 0.' });
+        }
 
         const product = await Product.findById(productId);
-        if (!product)
-            return res.status(404).json({ message: 'Product not found' });
+        if (!product || !product.is_published) {
+            return res.status(404).json({ message: 'Sản phẩm không tồn tại hoặc đã bị ẩn.' });
+        }
 
         const variant = product.variants.id(variantId);
-        if (!variant)
-            return res.status(404).json({ message: 'Variant not found' });
+        if (!variant) {
+            return res.status(404).json({ message: 'Phân loại (màu sắc,...) không tồn tại.' });
+        }
 
         const option = variant.options.id(optionId);
-        if (!option)
-            return res.status(404).json({ message: 'Option not found' });
+        if (!option) {
+            return res.status(404).json({ message: 'Tùy chọn (size,...) không tồn tại.' });
+        }
+        let cart = await Cart.findOne({ user: userId });
+        if (!cart) {
+            cart = new Cart({ user: userId, items: [] });
+        }
+        const existingItem = cart.items.find(item =>
+            item.product.equals(productId) &&
+            item.variant_id.equals(variantId) &&
+            item.option_id.equals(optionId)
+        );
 
-        if (option.stock_quantity < quantity)
-            return res.status(400).json({ message: 'Not enough stock available' });
-
+        const currentQuantityInCart = existingItem ? existingItem.quantity : 0;
+        const newTotalQuantity = currentQuantityInCart + quantityToAdd;
+        if (newTotalQuantity > option.stock_quantity) {
+            const addableQuantity = option.stock_quantity - currentQuantityInCart;
+            let errorMessage = `Số lượng sản phẩm vượt quá tồn kho (Tồn kho: ${option.stock_quantity}).`;
+            if (addableQuantity > 0) {
+                errorMessage = `Trong giỏ đã có ${currentQuantityInCart} sản phẩm. Bạn chỉ có thể thêm tối đa ${addableQuantity} sản phẩm nữa.`;
+            } else {
+                errorMessage = `Số lượng sản phẩm trong giỏ đã đạt mức tối đa theo tồn kho.`;
+            }
+            return res.status(400).json({ message: errorMessage });
+        }
         const now = new Date();
-        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const activePromotions = await Promotion.find({
             isActive: true,
             startDate: { $lte: now },
-            endDate: { $gte: todayStart }
+            endDate: { $gte: now }
         }).lean();
 
-        let discountPrice = option.price || product.price;
+        let priceAtTime = option.price || product.price; 
         let appliedPromoCode = null;
-
         activePromotions.forEach(promo => {
             const prodDiscount = promo.productDiscounts?.find(pd => pd.productId.toString() === productId);
             if (prodDiscount) {
@@ -131,56 +155,40 @@ exports.addToCart = async (req, res) => {
                 if (codeEntry) {
                     let newPrice;
                     if (codeEntry.discountType === 'percentage') {
-                        newPrice = discountPrice * (1 - codeEntry.discountValue / 100);
-                    } else if (codeEntry.discountType === 'fixed') {
-                        newPrice = Math.max(discountPrice - codeEntry.discountValue, 0);
+                        newPrice = priceAtTime * (1 - codeEntry.discountValue / 100);
+                    } else { // 'fixed'
+                        newPrice = Math.max(priceAtTime - codeEntry.discountValue, 0);
                     }
-                    if (newPrice < discountPrice) {
-                        discountPrice = newPrice;
+                    if (newPrice < priceAtTime) {
+                        priceAtTime = Math.round(newPrice);
                         appliedPromoCode = codeEntry.code;
                     }
                 }
             }
         });
-        discountPrice = Math.round(discountPrice);
-
-        let cart = await Cart.findOne({ user: userId });
-        if (!cart) {
-            cart = new Cart({
-                user: userId,
-                items: []
-            });
-        }
-
-        const existingItem = cart.items.find(item =>
-            item.product.equals(productId) &&
-            item.variant_id.equals(variantId) &&
-            item.option_id.equals(optionId)
-        );
-
         if (existingItem) {
-            existingItem.quantity += quantity;
-            existingItem.priceAtTime = discountPrice;
-            existingItem.appliedCode = appliedPromoCode;
+            existingItem.quantity = newTotalQuantity;
+            existingItem.priceAtTime = priceAtTime;
+            existingItem.appliedCode = appliedPromoCode; 
         } else {
             cart.items.push({
                 product: new mongoose.Types.ObjectId(productId),
                 variant_id: new mongoose.Types.ObjectId(variantId),
                 option_id: new mongoose.Types.ObjectId(optionId),
                 sku_code: option.sku_code,
-                quantity,
-                priceAtTime: discountPrice,
+                quantity: quantityToAdd,
+                priceAtTime: priceAtTime,
                 appliedCode: appliedPromoCode
             });
         }
-
         cart.recalculateTotals();
         await cart.save();
 
-        res.status(200).json({ message: 'Item added to cart', cart: cart.toObject() });
+        res.status(200).json({ message: 'Thêm sản phẩm vào giỏ hàng thành công.', cart });
+
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Error adding to cart', error: err.message });
+        console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', err);
+        res.status(500).json({ message: 'Đã xảy ra lỗi hệ thống, vui lòng thử lại sau.', error: err.message });
     }
 };
 
@@ -220,59 +228,48 @@ exports.removeCartItem = async (req, res) => {
 exports.updateCartItem = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { product: productId, variant_id: variantId, option_id: optionId, delta, priceAtTime } = req.body;
+        const { product: productId, variant_id: variantId, option_id: optionId, quantity } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(productId) || !mongoose.Types.ObjectId.isValid(variantId))
-            return res.status(400).json({ message: 'Invalid productId or variantId' });
+            return res.status(400).json({ message: 'ID sản phẩm hoặc biến thể không hợp lệ' });
 
-        if (delta !== 1 && delta !== -1)
-            return res.status(400).json({ message: 'Delta must be either 1 or -1' });
+        const newQuantity = parseInt(quantity, 10);
+        if (isNaN(newQuantity) || newQuantity <= 0) {
+            return res.status(400).json({ message: 'Số lượng phải là một số lớn hơn 0' });
+        }
 
         const product = await Product.findById(productId);
         if (!product)
-            return res.status(404).json({ message: 'Product not found' });
+            return res.status(404).json({ message: 'Không tìm thấy sản phẩm' });
 
         const variant = product.variants.id(variantId);
         if (!variant)
-            return res.status(404).json({ message: 'Variant not found' });
+            return res.status(404).json({ message: 'Không tìm thấy biến thể' });
 
         const option = variant.options.id(optionId);
         if (!option)
-            return res.status(404).json({ message: 'Option not found' });
+            return res.status(404).json({ message: 'Không tìm thấy tùy chọn' });
 
         const cart = await Cart.findOne({ user: userId });
         if (!cart)
-            return res.status(404).json({ message: 'Cart not found' });
+            return res.status(404).json({ message: 'Không tìm thấy giỏ hàng' });
 
         const item = cart.items.find(item =>
             item.product.equals(productId) &&
             item.variant_id.equals(variantId) &&
             item.option_id.equals(optionId)
         );
-
         if (!item)
-            return res.status(404).json({ message: 'Item not found in cart' });
-
-        const newQuantity = item.quantity + delta;
-
-        if (newQuantity <= 0)
-            return res.status(400).json({ message: 'Quantity must be greater than 0' });
-
+            return res.status(404).json({ message: 'Không tìm thấy sản phẩm trong giỏ hàng' });
         if (newQuantity > option.stock_quantity)
-            return res.status(400).json({ message: 'Not enough stock available' });
-
+            return res.status(400).json({ message: `Số lượng vượt quá tồn kho. Tối đa: ${option.stock_quantity}` });
         item.quantity = newQuantity;
-
-        if (priceAtTime !== undefined) {
-            item.priceAtTime = priceAtTime;
-        }
-
         cart.recalculateTotals();
         await cart.save();
 
-        res.status(200).json({ message: 'Cart item updated', cart });
+        res.status(200).json({ message: 'Cập nhật giỏ hàng thành công', cart });
     } catch (err) {
-        res.status(500).json({ message: 'Error updating cart item', error: err.message });
+        res.status(500).json({ message: 'Lỗi khi cập nhật giỏ hàng', error: err.message });
     }
 };
 

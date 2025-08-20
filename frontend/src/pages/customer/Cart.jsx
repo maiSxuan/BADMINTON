@@ -11,6 +11,7 @@ const CartPage = () => {
   const [selectedCount, setSelectedCount] = useState(0)
   const [selectAll, setSelectAll] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [editableQuantities, setEditableQuantities] = useState({});
 
   const { showPopup } = usePopup();
 
@@ -35,6 +36,7 @@ const CartPage = () => {
           optionId: item.optionId,
           slug: item.slug,
           quantity: item.quantity,
+          stock_quantity: item.stock_quantity || 999,
           price: item.price,
           selected: false,
           color: item.color || "Không xác định",
@@ -42,9 +44,16 @@ const CartPage = () => {
           image: item.image || "/placeholder.svg"
         }));
 
-        setCartItems(cartWithSelected)
+        setCartItems(cartWithSelected);
+
+        const initialQuantities = cartWithSelected.reduce((acc, item) => {
+          acc[item._id] = item.quantity;
+          return acc;
+        }, {});
+        setEditableQuantities(initialQuantities);
+
       } catch (err) {
-        console.error('Failed to fetch cart:', err)
+        console.error('Lỗi khi tải giỏ hàng:', err)
         showPopup(
           'Lỗi',
           err.message || 'Tải giỏ hàng thất bại',
@@ -61,29 +70,69 @@ const CartPage = () => {
     fetchCartData()
   }, [showPopup])
 
-  const handleQuantityChange = async (item, amount) => {
-    if (![1, -1].includes(amount)) return
-    if (![1, -1].includes(amount)) return
+  const handleUpdateItemQuantity = async (item, newQuantity) => {
+    const originalQuantity = item.quantity;
+
+    let validatedQuantity = parseInt(newQuantity, 10);
+    if (isNaN(validatedQuantity) || validatedQuantity < 1) {
+      validatedQuantity = 1;
+    }
+    if (validatedQuantity > item.stock_quantity) {
+      validatedQuantity = item.stock_quantity;
+      showPopup('Thông báo', `Số lượng sản phẩm vượt quá tồn kho. Tối đa: ${item.stock_quantity}`, null, null, 4, 3);
+    }
+
+    setEditableQuantities(prev => ({ ...prev, [item._id]: validatedQuantity }));
+
+    if (validatedQuantity === originalQuantity) {
+      return;
+    }
 
     try {
+      // THAY ĐỔI: Gửi 'quantity' thay vì 'delta'
       await updateCartItemQuantity(item.variantId, {
         product: item.productId,
         variant_id: item.variantId,
         option_id: item.optionId,
-        delta: amount
+        quantity: validatedQuantity 
       });
 
       setCartItems(prev =>
-        prev.map(newItem =>
-          newItem.productId === item.productId &&
-            newItem.variantId === item.variantId &&
-            newItem.optionId === item.optionId
-            ? { ...newItem, quantity: newItem.quantity + amount }
-            : newItem
+        prev.map(cartItem =>
+          cartItem._id === item._id
+            ? { ...cartItem, quantity: validatedQuantity }
+            : cartItem
         )
-      )
+      );
     } catch (err) {
-      console.error('Error updating quantity:', err);
+      console.error('Lỗi khi cập nhật số lượng:', err);
+      showPopup('Lỗi', err.message || 'Cập nhật số lượng thất bại.', null, null, 4, 2);
+      
+      setEditableQuantities(prev => ({ ...prev, [item._id]: originalQuantity }));
+    }
+  };
+
+  const handleQuantityInputChange = (e, item) => {
+    const value = e.target.value;
+    const numericValue = value.replace(/[^0-9]/g, '').slice(0, 3);
+    setEditableQuantities(prev => ({
+      ...prev,
+      [item._id]: numericValue,
+    }));
+  };
+
+  const handleQuantityKeyDown = (e, item) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.target.blur();
+    }
+  };
+
+  const handleQuantityButtonClick = (item, amount) => {
+    const currentQuantity = item.quantity;
+    const newQuantity = currentQuantity + amount;
+    if (newQuantity >= 1 && newQuantity <= item.stock_quantity) {
+      handleUpdateItemQuantity(item, newQuantity);
     }
   };
 
@@ -111,7 +160,7 @@ const CartPage = () => {
 
           window.dispatchEvent(new Event("cartUpdated"));
         } catch (err) {
-          console.error("Failed to remove item:", err)
+          console.error("Lỗi khi xóa sản phẩm:", err)
         }
       },
       6
@@ -202,7 +251,7 @@ const CartPage = () => {
             2
           )
         } catch (err) {
-          console.error("Clear cart error: ", err);
+          console.error("Lỗi xóa toàn bộ giỏ hàng: ", err);
           showPopup(
             'Lỗi',
             err.message || 'Xóa toàn bộ sản phẩm trong giỏ hàng thất bại',
@@ -234,7 +283,6 @@ const CartPage = () => {
   const handleProceedToPurchase = () => {
     const selectedItems = cartItems.filter(i => i.selected)
     if (selectedItems.length === 0) {
-      // alert("Vui lòng chọn ít nhất một sản phẩm để mua hàng!")
       showPopup(
         'Thông báo',
         'Vui lòng chọn ít nhất một sản phẩm để mua hàng',
@@ -340,15 +388,23 @@ const CartPage = () => {
                   <div className="item-quantity-control">
                     <button
                       className="quantity-btn"
-                      onClick={() => handleQuantityChange(item, -1)}
+                      onClick={() => handleQuantityButtonClick(item, -1)}
                       disabled={item.quantity <= 1}
                     >
                       -
                     </button>
-                    <input type="text" value={item.quantity} readOnly className="quantity-input" />
+                    <input
+                      type="text"
+                      className="quantity-input"
+                      value={editableQuantities[item._id] || ''}
+                      onChange={(e) => handleQuantityInputChange(e, item)}
+                      onKeyDown={(e) => handleQuantityKeyDown(e, item)}
+                      onBlur={() => handleUpdateItemQuantity(item, editableQuantities[item._id])}
+                    />
                     <button
                       className="quantity-btn"
-                      onClick={() => handleQuantityChange(item, 1)}
+                      onClick={() => handleQuantityButtonClick(item, 1)}
+                      disabled={item.quantity >= item.stock_quantity}
                     >
                       +
                     </button>
@@ -400,4 +456,4 @@ const CartPage = () => {
   )
 }
 
-export default CartPage
+export default CartPage;
