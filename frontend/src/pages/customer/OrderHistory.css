@@ -273,7 +273,7 @@
   border: none;
   background: none;
   cursor: pointer;
-  border-radius: 50%;
+  border-radius: 0%;
   transition: background-color 0.2s;
 }
 
@@ -593,7 +593,7 @@
 }
 
 .dialog-textarea {
-  width: calc(100% - 20px); /* Adjust for padding */
+  width: 100%;
   min-height: 100px;
   padding: 10px;
   border: 1px solid #ccc;

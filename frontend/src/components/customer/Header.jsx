@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import "./Header.css";
 import DropdownMenu from "../customer/DropdownMenu";
@@ -165,17 +165,23 @@ const Header = () => {
                 "Chưa đăng nhập",
                 "Bạn cần đăng nhập để xem lịch sử mua hàng",
                 "Đăng nhập",
-                () => navigate("/order-history"),
+                () => navigate("/login"),
                 4
             );
         }
     };
 
+    const gobackHome= () =>{
+        navigate("/")
+    }
+
     return (
         <header className="site-header">
             <div className="main-header">
                 <div className="left-group">
-                    <div className="header-group logo-group"><Logo size="mini" /></div>
+                    <Link to="/" className="logo-link">
+                        <Logo size="mini" />
+                    </Link>
                     <div className="header-group support-group">
                         <div className="support-item">
                             <i className="fa-solid fa-phone"></i>

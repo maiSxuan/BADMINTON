@@ -103,21 +103,14 @@ function ReviewDialog({ isOpen, onClose, order, userId }) {
             userId: userId,
             rating: review.rating,
             comment: review.comment,
-          })
+          }),
         )
       }
     }
 
     if (reviewPromises.length === 0) {
       // alert("Vui lòng đánh giá và viết bình luận cho ít nhất một sản phẩm.")
-      showPopup(
-        'Thông báo',
-        'Vui lòng chọn số sao và viết bình luận để đánh giá',
-        null,
-        null,
-        4,
-        3
-      )
+      showPopup("Thông báo", "Vui lòng chọn số sao và viết bình luận để đánh giá", null, null, 4, 3)
       setIsSubmitting(false)
       return
     }
@@ -125,26 +118,12 @@ function ReviewDialog({ isOpen, onClose, order, userId }) {
     try {
       await Promise.all(reviewPromises)
       // alert("Cảm ơn bạn đã đánh giá sản phẩm!")
-      showPopup(
-        'Thông báo',
-        'Cảm ơn bạn đã đánh giá sản phẩm',
-        null,
-        null,
-        4,
-        5
-      )
+      showPopup("Thông báo", "Cảm ơn bạn đã đánh giá sản phẩm", null, null, 4, 5)
       onClose()
     } catch (error) {
       console.error("Lỗi khi gửi đánh giá:", error)
       // alert(error.message || "Có lỗi xảy ra khi gửi đánh giá.")
-      showPopup(
-        'Lỗi',
-        error.message || 'Có lỗi xảy ra khi gửi đánh giá',
-        null,
-        null,
-        4,
-        3
-      )
+      showPopup("Lỗi", error.message || "Có lỗi xảy ra khi gửi đánh giá", null, null, 4, 3)
     } finally {
       setIsSubmitting(false)
     }
@@ -164,7 +143,7 @@ function ReviewDialog({ isOpen, onClose, order, userId }) {
         <div className="dialog-body">
           {order.items.map((item) => (
             <div key={item.productId} className="review-item">
-              <img src={item.image} alt={item.name} className="review-item-image" />
+              <img src={item.image || "/placeholder.svg"} alt={item.name} className="review-item-image" />
               <div className="review-item-details">
                 <h4 className="review-item-name">{item.name}</h4>
                 <p className="review-item-variant">
@@ -308,25 +287,11 @@ const OrderHistory = () => {
       await updateOrderStatus(order._id, "Hoàn thành")
       setOrders((prev) => prev.map((o) => (o._id === order._id ? { ...o, status: "Hoàn thành" } : o)))
       // alert("Đã xác nhận nhận hàng thành công!")
-      showPopup(
-        'Thông báo',
-        'Đã xác nhận nhận hàng thành công',
-        null,
-        null,
-        4,
-        3
-      )
+      showPopup("Thông báo", "Đã xác nhận nhận hàng thành công", null, null, 4, 3)
     } catch (error) {
       console.error("Lỗi xác nhận nhận hàng:", error)
       // alert("Có lỗi xảy ra khi xác nhận nhận hàng.")
-      showPopup(
-        'Lỗi',
-        error.message || 'Có lỗi xảy ra khi xác thực nhận hàng',
-        null,
-        null,
-        4,
-        3
-      )
+      showPopup("Lỗi", error.message || "Có lỗi xảy ra khi xác thực nhận hàng", null, null, 4, 3)
     }
   }
 
@@ -344,28 +309,14 @@ const OrderHistory = () => {
     try {
       const data = await requestReturnOrCancellation(currentOrderForAction._id, dialogType, reason)
       setOrders((prev) =>
-        prev.map((o) => (o._id === currentOrderForAction._id ? { ...o, status: data.data.status } : o))
+        prev.map((o) => (o._id === currentOrderForAction._id ? { ...o, status: data.data.status } : o)),
       )
       // alert(data.message)
-      showPopup(
-        'Thông báo',
-        data.message,
-        null,
-        null,
-        4,
-        3
-      )
+      showPopup("Thông báo", data.message, null, null, 4, 3)
     } catch (error) {
       console.error("Lỗi gửi yêu cầu:", error)
       // alert("Có lỗi xảy ra khi gửi yêu cầu.")
-      showPopup(
-        'Lỗi',
-        error.message || 'Có lỗi xảy ra khi gửi yêu cầu',
-        null,
-        null,
-        4,
-        3
-      )
+      showPopup("Lỗi", error.message || "Có lỗi xảy ra khi gửi yêu cầu", null, null, 4, 3)
     } finally {
       setShowReasonDialog(false)
       setCurrentOrderForAction(null)
@@ -409,8 +360,8 @@ const OrderHistory = () => {
   return (
     <div className="order-history-container">
       <div className="cart-header">
-          <h1 className="cart-title">LỊCH SỬ MUA HÀNG</h1>
-          <p className="cart-subtitle">({orders.length} đơn hàng)</p>
+        <h1 className="cart-title">LỊCH SỬ MUA HÀNG</h1>
+        <p className="cart-subtitle">({orders.length} đơn hàng)</p>
       </div>
       {orders.length === 0 ? (
         <div className="empty-orders">
@@ -441,7 +392,9 @@ const OrderHistory = () => {
                       />
                       <div className="item-details">
                         <h3 className="item-name">{item.name}</h3>
-                        <p className="item-variant">Phân loại hàng: {item.variant_name || item.sku_code || "Mặc định"}</p>
+                        <p className="item-variant">
+                          Phân loại hàng: {item.variant_name || item.sku_code || "Mặc định"}
+                        </p>
                         <div className="item-price-info">
                           <span className="item-quantity">x{item.quantity}</span>
                           {/* Giữ nguyên logic cũ: hiển thị tổng đơn ở mỗi item */}
@@ -468,7 +421,10 @@ const OrderHistory = () => {
                     )}
                     {order.status === "Đã giao" && (
                       <>
-                        <button onClick={() => handleConfirmReceived(order)} className="history-btn history-btn-primary">
+                        <button
+                          onClick={() => handleConfirmReceived(order)}
+                          className="history-btn history-btn-primary"
+                        >
                           Đã nhận được hàng
                         </button>
                         <button onClick={() => handleReturnRefund(order)} className="history-btn history-btn-secondary">
@@ -536,8 +492,6 @@ const OrderHistory = () => {
   )
 }
 
-// ... (component OrderDetail giữ nguyên)
-
 const OrderDetail = ({ order, onBack }) => {
   const calculateOrderTotal = (items) => {
     return items.reduce((sum, item) => sum + item.price * item.quantity, 0)
@@ -568,7 +522,7 @@ const OrderDetail = ({ order, onBack }) => {
       "Yêu cầu trả hàng/hoàn tiền": "status-returned-request",
       "Yêu cầu hủy": "status-cancelled-request",
     }
-  return statusClasses[status] || "status-default"
+    return statusClasses[status] || "status-default"
   }
 
   return (
@@ -576,7 +530,7 @@ const OrderDetail = ({ order, onBack }) => {
       {/* Header */}
       <div className="detail-header">
         <button onClick={onBack} className="back-button">
-          <span className="sr-only">Quay lại</span>
+          ← Quay lại lịch sử mua hàng
         </button>
         <h1 className="detail-title">Chi tiết đơn hàng #{order._id.slice(-8)}</h1>
       </div>
@@ -624,8 +578,7 @@ const OrderDetail = ({ order, onBack }) => {
                   </p>
                 )}
                 <p>
-                  <span className="info-label">Địa chỉ:</span>{" "}
-                  {[order.shippingInfo.address].filter(Boolean).join(", ")}
+                  <span className="info-label">Địa chỉ:</span> {[order.shippingInfo.address].filter(Boolean).join(", ")}
                 </p>
               </div>
             </div>

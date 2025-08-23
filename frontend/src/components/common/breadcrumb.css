@@ -1,7 +1,6 @@
 /* src/components/common/Breadcrumb/Breadcrumb.css */
 
 .breadcrumb-container {
-  width: 100vw;                       /* Chiếm toàn bộ chiều ngang màn hình */
   background-color: #ffffff;
   padding: 4px 8px;
   margin: 4px;

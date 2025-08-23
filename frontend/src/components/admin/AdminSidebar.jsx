@@ -1,66 +1,69 @@
-// src/components/Sidebar/AdminSidebar.jsx
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import './AdminSidebar.css';
 
-  const menuItems = [
-    {
-      id: 'users',
-      title: 'Quản lý người dùng',
-      subItems: [
-        { label: 'Xem thông tin người dùng', path: '/admin/user-list' }, 
-      ],
-    },
-    {
-      id: 'orders',
-      title: 'Quản lý đơn hàng',
-      subItems: [
-        { label: 'Tất cả', path: '/admin/all-orders' },
-        { label: 'Đơn hủy', path: '/admin/cancelled-orders'},
-        { label: 'Trả hàng/hoàn tiền', path: '/admin/return-orders'}
-      ],
-    },
-    {
-      id: 'products',
-      title: 'Quản lý sản phẩm',
-      subItems: [
-        { label: 'Tất cả sản phẩm', path: '/admin/all-products' },
-        { label: 'Thêm sản phẩm', path: '/admin/add-product' },
-      ],
-    },
-        {
-      id: 'promotions',
-      title: 'Khuyến mãi',
-      subItems: [
-        {label: 'Tạo chiến dịch', path:'/admin/add-promotion'},
-        {label: 'Quản lí khuyến mãi', path:'/admin/manage-promotion'}
-      ]
-    },
-  ];
+const menuItems = [
+  {
+    id: 'users',
+    title: 'Quản lý người dùng',
+    subItems: [
+      { label: 'Xem thông tin người dùng', path: '/admin/user-list' }, 
+    ],
+  },
+  {
+    id: 'orders',
+    title: 'Quản lý đơn hàng',
+    subItems: [
+      { label: 'Tất cả', path: '/admin/all-orders' },
+      { label: 'Đơn hủy', path: '/admin/cancelled-orders'},
+      { label: 'Trả hàng/hoàn tiền', path: '/admin/return-orders'}
+    ],
+  },
+  {
+    id: 'products',
+    title: 'Quản lý sản phẩm',
+    subItems: [
+      { label: 'Tất cả sản phẩm', path: '/admin/all-products' },
+      { label: 'Thêm sản phẩm', path: '/admin/add-product' },
+    ],
+  },
+  {
+    id: 'promotions',
+    title: 'Khuyến mãi',
+    subItems: [
+      {label: 'Tạo chiến dịch', path:'/admin/add-promotion'},
+      {label: 'Quản lí khuyến mãi', path:'/admin/manage-promotion'}
+    ]
+  },
+];
 
 const AdminSidebar = () => {
-  const [openSectionIds, setOpenSectionIds] = useState([]);
+  // load trạng thái từ localStorage (nếu có)
+  const [openSectionIds, setOpenSectionIds] = useState(() => {
+    const saved = localStorage.getItem("openSectionIds");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const handleToggle = (sectionId) => {
     setOpenSectionIds(prevOpenIds => {
       const isOpen = prevOpenIds.includes(sectionId);
+      let newState;
       if (isOpen) {
-        return prevOpenIds.filter(id => id !== sectionId); 
+        newState = prevOpenIds.filter(id => id !== sectionId);
       } else {
-        return [...prevOpenIds, sectionId];
+        newState = [...prevOpenIds, sectionId];
       }
+      // lưu xuống localStorage
+      localStorage.setItem("openSectionIds", JSON.stringify(newState));
+      return newState;
     });
   };
 
-   return (
+  return (
     <aside className="admin-sidebar">
       {menuItems.map((section) => {
-        // Kiểm tra xem mục có menu con hay không
         const hasSubItems = section.subItems && section.subItems.length > 0;
-        
         if (hasSubItems) {
-          // NẾU CÓ MENU CON, RENDER NHƯ CŨ
           const isOpen = openSectionIds.includes(section.id);
           return (
             <div key={section.id} className="sidebar-section">
@@ -80,12 +83,11 @@ const AdminSidebar = () => {
             </div>
           );
         } else {
-          // NẾU KHÔNG CÓ MENU CON, RENDER NHƯ MỘT LIÊN KẾT TRỰC TIẾP
           return (
             <div key={section.id} className="sidebar-section">
               <NavLink 
                 to={section.path} 
-                className="admin-section-header direct-link" // Thêm class để dễ dàng style riêng
+                className="admin-section-header direct-link"
               >
                 <h3 className="admin-section-title">{section.title}</h3>
               </NavLink>

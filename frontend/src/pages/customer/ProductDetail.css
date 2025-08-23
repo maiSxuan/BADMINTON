@@ -305,11 +305,16 @@
 .buy-now-btn {
     background-color: var(--primary-color);
     color: #fff;
+    font-weight: bold;
+    font-size: 18px;
+
 }
 
 .add-to-cart-btn {
     background-color: var(--secondary-color);
     color: #fff;
+    font-weight: bold;
+    font-size: 18px;
 }
 
 .product-description-section {
