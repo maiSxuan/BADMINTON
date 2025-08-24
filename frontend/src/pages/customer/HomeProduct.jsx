@@ -249,14 +249,14 @@ const HomeProduct = () => {
             <NavLink
               to="/sale"
               className="sale-card image-card"
-              style={{ backgroundImage: `url(${saleGiay})` }}
+              style={{ backgroundImage: `url(${saleAo})` }}
             ></NavLink>
 
             <NavLink
               to="/sale"
               className="sale-card image-card"
-              style={{ backgroundImage: `url(${saleAo})` }}
-            ></NavLink>
+              style={{ backgroundImage: `url(${saleGiay})` }}
+            ></NavLink> 
           </div>
         </div>
       </section>

@@ -208,7 +208,7 @@ const AddProducts = () => {
         };
 
         fetchAndPopulateProduct(slug);
-    }, [slug, isEditMode, navigate]);
+    }, [slug, isEditMode, navigate, showPopup]);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
