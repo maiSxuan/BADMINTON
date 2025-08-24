@@ -183,6 +183,13 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(401).json({ message: "Tài khoản chưa được đăng ký" });
     }
+
+    if (user.status === 0) {
+      return res
+        .status(403)
+        .json({ message: "Tài khoản đã bị khóa bởi quản trị viên" });
+    }
+
     if (user.user_type !== "ADMIN" && !user.isVerified) {
       return res.status(403).json({ message: "Tài khoản chưa xác minh OTP" });
     }

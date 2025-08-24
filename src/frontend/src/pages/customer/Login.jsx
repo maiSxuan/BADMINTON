@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../services";
 import Logo from "../../components/common/logo";
@@ -13,6 +13,16 @@ export default function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { showPopup } = usePopup();
+
+  useEffect(() => {
+    const savedLogin = localStorage.getItem("rememberedLogin");
+    if (savedLogin) {
+      const { emailOrPhone, password } = JSON.parse(savedLogin);
+      setEmailOrPhone(emailOrPhone);
+      setPassword(password);
+      setRememberPassword(true);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,9 +47,15 @@ export default function Login() {
 
       if (rememberPassword) {
         localStorage.setItem("token", token);
+        localStorage.setItem(
+          "rememberedLogin",
+          JSON.stringify({ emailOrPhone, password })
+        );
       } else {
         sessionStorage.setItem("token", token);
+        localStorage.removeItem("rememberedLogin");
       }
+
       window.dispatchEvent(new Event("loginStatusChanged"));
       showPopup("Thành công", "Bạn đã đăng nhập thành công", "OK");
       // Redirect to homepage or admin page
