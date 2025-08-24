@@ -4,7 +4,7 @@ export * from './brandService';
 export * from './productService';
 export * from './categoryService';
 export * from './uploadService';
-export * from './usersService';
+export * from './UsersService';
 export * from './authentication';
 export * from './ratingService'
 

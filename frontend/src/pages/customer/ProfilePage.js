@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import "./ProfilePage.css"
 // import { useNavigate } from "react-router-dom"
 import { Pencil, Eye, EyeOff, Check, X } from "lucide-react"
-import { getProfile, updateProfile } from "../../services/usersService"
+import { getProfile, updateProfile } from "../../services"
 import { usePopup } from "../../components/common/popupContext"
 
 const ProfilePage = () => {

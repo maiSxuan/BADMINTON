@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import "./PromotionList.css"
 import Pagination from '../../components/common/Pagination';
+import Select from 'react-select'
 import { Trash, SquarePen } from 'lucide-react';
 import { deletePromotion, getAllPromotions, getPromotionById, addCodeToPromotion, addProductToPromotion, removeCodeFromPromotion, removeProductFromPromotion, updatePromotion, togglePromotionStatus } from '../../services/index';
 import { getProductsOnQuery } from '../../services/index';
@@ -368,7 +369,7 @@ const PromotionListPage = () => {
     }
 
   const [currentPage, setCurrentPage] = useState(1);
-  let promotionsPerPage = 10;
+  let promotionsPerPage = 2;
   const indexOfLastpromotion = currentPage * promotionsPerPage;
   const indexOfFirstpromotion = indexOfLastpromotion - promotionsPerPage;
   const currentpromotions = promotions.slice(indexOfFirstpromotion, indexOfLastpromotion)
@@ -511,7 +512,7 @@ const PromotionListPage = () => {
                       </tbody>
                     </table>
                     <div className="promo-product-add-row">
-                      <select
+                      {/* <select
                         value={selectedProductId}
                         onChange={(e) => setSelectedProductId(e.target.value)}
                         className="dropdown"
@@ -522,12 +523,21 @@ const PromotionListPage = () => {
                             {product.name}
                           </option>
                         ))}
-                      </select>
+                      </select> */}
+                      <Select 
+                        className='select-search-dropdown'
+                        classNamePrefix='select-search-dropdown'
+                        value={allProducts.map(p => ({ value: p.id, label: p.name })).find(opt => opt.value === selectedProductId) || null}
+                        onChange={(opt) => setSelectedProductId(opt.value)}
+                        options={allProducts.map(p => ({ value: p.id, label: p.name}))}  
+                        placeholder='-- Chọn sản phẩm --'
+                        isSearchable
+                      />
 
                       <select
                         value={selectedCode}
                         onChange={(e) => setSelectedCode(e.target.value)}
-                        className="dropdown"
+                        
                       >
                         <option value="">-- Chọn mã khuyến mãi --</option>
                         {selectedPromotion?.listCode?.map((code, index) => (

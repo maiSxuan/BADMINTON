@@ -138,7 +138,7 @@ const AddPromotionPage = () => {
         />
       </form>
       <div className="promo-form-actions">
-        <button type="submit" className="promo-submit-btn">
+        <button type="submit" className="promo-submit-btn" onClick={handleCreatePromotion}>
           Tạo Chiến Dịch
         </button>
       </div>
