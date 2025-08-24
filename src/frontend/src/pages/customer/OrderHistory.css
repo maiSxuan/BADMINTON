@@ -709,6 +709,7 @@
 
 .review-item-details {
   flex: 1;
+  width: 100%;
 }
 
 .review-item-name {

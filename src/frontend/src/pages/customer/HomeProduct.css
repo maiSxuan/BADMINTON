@@ -126,7 +126,7 @@
 /* --- CÁC STYLE CŨ CÒN LẠI --- */
 .sale-off { padding: 12px 0; margin-bottom: 12px; }
 .sale-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin: 0 32px; }
-.sale-card { border-radius: 8px; padding: 24px; color: white; position: relative; overflow: hidden; min-height: 120px; display: flex; flex-direction: column; justify-content: center; cursor: pointer; transition: transform 0.2s; text-decoration: none; }
+.sale-card { border-radius: 8px; padding: 24px; color: white; position: relative; overflow: hidden; min-height: 180px; display: flex; flex-direction: column; justify-content: center; cursor: pointer; transition: transform 0.2s; text-decoration: none; }
 .sale-card:hover { transform: translateY(-2px); }
 .image-card { background-size: cover; background-position: center; background-repeat: no-repeat; color: #fee9ff; }
 .image-card:hover { filter: brightness(1.1); }
@@ -140,9 +140,9 @@
 .category-grid-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 .category-grid-container::-webkit-scrollbar-thumb:hover { background: #aaa; }
 .category-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-.category-card { background: linear-gradient(135deg, #bf6a02, #ff0102); color: white; border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s; min-height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-decoration: none; }
+.category-card { /*background: linear-gradient(135deg, #bf6a02, #ff0102);*/background: linear-gradient(45deg, #df98cd, #ee83c5, #ffabdd); color: white; border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s; min-height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-decoration: none; }
 .category-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
-.category-title { font-weight: bold; font-size: 14px; line-height: 1.4; word-break: break-word; }
+.category-title { font-weight: bold; font-size: 16px; line-height: 1.4; word-break: break-word; }
 
 /* Responsive Design */
 @media (max-width: 1024px) { .features-grid, .homepage-product-grid, .category-grid { grid-template-columns: repeat(3, 1fr); } }
