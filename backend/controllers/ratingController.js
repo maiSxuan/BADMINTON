@@ -36,6 +36,14 @@ exports.createRating = async (req, res) => {
       return res.status(400).json({ message: 'Bạn đã đánh giá sản phẩm này trong đơn hàng này.' });
     }
 
+    if (!comment || comment.trim().length === 0) {
+      return res.status(400).json({ message: 'Vui lòng nhập nội dung đánh giá.' });
+    }
+
+    if (comment.length > 500) {
+      return res.status(400).json({ message: 'Nội dung đánh giá tối đa 500 ký tự.' });
+    }
+
     // 4. Tạo đánh giá
     const newRating = new Rating({
       user: userId,

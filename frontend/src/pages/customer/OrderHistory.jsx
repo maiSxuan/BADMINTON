@@ -80,6 +80,18 @@ function ReviewDialog({ isOpen, onClose, order, userId }) {
   const { showPopup } = usePopup()
 
   const handleReviewChange = (productId, field, value) => {
+    if (field === 'comment' && value.length > 500) {
+      value = value.slice(0, 500)
+      showPopup(
+        'Thông báo',
+        'Bình luận đánh giá không được vượt quá 500 kí tự',
+        null,
+        null,
+        4,
+        2
+      )
+    }
+
     setReviews((prev) => ({
       ...prev,
       [productId]: {
