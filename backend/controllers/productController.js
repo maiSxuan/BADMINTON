@@ -233,7 +233,7 @@ const validateUniqueSkus = (data) => {
                 startDate: { $lte: now },
                 endDate: { $gte: todayStart }
             }).lean();
-            console.log(todayStart)
+            // console.log(todayStart)
 
             const discountMap = new Map();
             promotions.forEach(promo => {
