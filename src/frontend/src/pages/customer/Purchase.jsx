@@ -327,7 +327,7 @@ const PurchasePage = () => {
                     <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
                   </div>
                   <div className="purchase-product-details">
-                    <h3>{item.name}</h3>
+                    <h4>{item.name}</h4>
                     <p className="variant"> {item.color} - {item.size}</p>
                     <p className="price">{item.price.toLocaleString("vi-VN")}đ x {item.quantity}</p>
                   </div>
@@ -573,7 +573,7 @@ const PurchasePage = () => {
                           <img src={item.image || "/placeholder.svg"} alt={item.name} className="item-image" />
                         </div>
                         <div className="purchase-product-details">
-                          <h3>{item.name}</h3>
+                          <h4>{item.name}</h4>
                           <p className="variant"> {item.color} - {item.size}</p>
                           <p className="price">{item.price.toLocaleString("vi-VN")}đ x {item.quantity}</p>
                         </div>
