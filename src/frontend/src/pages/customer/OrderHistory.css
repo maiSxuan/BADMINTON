@@ -333,71 +333,7 @@
   margin-right: 8px;
 }
 
-/* Detail items
-.detail-items {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
 
-.detail-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 16px;
-  background-color: #FFE2F6;
-  border-radius: 8px
-}
-
-.detail-item-image {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.detail-item-info {
-  flex: 1;
-}
-
-.detail-item-name {
-  font-weight: 500;
-  color: #111827;
-  margin-bottom: 4px;
-}
-
-.detail-item-variant {
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 8px;
-}
-
-.detail-item-pricing {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.detail-item-quantity {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-.detail-item-prices {
-  text-align: right;
-}
-
-.unit-price {
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 4px;
-}
-
-.total-item-price {
-  font-weight: 500;
-  color: #111827;
-} */
 
 /* Final total */
 .final-total {
@@ -685,7 +621,13 @@
 
 /* Styles cho Review Dialog */
 .review-dialog .dialog-content {
-  max-width: 600px; /* Tăng chiều rộng cho dialog */
+  max-width: 700px; /* Tăng chiều rộng cho dialog */
+}
+
+.review-dialog .dialog-body {
+  max-height: 60vh; 
+  overflow-y: auto;   
+  padding-right: 15px;
 }
 
 .review-item {
